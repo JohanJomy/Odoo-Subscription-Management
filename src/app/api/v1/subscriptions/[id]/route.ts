@@ -1,8 +1,10 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { ok, HttpError, apiHandler, zodToFieldErrors } from '@/lib/http';
 import { requireRole, scopeToCustomer } from '@/server/auth/guard';
 import { updateSubscriptionSchema } from '@/lib/validators';
+import { transitionSubscription } from '@/server/subscriptions/transitions';
+import { SubscriptionStatus } from '@/lib/constants';
 
 export const GET = apiHandler(async (
   request: NextRequest,
@@ -48,8 +50,8 @@ export const GET = apiHandler(async (
 });
 
 /**
- * PATCH is only allowed while status = 'DRAFT'.
- * Once a subscription moves to QUOTATION or beyond, lines are locked.
+ * PATCH handles updating subscription fields while in DRAFT,
+ * or updating/transitioning subscription status.
  */
 export const PATCH = apiHandler(async (
   request: NextRequest,
@@ -61,6 +63,19 @@ export const PATCH = apiHandler(async (
 
   const sub = await prisma.subscription.findUnique({ where: { id } });
   if (!sub) throw new HttpError(404, 'SUBSCRIPTION_NOT_FOUND', 'Subscription not found');
+
+  // Handle direct status transition if passed in body
+  if (body.status && body.status !== sub.status) {
+    const updated = await prisma.$transaction(async (tx) => {
+      return transitionSubscription(tx, id, body.status as SubscriptionStatus, {
+        userId: user.id,
+        userRole: user.role,
+        closeReason: body.reason,
+        newExpiryDate: body.expiryDate,
+      });
+    });
+    return ok(updated);
+  }
 
   if (sub.status !== 'DRAFT') {
     throw new HttpError(409, 'SUBSCRIPTION_LOCKED',

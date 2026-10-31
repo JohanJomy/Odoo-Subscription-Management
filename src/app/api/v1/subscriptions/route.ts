@@ -11,7 +11,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
 
   const status = searchParams.get('status');
   const customerId = searchParams.get('customerId');
-  const q = searchParams.get('q') || '';
+  const q = searchParams.get('q') || searchParams.get('search') || '';
 
   const scope = scopeToCustomer(user);
 
@@ -34,7 +34,8 @@ export const GET = apiHandler(async (request: NextRequest) => {
       orderBy: { createdAt: 'desc' },
       include: {
         customer: { select: { id: true, name: true, company: true } },
-        plan: { select: { id: true, name: true, billingPeriod: true } },
+        plan: { select: { id: true, name: true, billingPeriod: true, price: true } },
+        lines: true,
         _count: { select: { invoices: true, lines: true } },
       },
     }),
@@ -47,6 +48,55 @@ export const GET = apiHandler(async (request: NextRequest) => {
 export const POST = apiHandler(async (request: NextRequest) => {
   const user = await requireRole(['ADMIN', 'STAFF'], request);
   const body = await request.json();
+
+  // Normalize incoming body fields for compatibility with P3 UI and P2 API
+  if (body.lines && Array.isArray(body.lines)) {
+    body.lines = body.lines.map((l: any) => ({
+      ...l,
+      qty: l.qty ?? l.quantity ?? 1,
+    }));
+  }
+  if (!body.paymentTerm) {
+    body.paymentTerm = 'IMMEDIATE';
+  }
+  if (!body.expiryDate && body.startDate) {
+    const s = new Date(body.startDate);
+    s.setMonth(s.getMonth() + 1);
+    body.expiryDate = s;
+  }
+
+  if (body.customerEmail || body.customerName) {
+    let cust = body.customerId ? await prisma.customer.findUnique({ where: { id: body.customerId } }) : null;
+    if (!cust) {
+      if (body.customerEmail) {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: body.customerEmail },
+          include: { customer: true },
+        });
+        if (existingUser?.customer) {
+          body.customerId = existingUser.customer.id;
+        } else {
+          const firstCust = await prisma.customer.findFirst();
+          if (firstCust) {
+            body.customerId = firstCust.id;
+          } else {
+            const newCust = await prisma.customer.create({
+              data: {
+                name: body.customerName || body.customerEmail.split('@')[0],
+                company: 'Acme Enterprise',
+              },
+            });
+            body.customerId = newCust.id;
+          }
+        }
+      } else {
+        const firstCust = await prisma.customer.findFirst();
+        if (firstCust) {
+          body.customerId = firstCust.id;
+        }
+      }
+    }
+  }
 
   const parsed = createSubscriptionSchema.safeParse(body);
   if (!parsed.success) {

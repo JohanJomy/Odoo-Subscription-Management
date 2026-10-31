@@ -30,6 +30,8 @@ export class HttpError extends Error {
 export function ok<T>(data: T, meta?: ApiPaginationMeta, init?: ResponseInit) {
   return NextResponse.json(
     {
+      ok: true,
+      success: true,
       data,
       ...(meta ? { meta } : {}),
     },
@@ -38,7 +40,7 @@ export function ok<T>(data: T, meta?: ApiPaginationMeta, init?: ResponseInit) {
 }
 
 export function created<T>(data: T, init?: ResponseInit) {
-  return NextResponse.json({ data }, { status: 201, ...init });
+  return NextResponse.json({ ok: true, success: true, data }, { status: 201, ...init });
 }
 
 export function fail(
