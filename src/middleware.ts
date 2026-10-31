@@ -72,6 +72,15 @@ export async function middleware(request: NextRequest) {
 
   // If visiting public auth page with valid session, redirect to home workspace
   if (isPublicAuthPage) {
+    if (
+      request.nextUrl.searchParams.has("reset") ||
+      request.nextUrl.searchParams.has("logout") ||
+      request.nextUrl.searchParams.has("force")
+    ) {
+      const response = NextResponse.next();
+      response.cookies.delete(SESSION_COOKIE_NAME);
+      return response;
+    }
     if (session) {
       const destination =
         session.role === "CUSTOMER" ? "/my/subscriptions" : "/dashboard";
