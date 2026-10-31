@@ -12,9 +12,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
       skip,
       take: limit,
       orderBy: { ranAt: 'desc' },
-      include: {
-        ranBy: { select: { id: true, email: true } },
-      },
+  
     }),
     prisma.billingRun.count(),
   ]);

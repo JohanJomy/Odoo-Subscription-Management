@@ -18,12 +18,7 @@ export const GET = apiHandler(async (
     include: {
       customer: { select: { id: true, name: true, company: true, phone: true } },
       plan: true,
-      lines: {
-        include: {
-          product: { select: { id: true, name: true } },
-          variant: { select: { id: true, attribute: true, value: true } },
-        },
-      },
+      lines: true,
       invoices: {
         orderBy: { createdAt: 'desc' },
         take: 20,
