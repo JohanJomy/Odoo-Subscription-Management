@@ -1,5 +1,6 @@
-import { Prisma, type Invoice as PrismaInvoice, type Payment as PrismaPayment } from "@prisma/client";
+import { Prisma, type Customer as PrismaCustomer, type Invoice as PrismaInvoice, type Payment as PrismaPayment } from "@prisma/client";
 import { prisma } from "@/server/db";
+import { writeAudit } from "@/server/audit";
 
 export type InvoiceStatus = "DRAFT" | "CONFIRMED" | "PAID" | "CANCELLED";
 export type PaymentMethod = "UPI" | "BANK" | "CARD" | "CASH";
@@ -34,15 +35,15 @@ export class PaymentError extends Error {
   }
 }
 
-type InvoiceWithPayments = PrismaInvoice & { payments: PrismaPayment[] };
+type InvoiceWithPayments = PrismaInvoice & { payments: PrismaPayment[]; customer: PrismaCustomer };
 
 function mapPayment(payment: PrismaPayment): Payment {
   return {
     id: payment.id,
     invoiceId: payment.invoiceId,
-    method: payment.method,
+    method: payment.method as PaymentMethod,
     amount: payment.amount,
-    paidOn: payment.paidOn,
+    paidOn: payment.paidOn.toISOString().slice(0, 10),
     note: payment.note,
     externalRef: payment.externalRef,
   };
@@ -52,16 +53,16 @@ function mapInvoice(invoice: InvoiceWithPayments): Invoice {
   return {
     id: invoice.id,
     number: invoice.number,
-    customer: invoice.customer,
+    customer: invoice.customer.name,
     total: invoice.total,
     paidTotal: invoice.paidTotal,
-    dueDate: invoice.dueDate,
-    status: invoice.status,
+    dueDate: invoice.dueDate.toISOString().slice(0, 10),
+    status: invoice.status as InvoiceStatus,
     payments: invoice.payments.map(mapPayment),
   };
 }
 
-const invoiceInclude = { payments: { orderBy: { paidOn: "desc" as const } } };
+const invoiceInclude = { payments: { orderBy: { paidOn: "desc" as const } }, customer: true };
 
 export async function listInvoices(): Promise<Invoice[]> {
   const rows = await prisma.invoice.findMany({ include: invoiceInclude, orderBy: { dueDate: "asc" } });
@@ -90,6 +91,12 @@ export async function recordPayment(
         if (existing) {
           const invoice = await transaction.invoice.findUnique({ where: { id: existing.invoiceId }, include: invoiceInclude });
           if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
+          await writeAudit(transaction, {
+            action: "PAYMENT_IDEMPOTENCY_REPLAYED",
+            entity: "Payment",
+            entityId: existing.id,
+            metadata: { externalRef: input.externalRef },
+          });
           return { invoice: mapInvoice(invoice), payment: mapPayment(existing), duplicate: true };
         }
       }
@@ -105,7 +112,7 @@ export async function recordPayment(
           invoiceId,
           method: input.method,
           amount: input.amount,
-          paidOn: input.paidOn,
+          paidOn: new Date(`${input.paidOn}T00:00:00.000Z`),
           note: input.note?.trim() || null,
           externalRef: input.externalRef || null,
         },
@@ -116,6 +123,20 @@ export async function recordPayment(
         data: { paidTotal, status: paidTotal === invoice.total ? "PAID" : "CONFIRMED" },
         include: invoiceInclude,
       });
+      await writeAudit(transaction, {
+        action: "PAYMENT_RECORDED",
+        entity: "Payment",
+        entityId: payment.id,
+        metadata: { invoiceId, amount: payment.amount, method: payment.method, status: updated.status },
+      });
+      if (updated.status === "PAID") {
+        await writeAudit(transaction, {
+          action: "INVOICE_PAID",
+          entity: "Invoice",
+          entityId: invoiceId,
+          metadata: { paymentId: payment.id },
+        });
+      }
       return { invoice: mapInvoice(updated), payment: mapPayment(payment), duplicate: false };
     });
   } catch (error) {
@@ -135,5 +156,11 @@ export async function transitionInvoice(invoiceId: string, nextStatus: "CONFIRME
     throw new PaymentError("INVOICE_NOT_PAYABLE", 409);
   }
   const updated = await prisma.invoice.update({ where: { id: invoiceId }, data: { status: nextStatus }, include: invoiceInclude });
+  await writeAudit(prisma, {
+    action: nextStatus === "CONFIRMED" ? "INVOICE_CONFIRMED" : "INVOICE_CANCELLED",
+    entity: "Invoice",
+    entityId: invoiceId,
+    metadata: { previousStatus: invoice.status, nextStatus },
+  });
   return mapInvoice(updated);
 }
