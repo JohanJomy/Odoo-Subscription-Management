@@ -9,13 +9,17 @@ import UpiPaymentPanel from "@/components/p4/upi-payment-panel";
 export const dynamic = "force-dynamic";
 
 export default async function CustomerInvoicesPage() {
-  const user = await requireRole(["CUSTOMER"]);
-  if (!user.customerId) redirect("/login");
-  const invoices = await prisma.invoice.findMany({
-    where: { customerId: user.customerId },
-    include: { payments: true },
-    orderBy: { dueDate: "desc" },
-  });
+  const user = await requireRole(["CUSTOMER", "ADMIN", "STAFF"]);
+  const customerId =
+    user.customerId ?? (await prisma.customer.findFirst({ select: { id: true } }))?.id;
+
+  const invoices = customerId
+    ? await prisma.invoice.findMany({
+        where: { customerId },
+        include: { payments: true },
+        orderBy: { dueDate: "desc" },
+      })
+    : [];
   return (
     <div className="space-y-6">
       <header>
