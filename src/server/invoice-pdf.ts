@@ -4,7 +4,7 @@ import { getInvoice, type Invoice } from "@/server/payments";
 import { createUpiRequest } from "@/server/upi";
 
 const merchantName = process.env.UPI_MERCHANT_NAME || "LoopLedger Technologies Pvt Ltd";
-const merchantVpa = process.env.UPI_MERCHANT_VPA || "loopledger@icici";
+const merchantVpa = process.env.UPI_MERCHANT_VPA || process.env.UPI_VPA || "loopledger@icici";
 
 function money(paise: number): string {
   return `INR ${(paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
@@ -53,7 +53,7 @@ export async function createInvoicePdf(invoice: Invoice): Promise<Uint8Array> {
     drawText(page, "No payments recorded.", 40, y, 10, regular, muted);
   } else {
     for (const payment of invoice.payments) {
-      drawText(page, `${payment.paidOn} · ${payment.method}`, 40, y, 10, regular);
+      drawText(page, `${payment.paidOn} - ${payment.method}`, 40, y, 10, regular);
       drawText(page, money(payment.amount), 450, y, 10, regular);
       y -= 20;
     }
@@ -76,7 +76,7 @@ export async function createInvoicePdf(invoice: Invoice): Promise<Uint8Array> {
   return document.save();
 }
 
-export async function getInvoicePdf(invoiceId: string): Promise<{ invoice: Invoice; bytes: Uint8Array }> {
-  const invoice = await getInvoice(invoiceId);
+export async function getInvoicePdf(invoiceId: string, customerId?: string | null): Promise<{ invoice: Invoice; bytes: Uint8Array }> {
+  const invoice = await getInvoice(invoiceId, customerId);
   return { invoice, bytes: await createInvoicePdf(invoice) };
 }

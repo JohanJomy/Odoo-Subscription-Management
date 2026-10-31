@@ -35,34 +35,27 @@ export async function audit(
 }
 
 export async function writeAudit(
-  client: PrismaTransaction | PrismaClient,
-  input: { action: string; entity: string; entityId: string; metadata?: Record<string, unknown> },
+  client: PrismaTransaction | PrismaClient | undefined,
+  params: {
+    entity: string;
+    entityId: string;
+    action: string;
+    userId?: string | null;
+    metadata?: Record<string, unknown>;
+  },
 ) {
   return audit(client, {
-    action: input.action,
-    entity: input.entity,
-    entityId: input.entityId,
-    detail: input.metadata ? JSON.stringify(input.metadata) : null,
+    entity: params.entity,
+    entityId: params.entityId,
+    action: params.action,
+    userId: params.userId,
+    detail: params.metadata ? JSON.stringify(params.metadata) : null,
   });
 }
 
 export async function listAuditLogs(limit = 100) {
-  const rows = await defaultPrisma.auditLog.findMany({ orderBy: { at: "desc" }, take: limit });
-  return rows.map((row) => ({
-    id: row.id,
-    action: row.action,
-    entity: row.entity,
-    entityId: row.entityId,
-    actor: row.userId ?? "system",
-    metadata: row.detail
-      ? (() => {
-          try {
-            return JSON.parse(row.detail) as Record<string, unknown>;
-          } catch {
-            return { detail: row.detail };
-          }
-        })()
-      : null,
-    createdAt: row.at.toISOString(),
-  }));
+  return defaultPrisma.auditLog.findMany({
+    orderBy: { at: "desc" },
+    take: Math.min(Math.max(limit, 1), 200),
+  });
 }

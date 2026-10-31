@@ -1,9 +1,11 @@
 import { getInvoicePdf } from "@/server/invoice-pdf";
+import { requireAuth } from "@/server/auth/guard";
 
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const user = await requireAuth(_request);
     const { id } = await context.params;
-    const { invoice, bytes } = await getInvoicePdf(id);
+    const { invoice, bytes } = await getInvoicePdf(id, user.role === "CUSTOMER" ? user.customerId : undefined);
     return new Response(bytes as BodyInit, {
       headers: {
         "Content-Type": "application/pdf",

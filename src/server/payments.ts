@@ -64,13 +64,20 @@ function mapInvoice(invoice: InvoiceWithPayments): Invoice {
 
 const invoiceInclude = { payments: { orderBy: { paidOn: "desc" as const } } };
 
-export async function listInvoices(): Promise<Invoice[]> {
-  const rows = await prisma.invoice.findMany({ include: invoiceInclude, orderBy: { dueDate: "asc" } });
+export async function listInvoices(customerId?: string | null): Promise<Invoice[]> {
+  const rows = await prisma.invoice.findMany({
+    where: customerId ? { customerId } : undefined,
+    include: invoiceInclude,
+    orderBy: { dueDate: "asc" },
+  });
   return rows.map(mapInvoice);
 }
 
-export async function getInvoice(invoiceId: string): Promise<Invoice> {
-  const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: invoiceInclude });
+export async function getInvoice(invoiceId: string, customerId?: string | null): Promise<Invoice> {
+  const invoice = await prisma.invoice.findFirst({
+    where: { id: invoiceId, ...(customerId ? { customerId } : {}) },
+    include: invoiceInclude,
+  });
   if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
   return mapInvoice(invoice);
 }
@@ -112,7 +119,7 @@ export async function recordPayment(
           invoiceId,
           method: input.method,
           amount: input.amount,
-          paidOn: new Date(`${input.paidOn}T00:00:00.000Z`),
+          paidOn: input.paidOn,
           note: input.note?.trim() || null,
           externalRef: input.externalRef || null,
         },

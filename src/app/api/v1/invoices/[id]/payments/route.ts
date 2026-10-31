@@ -1,9 +1,11 @@
-import { PaymentError, recordPayment, type PaymentMethod } from "@/server/payments";
+import { recordPayment, type PaymentMethod } from "@/server/payments";
+import { requireRole } from "@/server/auth/guard";
+import { apiHandler } from "@/lib/http";
 
 const methods = new Set<PaymentMethod>(["UPI", "BANK", "CARD", "CASH"]);
 
-export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
-  try {
+export const POST = apiHandler(async (request: Request, context: { params: Promise<{ id: string }> }) => {
+    await requireRole(["ADMIN", "STAFF"], request);
     const { id } = await context.params;
     const body = await request.json() as Record<string, unknown>;
     const method = typeof body.method === "string" ? body.method.toUpperCase() as PaymentMethod : null;
@@ -15,8 +17,4 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const externalRef = typeof body.externalRef === "string" ? body.externalRef : request.headers.get("Idempotency-Key") || undefined;
     const result = await recordPayment(id, { method, amount, paidOn, note: typeof body.note === "string" ? body.note : undefined, externalRef });
     return Response.json({ data: result }, { status: result.duplicate ? 200 : 201 });
-  } catch (error) {
-    if (error instanceof PaymentError) return Response.json({ error: { code: error.code } }, { status: error.status });
-    return Response.json({ error: { code: "INVALID_JSON" } }, { status: 400 });
-  }
-}
+});

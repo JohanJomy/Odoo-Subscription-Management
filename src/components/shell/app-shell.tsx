@@ -26,6 +26,8 @@ import {
   CloudCheck,
   Building2,
   ExternalLink,
+  BarChart3,
+  ScanLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/lib/constants";
@@ -55,6 +57,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
   PlayCircle,
   UserCheck,
   ShieldAlert,
+  BarChart3,
+  ScanLine,
 };
 
 export function AppShell({ children, user }: AppShellProps) {

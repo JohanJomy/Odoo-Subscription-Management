@@ -1,6 +1,6 @@
 import { getInvoice, type Invoice } from "@/server/payments";
 
-const merchantVpa = process.env.UPI_MERCHANT_VPA || "loopledger@icici";
+const merchantVpa = process.env.UPI_MERCHANT_VPA || process.env.UPI_VPA || "loopledger@icici";
 const merchantName = process.env.UPI_MERCHANT_NAME || "LoopLedger Technologies Pvt Ltd";
 
 export type UpiPaymentRequest = {
@@ -31,6 +31,6 @@ export function createUpiRequest(invoice: Invoice): UpiPaymentRequest {
   };
 }
 
-export async function getUpiRequest(invoiceId: string): Promise<UpiPaymentRequest> {
-  return createUpiRequest(await getInvoice(invoiceId));
+export async function getUpiRequest(invoiceId: string, customerId?: string | null): Promise<UpiPaymentRequest> {
+  return createUpiRequest(await getInvoice(invoiceId, customerId));
 }
