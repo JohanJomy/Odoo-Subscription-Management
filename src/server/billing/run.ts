@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import {
   priceSubscription,
   addPeriod,
-  calculateDueDate,
   PricingLineInput,
   DiscountCandidate,
 } from './pricing';
@@ -26,6 +25,9 @@ export interface RunItem {
   periodEnd?: Date;
   outcome: 'CREATED' | 'SKIPPED_EXISTS' | 'FAILED';
   invoiceNumber?: string;
+  subtotal?: number;
+  discountTotal?: number;
+  taxTotal?: number;
   total?: number; // paise
   message?: string;
 }
@@ -259,6 +261,9 @@ export async function runBilling(
                 periodStart,
                 periodEnd,
                 outcome: 'CREATED',
+                subtotal: calc.subtotal,
+                discountTotal: calc.discountTotal,
+                taxTotal: calc.taxTotal,
                 total: calc.total,
               });
             } else {
@@ -313,6 +318,9 @@ export async function runBilling(
                 periodEnd,
                 outcome: 'CREATED',
                 invoiceNumber,
+                subtotal: calc.subtotal,
+                discountTotal: calc.discountTotal,
+                taxTotal: calc.taxTotal,
                 total: calc.total,
               });
             }

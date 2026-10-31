@@ -5,10 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Repeat,
-  Calendar,
-  Building,
   User,
-  Phone,
   Layers,
   ArrowRight,
   Receipt,
@@ -20,8 +17,6 @@ import {
   XCircle,
   RotateCcw,
   Edit3,
-  Clock,
-  ShieldCheck,
 } from 'lucide-react';
 import { formatMoney } from '@/lib/money';
 import { StatusChip } from '@/components/shared/status-chip';

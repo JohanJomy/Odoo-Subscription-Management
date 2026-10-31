@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -27,10 +28,11 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface CustomerCreateModalProps {
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function CustomerCreateModal({ onSuccess }: CustomerCreateModalProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -75,7 +77,11 @@ export function CustomerCreateModal({ onSuccess }: CustomerCreateModalProps) {
 
       reset();
       setOpen(false);
-      onSuccess();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.refresh();
+      }
     } catch (err) {
       setApiError(err instanceof Error ? err.message : 'Network error');
     }

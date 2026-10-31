@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  User,
   Building,
   Phone,
   MapPin,
@@ -17,7 +16,6 @@ import {
   AlertCircle,
   CheckCircle2,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 import { formatMoney } from '@/lib/money';
 import { StatusChip } from '@/components/shared/status-chip';

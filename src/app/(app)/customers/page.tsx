@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/server/auth/guard';
-import { Users, Search, ChevronLeft, ChevronRight, Building, Phone, ArrowRight, ShieldAlert } from 'lucide-react';
+import { Users, Search, ChevronLeft, ChevronRight, Building, Phone, ArrowRight } from 'lucide-react';
 import { CustomerCreateModal } from './customer-create-modal';
 
 export const dynamic = 'force-dynamic';
@@ -122,7 +122,7 @@ export default async function CustomersPage({
         </div>
 
         <div className="flex items-center gap-2">
-          <CustomerCreateModal onSuccess={() => redirect('/customers')} />
+          <CustomerCreateModal />
         </div>
       </div>
 

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -16,7 +18,6 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { formatMoney } from '@/lib/money';
-import { StatusChip } from '@/components/shared/status-chip';
 
 interface RunItem {
   subscriptionId: string;
@@ -26,6 +27,9 @@ interface RunItem {
   periodEnd?: string;
   outcome: 'CREATED' | 'SKIPPED_EXISTS' | 'FAILED';
   invoiceNumber?: string;
+  subtotal?: number;
+  discountTotal?: number;
+  taxTotal?: number;
   total?: number;
   message?: string;
 }
@@ -155,7 +159,7 @@ export default function BillingRunCenterPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
             <span>Core Operations</span>
-            <span>•</span>
+            <span>â€¢</span>
             <span className="text-indigo-600 font-semibold">Recurring Engine</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Billing Run Center</h1>
@@ -324,26 +328,29 @@ export default function BillingRunCenterPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-600">
-            <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                        <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
               <tr>
-                <th className="px-5 py-3">Subscription</th>
-                <th className="px-5 py-3">Customer</th>
-                <th className="px-5 py-3">Billing Period</th>
-                <th className="px-5 py-3">Outcome</th>
-                <th className="px-5 py-3 text-right">Invoice Total</th>
+                <th className="px-4 py-3">Subscription</th>
+                <th className="px-4 py-3">Customer</th>
+                <th className="px-4 py-3">Billing Period</th>
+                <th className="px-4 py-3 text-right">Subtotal</th>
+                <th className="px-4 py-3 text-right">Discount</th>
+                <th className="px-4 py-3 text-right">Tax</th>
+                <th className="px-4 py-3 text-right">Total</th>
+                <th className="px-4 py-3 text-center">Outcome</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loadingPreview ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
+                  <td colSpan={8} className="px-5 py-12 text-center text-slate-400">
                     <RotateCw className="h-5 w-5 animate-spin mx-auto mb-2 text-indigo-500" />
                     <span>Calculating upcoming billing schedule...</span>
                   </td>
                 </tr>
               ) : currentItems.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-12 text-center text-slate-400">
+                  <td colSpan={8} className="px-5 py-12 text-center text-slate-400">
                     <CheckCircle2 className="h-6 w-6 text-emerald-500 mx-auto mb-2" />
                     <p className="font-semibold text-slate-700 text-sm">All caught up!</p>
                     <p className="text-xs mt-1">
@@ -353,19 +360,31 @@ export default function BillingRunCenterPage() {
                 </tr>
               ) : (
                 currentItems.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/70 transition">
-                    <td className="px-5 py-3 font-semibold text-slate-900">
+                                    <tr key={idx} className="hover:bg-slate-50/70 transition">
+                    <td className="px-4 py-3 font-semibold text-slate-900">
                       {item.subscriptionNumber || item.subscriptionId}
                     </td>
-                    <td className="px-5 py-3 text-slate-700">{item.customerName || '—'}</td>
-                    <td className="px-5 py-3 text-slate-500">
+                    <td className="px-4 py-3 text-slate-700">{item.customerName || '—'}</td>
+                    <td className="px-4 py-3 text-slate-500">
                       {item.periodStart
                         ? `${new Date(item.periodStart).toLocaleDateString('en-IN')} → ${
                             item.periodEnd ? new Date(item.periodEnd).toLocaleDateString('en-IN') : '—'
                           }`
                         : '—'}
                     </td>
-                    <td className="px-5 py-3">
+                    <td className="px-4 py-3 text-right text-slate-700">
+                      {formatMoney(item.subtotal ?? item.total ?? 0)}
+                    </td>
+                    <td className="px-4 py-3 text-right text-emerald-700">
+                      {item.discountTotal ? `-${formatMoney(item.discountTotal)}` : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-600">
+                      {item.taxTotal !== undefined ? formatMoney(item.taxTotal) : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-right font-semibold text-slate-900">
+                      {formatMoney(item.total ?? 0)}
+                    </td>
+                    <td className="px-4 py-3 text-center">
                       {item.outcome === 'CREATED' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                           <CheckCircle2 className="h-3 w-3" />
@@ -382,9 +401,6 @@ export default function BillingRunCenterPage() {
                           Failed
                         </span>
                       )}
-                    </td>
-                    <td className="px-5 py-3 text-right font-semibold text-slate-900">
-                      {formatMoney(item.total ?? 0)}
                     </td>
                   </tr>
                 ))
@@ -442,13 +458,13 @@ export default function BillingRunCenterPage() {
             <tbody className="divide-y divide-slate-100">
               {loadingHistory ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-8 text-center text-slate-400">
+                  <td colSpan={8} className="px-5 py-8 text-center text-slate-400">
                     Loading historical runs...
                   </td>
                 </tr>
               ) : history.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-8 text-center text-slate-400">
+                  <td colSpan={8} className="px-5 py-8 text-center text-slate-400">
                     No billing runs recorded yet.
                   </td>
                 </tr>
@@ -573,12 +589,12 @@ export default function BillingRunCenterPage() {
                         {item.subscriptionNumber || item.subscriptionId}
                       </p>
                       <p className="text-[11px] text-slate-500">
-                        {item.customerName} {item.invoiceNumber ? `· ${item.invoiceNumber}` : ''}
+                        {item.customerName} {item.invoiceNumber ? `Â· ${item.invoiceNumber}` : ''}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-slate-900">
-                        {item.total !== undefined ? formatMoney(item.total) : '—'}
+                        {item.total !== undefined ? formatMoney(item.total) : 'â€”'}
                       </p>
                       <span
                         className={`text-[10px] font-semibold ${

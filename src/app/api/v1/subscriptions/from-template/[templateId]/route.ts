@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { ok, created, HttpError, apiHandler, zodToFieldErrors } from '@/lib/http';
+import { created, HttpError, apiHandler, zodToFieldErrors } from '@/lib/http';
 import { requireRole } from '@/server/auth/guard';
 import { fromTemplateSchema } from '@/lib/validators';
 import { nextNumber } from '@/lib/number-generator';

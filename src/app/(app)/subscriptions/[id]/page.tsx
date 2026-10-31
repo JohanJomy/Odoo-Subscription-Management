@@ -14,7 +14,7 @@ export default async function SubscriptionDetailPage({
   if (!session) redirect('/login');
 
   const { id } = await params;
-  const scope = scopeToCustomer(session as any);
+  const scope = scopeToCustomer(session as Parameters<typeof scopeToCustomer>[0]);
 
   const sub = await prisma.subscription.findUnique({
     where: {
@@ -73,6 +73,7 @@ export default async function SubscriptionDetailPage({
 
   return (
     <SubscriptionDetailsClient
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       subscription={serializedSub as any}
       currentUserRole={session.role}
     />
