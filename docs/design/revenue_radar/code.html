@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-lowest":"#ffffff","secondary-fixed":"#e3dfff","on-primary-fixed-variant":"#3323cc","inverse-primary":"#c3c0ff","surface-container-highest":"#dae2fd","on-tertiary-container":"#d7dbe8","on-background":"#131b2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","on-tertiary-fixed-variant":"#424751","on-secondary-container":"#fffbff","inverse-surface":"#283044","on-surface-variant":"#464555","secondary-container":"#6860ef","secondary-fixed-dim":"#c3c0ff","on-error-container":"#93000a","surface-container":"#eaedff","on-primary-fixed":"#0f0069","primary-fixed-dim":"#c3c0ff","surface":"#faf8ff","on-secondary-fixed-variant":"#372abf","on-tertiary":"#ffffff","background":"#faf8ff","surface-container-low":"#f2f3ff","on-secondary":"#ffffff","on-tertiary-fixed":"#171c25","primary-fixed":"#e2dfff","outline-variant":"#c7c4d8","tertiary-fixed":"#dee2ef","tertiary":"#434853","on-primary-container":"#dad7ff","surface-container-high":"#e2e7ff","outline":"#777587","error-container":"#ffdad6","surface-tint":"#4d44e3","secondary":"#4e45d5","surface-dim":"#d2d9f4","primary-container":"#4f46e5","tertiary-fixed-dim":"#c2c6d3","on-secondary-fixed":"#100069","on-surface":"#131b2e","primary":"#3525cd","on-error":"#ffffff","tertiary-container":"#5b606b","surface-variant":"#dae2fd","surface-bright":"#faf8ff","on-primary":"#ffffff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{gutter:"1rem","margin-md":"1.5rem",margin:"1rem","space-lg":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","margin-lg":"2rem","space-xs":"0.25rem","gutter-lg":"1.5rem","space-md":"1rem"},fontFamily:{"label-md":["Geist"],"body-sm":["Geist"],"headline-xl-mobile":["Geist"],"body-md":["Geist"],"label-xs":["Geist"],"body-lg":["Geist"],"headline-lg":["Geist"],"label-sm":["Geist"],"headline-sm":["Geist"],"headline-xl":["Geist"],"stat-display":["Geist"],"headline-md":["Geist"]},fontSize:{"label-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"body-sm":["13px",{lineHeight:"18px",letterSpacing:"0em",fontWeight:"400"}],"headline-xl-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-sm":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-xl":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"stat-display":["28px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-xs"><img alt="LoopLedger Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ww7WmGsqWwTt0JuK95t44OoO3FSmccLcJXYBjqUunwBOEvRZl135ZKhIZzACDDRvaEjL1hhj2bofLhuDfmg65hhrLAJ2GAnRSI2-w3HVy_9T2nuc1xsUeAGR_nzG-lO2p4RTT1s9BlhKzIwaVoEnw_ckLiAWwi9T5l_WhBaahw2qD8z8Y88WvnDaMHPTa5Z8UnkhB6g-YNNPCq6IcEdWF69OWie2l-WlVtvkp_k9Fmyw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">LoopLedger</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-none mt-0.5">Billing Cloud</span></div></div><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-surface-variant">v2.4</span></div><div class="px-space-md py-space-xs"><div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs"><span class="truncate max-w-[130px] font-medium text-on-surface">Brightloop Production</span><span class="flex items-center gap-1 text-[10px] text-on-surface-variant"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>Live</span></div></div><div class="flex-1 overflow-y-auto px-space-sm py-space-xs"><nav class="flex flex-col gap-0.5" data-active-classes="bg-primary-container text-on-primary font-medium rounded-lg"><div class="px-2.5 pt-2 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Overview</div><a aria-current="page" class="flex items-center gap-2.5 px-2.5 py-1.5 transition-colors bg-primary-container text-on-primary font-medium rounded-lg" data-path="revenue-radar" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span>Revenue Radar</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Core Operations</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="billing-run" href="#"><span class="material-symbols-outlined text-[18px]">play_circle</span><span>Billing Run</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="subscriptions" href="#"><span class="material-symbols-outlined text-[18px]">autorenew</span><span>Subscriptions</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="invoices" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Invoices</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="payments" href="#"><span class="material-symbols-outlined text-[18px]">payments</span><span>Payments</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Customers</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="customer-directory" href="#"><span class="material-symbols-outlined text-[18px]">group</span><span>Customer Directory</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="renewal-dunning-inbox" href="#"><span class="material-symbols-outlined text-[18px]">mark_email_unread</span><span>Renewal & Dunning Inbox</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Product & Catalog</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="products-variants" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span>Products & Variants</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="plans" href="#"><span class="material-symbols-outlined text-[18px]">layers</span><span>Plans</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="templates" href="#"><span class="material-symbols-outlined text-[18px]">description</span><span>Templates</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Settings</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="pricing-rules" href="#"><span class="material-symbols-outlined text-[18px]">percent</span><span>Pricing & Taxes</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="team-roles" href="#"><span class="material-symbols-outlined text-[18px]">shield_person</span><span>Team & Roles</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="audit-trail" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span>Audit Trail</span></a></nav></div><div class="p-space-sm bg-surface-container-lowest"><div class="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-2"><div class="flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>Online · Synced</span><span class="material-symbols-outlined text-[14px] text-outline">cloud_done</span></div><div class="flex items-center justify-between pt-1 text-on-surface"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-xs text-label-xs font-semibold">BL</div><span class="font-label-sm text-label-sm truncate max-w-[120px]">Acme Corp HQ</span></div><a class="text-primary hover:text-secondary font-label-xs text-label-xs flex items-center gap-0.5" data-path="customer-portal" href="#" title="Open Customer Portal"><span class="material-symbols-outlined text-[14px]">open_in_new</span></a></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-9 pl-9 pr-14 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search subscriptions, invoices, customers..." type="text"/><div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-xs text-label-xs"><span class="text-[10px]">⌘</span><span>K</span></div></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low font-label-xs text-label-xs text-on-surface"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="hidden sm:inline font-medium">Online · Synced</span></div><div class="flex items-center bg-surface-container-low p-0.5 rounded-lg"><button class="px-2 py-1 rounded font-label-xs text-label-xs font-semibold bg-surface-container-lowest text-on-surface shadow-[0_1px_2px_rgba(15,23,42,0.06)]" type="button">Admin</button><button class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">Staff</button><a class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface flex items-center gap-1" data-path="customer-portal" href="#">Portal<span class="material-symbols-outlined text-[12px]">arrow_outward</span></a></div><button aria-label="Notifications" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-2 pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-label-sm text-label-sm font-medium text-on-surface leading-tight">Alex Mercer</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-tight">RevOps Admin</span></div></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="p-space-lg max-w-[1600px] mx-auto w-full space-y-space-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md pb-space-xs">
+<div>
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm text-outline mb-1">
+<span>Overview</span>
+<span>/</span>
+<span class="text-on-surface font-semibold">Revenue Radar</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline"></span>
+<span class="text-on-surface-variant font-medium">As of Oct 31, 2026 · 18:42 IST</span>
+</div>
+<div class="flex items-center gap-3">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Revenue Radar</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-xs text-label-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+            Dexie PWA Cache Active · 100% Synced
+          </span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="inline-flex p-0.5 rounded-lg bg-surface-container-high">
+<button class="px-3 py-1.5 rounded font-label-sm text-label-sm font-semibold bg-surface-container-lowest text-on-surface shadow-sm" type="button">Month-to-Date</button>
+<button class="px-3 py-1.5 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">Q4 2026</button>
+<button class="px-3 py-1.5 rounded font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">FY 2026-27</button>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container-high shadow-sm font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">tune</span>
+<span>Trigger Dry-Run</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-secondary font-label-md text-label-md shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Export Report</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-surface-container-high/40 rounded-full blur-2xl group-hover:bg-primary-fixed/30 transition-colors"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Monthly Recurring Revenue</span>
+<span class="material-symbols-outlined text-outline text-[20px]">payments</span>
+</div>
+<div class="my-3">
+<div class="font-stat-display text-stat-display text-on-surface tracking-tight">₹42,85,400</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant mt-0.5">Oct Target: ₹40,00,000 (107.1%)</div>
+</div>
+<div class="flex items-center justify-between font-label-xs text-label-xs pt-2">
+<span class="inline-flex items-center gap-1 text-[#059669] font-semibold bg-[#ecfdf5] px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+            +12.4%
+          </span>
+<span class="text-tertiary">vs ₹38,12,600 last month</span>
+</div>
+</div>
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Annual Recurring Revenue (ARR)</span>
+<span class="material-symbols-outlined text-outline text-[20px]">show_chart</span>
+</div>
+<div class="my-3">
+<div class="font-stat-display text-stat-display text-on-surface tracking-tight">₹5,14,24,800</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant mt-0.5">Projected FY Net: ₹5.45 Cr</div>
+</div>
+<div class="flex items-center justify-between font-label-xs text-label-xs pt-2">
+<span class="inline-flex items-center gap-1 text-[#059669] font-semibold bg-[#ecfdf5] px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+            +18.2% YoY
+          </span>
+<span class="text-tertiary">Run-rate multiple 12.0x</span>
+</div>
+</div>
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Active Subscriptions</span>
+<span class="material-symbols-outlined text-outline text-[20px]">autorenew</span>
+</div>
+<div class="my-3">
+<div class="font-stat-display text-stat-display text-on-surface tracking-tight">1,428</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant mt-0.5">34 onboarding · 2 under suspension</div>
+</div>
+<div class="flex items-center justify-between font-label-xs text-label-xs pt-2">
+<span class="inline-flex items-center gap-1 text-[#059669] font-semibold bg-[#ecfdf5] px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+            98.2% Retention
+          </span>
+<span class="text-tertiary">0.8% Net Churn</span>
+</div>
+</div>
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Collected vs Outstanding</span>
+<span class="material-symbols-outlined text-outline text-[20px]">account_balance_wallet</span>
+</div>
+<div class="my-3">
+<div class="flex items-baseline justify-between">
+<span class="font-headline-lg text-headline-lg text-on-surface">₹38.20L</span>
+<span class="font-label-sm text-label-sm text-[#e11d48] font-semibold">₹4.65L Due</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden mt-2 flex">
+<div class="bg-primary-container h-full rounded-full" style="width: 89.1%"></div>
+<div class="bg-[#e11d48] h-full" style="width: 10.9%"></div>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-xs text-label-xs pt-2">
+<span class="inline-flex items-center gap-1 text-primary-container font-semibold">
+            89.1% Collected
+          </span>
+<span class="text-tertiary">DSO: 18.4 Days</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<div class="lg:col-span-8 p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4">
+<div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline">Billing Run Performance</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Billing Velocity & Target Attainment</h2>
+</div>
+<div class="flex items-center gap-4 font-label-xs text-label-xs">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-primary-container"></span>
+<span class="text-on-surface-variant">Collected Run</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-secondary-container"></span>
+<span class="text-on-surface-variant">Target Pace</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-sm bg-error"></span>
+<span class="text-on-surface-variant">Aging Overdue</span>
+</div>
+</div>
+</div>
+<div class="w-full h-48 py-2">
+<svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 680 180">
+<line stroke="#eaedff" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="680" y1="30" y2="30"></line>
+<line stroke="#eaedff" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="680" y1="75" y2="75"></line>
+<line stroke="#eaedff" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="680" y1="120" y2="120"></line>
+<line stroke="#eaedff" stroke-width="1" x1="0" x2="680" y1="165" y2="165"></line>
+<path d="M10 165 C 80 150, 140 135, 200 122 C 260 110, 320 90, 380 72 C 440 55, 520 42, 600 34 L 670 28" fill="none" opacity="0.6" stroke="#6860ef" stroke-dasharray="4 4" stroke-width="2"></path>
+<path d="M10 165 L 10 165 C 80 158, 140 144, 200 130 C 260 116, 320 98, 380 78 C 440 60, 520 48, 600 39 L 670 32 L 670 165 Z" fill="url(#velocity-gradient)" opacity="0.18"></path>
+<path d="M10 165 C 80 158, 140 144, 200 130 C 260 116, 320 98, 380 78 C 440 60, 520 48, 600 39 L 670 32" fill="none" stroke="#4f46e5" stroke-width="2.5"></path>
+<path d="M480 165 C 530 163, 580 158, 620 152 L 670 145" fill="none" stroke="#ba1a1a" stroke-width="2"></path>
+<circle cx="670" cy="32" fill="#4f46e5" r="4"></circle>
+<circle cx="670" cy="145" fill="#ba1a1a" r="4"></circle>
+<defs>
+<lineargradient id="velocity-gradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#4f46e5"></stop>
+<stop offset="100%" stop-color="#4f46e5" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+<div class="grid grid-cols-4 gap-2 pt-3 text-center bg-surface-container-low rounded-lg p-3">
+<div>
+<div class="font-label-xs text-label-xs text-outline">WEEK 1 (OCT 1-7)</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-0.5">₹11.20L</div>
+<div class="font-label-xs text-label-xs text-[#059669] font-medium">102% target</div>
+</div>
+<div>
+<div class="font-label-xs text-label-xs text-outline">WEEK 2 (OCT 8-14)</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-0.5">₹9.84L</div>
+<div class="font-label-xs text-label-xs text-[#059669] font-medium">98% target</div>
+</div>
+<div>
+<div class="font-label-xs text-label-xs text-outline">WEEK 3 (OCT 15-21)</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-0.5">₹10.45L</div>
+<div class="font-label-xs text-label-xs text-[#059669] font-medium">110% target</div>
+</div>
+<div>
+<div class="font-label-xs text-label-xs text-outline">WEEK 4 (OCT 22-31)</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-0.5">₹6.71L</div>
+<div class="font-label-xs text-label-xs text-[#d97706] font-medium">₹4.65L pending</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3">
+<div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline">Delinquency Analysis</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Overdue Ageing Buckets</h2>
+</div>
+<span class="font-label-xs text-label-xs font-semibold px-2 py-0.5 rounded bg-surface-container-high text-on-surface">₹4,65,400 Total</span>
+</div>
+<div class="space-y-3 mt-2">
+<div class="p-3 rounded-lg bg-[#fffbeb] transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-[#d97706]"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">0–30 Days Overdue</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">₹2,45,000</span>
+</div>
+<div class="flex items-center justify-between mt-2 font-label-xs text-label-xs text-on-surface-variant">
+<span>14 Accounts · Low Risk</span>
+<span class="font-medium text-[#d97706]">52.6% of overdue</span>
+</div>
+<div class="w-full bg-[#fde68a] h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-[#d97706] h-full rounded-full" style="width: 52.6%"></div>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-[#fff1f2] transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-[#e11d48]"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">31–60 Days Overdue</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">₹1,65,400</span>
+</div>
+<div class="flex items-center justify-between mt-2 font-label-xs text-label-xs text-on-surface-variant">
+<span>6 Accounts · Dunning Escalation</span>
+<span class="font-medium text-[#e11d48]">35.5% of overdue</span>
+</div>
+<div class="w-full bg-[#fecdd3] h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-[#e11d48] h-full rounded-full" style="width: 35.5%"></div>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-high transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">60+ Days Overdue</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-error font-semibold">₹55,000</span>
+</div>
+<div class="flex items-center justify-between mt-2 font-label-xs text-label-xs text-on-surface-variant">
+<span>2 Accounts · Legal Notice Phase</span>
+<span class="font-medium text-error">11.8% of overdue</span>
+</div>
+<div class="w-full bg-error-container h-1.5 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 11.8%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-3">
+<a class="w-full py-2 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-medium flex items-center justify-center gap-1.5 transition-colors" href="#">
+<span>Automate Recovery Workflows</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<div class="lg:col-span-8 p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline">Priority Watchlist</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs font-semibold">22 Overdue</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Customer Health & Dunning Escalation</h2>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px]">filter_list</span>
+<select class="h-8 pl-8 pr-6 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs focus:outline-none appearance-none cursor-pointer">
+<option>All Risk Levels</option>
+<option>High Risk (>30d)</option>
+<option>Medium Risk (1-30d)</option>
+<option>Clean Slate</option>
+</select>
+</div>
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-xs text-label-xs flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">refresh</span>
+              Sync
+            </button>
+</div>
+</div>
+<div class="w-full overflow-x-auto rounded-lg">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead>
+<tr class="h-9 bg-surface-container-low font-label-xs text-label-xs uppercase text-tertiary">
+<th class="px-3">Customer & Company</th>
+<th class="px-3">Health</th>
+<th class="px-3">Active Plan</th>
+<th class="px-3 text-right">Balance (₹)</th>
+<th class="px-3">Ageing</th>
+<th class="px-3">Primary Contact</th>
+<th class="px-3 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high">
+<tr class="h-12 hover:bg-surface-container-low/70 transition-colors">
+<td class="px-3">
+<div class="font-label-sm text-label-sm font-semibold text-on-surface">Apex Logix India</div>
+<div class="font-label-xs text-label-xs text-outline">BL-88492 · Bengaluru</div>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#fff1f2] text-[#e11d48] font-label-xs text-label-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#e11d48]"></span>
+                    Critical (>45d)
+                  </span>
+</td>
+<td class="px-3 text-on-surface-variant">Enterprise Custom</td>
+<td class="px-3 text-right font-semibold text-on-surface">₹1,18,000</td>
+<td class="px-3">
+<span class="font-label-xs text-label-xs text-error font-medium">47 Days Overdue</span>
+</td>
+<td class="px-3">
+<div class="text-on-surface font-medium">Rajiv Menon</div>
+<div class="text-outline font-label-xs text-label-xs">+91 98401 23410</div>
+</td>
+<td class="px-3 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary-container" title="Send Legal Warning" type="button">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-error" title="Restrict Tenant API Access" type="button">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="h-12 hover:bg-surface-container-low/70 transition-colors">
+<td class="px-3">
+<div class="font-label-sm text-label-sm font-semibold text-on-surface">TechNova Solutions</div>
+<div class="font-label-xs text-label-xs text-outline">BL-92144 · Hyderabad</div>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] font-label-xs text-label-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#d97706]"></span>
+                    Moderate (18d)
+                  </span>
+</td>
+<td class="px-3 text-on-surface-variant">Growth Annual</td>
+<td class="px-3 text-right font-semibold text-on-surface">₹72,400</td>
+<td class="px-3">
+<span class="font-label-xs text-label-xs text-[#d97706] font-medium">18 Days Overdue</span>
+</td>
+<td class="px-3">
+<div class="text-on-surface font-medium">Deepa Rao</div>
+<div class="text-outline font-label-xs text-label-xs">+91 88712 99014</div>
+</td>
+<td class="px-3 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary-container" title="Send WhatsApp & Email Reminder" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-tertiary" title="Inspect Invoice #INV-1099" type="button">
+<span class="material-symbols-outlined text-[18px]">description</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="h-12 hover:bg-surface-container-low/70 transition-colors">
+<td class="px-3">
+<div class="font-label-sm text-label-sm font-semibold text-on-surface">Zeta Retailers LLP</div>
+<div class="font-label-xs text-label-xs text-outline">BL-74910 · Mumbai</div>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#fffbeb] text-[#d97706] font-label-xs text-label-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#d97706]"></span>
+                    Moderate (24d)
+                  </span>
+</td>
+<td class="px-3 text-on-surface-variant">Pro Tier + 10 Seats</td>
+<td class="px-3 text-right font-semibold text-on-surface">₹54,600</td>
+<td class="px-3">
+<span class="font-label-xs text-label-xs text-[#d97706] font-medium">24 Days Overdue</span>
+</td>
+<td class="px-3">
+<div class="text-on-surface font-medium">Aman Singhania</div>
+<div class="text-outline font-label-xs text-label-xs">+91 97110 56230</div>
+</td>
+<td class="px-3 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary-container" title="Send Payment Link" type="button">
+<span class="material-symbols-outlined text-[18px]">add_card</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-tertiary" title="Call Contact" type="button">
+<span class="material-symbols-outlined text-[18px]">call</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="h-12 hover:bg-surface-container-low/70 transition-colors">
+<td class="px-3">
+<div class="font-label-sm text-label-sm font-semibold text-on-surface">CloudSync Pvt Ltd</div>
+<div class="font-label-xs text-label-xs text-outline">BL-63012 · Pune</div>
+</td>
+<td class="px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ecfdf5] text-[#059669] font-label-xs text-label-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                    Healthy (Current)
+                  </span>
+</td>
+<td class="px-3 text-on-surface-variant">Starter Annual</td>
+<td class="px-3 text-right font-semibold text-on-surface">₹0</td>
+<td class="px-3">
+<span class="font-label-xs text-label-xs text-[#059669] font-medium">Paid (Due in 14d)</span>
+</td>
+<td class="px-3">
+<div class="text-on-surface font-medium">Siddharth V.</div>
+<div class="text-outline font-label-xs text-label-xs">+91 94230 11982</div>
+</td>
+<td class="px-3 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-tertiary" title="View Audit Logs" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex items-center justify-between pt-3 font-label-xs text-label-xs text-on-surface-variant">
+<span>Showing 4 of 22 active watchlist accounts</span>
+<div class="flex items-center gap-2">
+<button class="px-2 py-1 rounded bg-surface-container-high text-on-surface disabled:opacity-40" disabled="" type="button">Previous</button>
+<span class="px-1 text-on-surface font-medium">Page 1 of 6</span>
+<button class="px-2 py-1 rounded bg-surface-container-high text-on-surface hover:bg-surface-dim" type="button">Next</button>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 p-5 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3">
+<div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline">Actionable Queue</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Renewal & Dunning Inbox</h2>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-xs text-label-xs font-semibold">44 Tasks</span>
+</div>
+<div class="grid grid-cols-3 gap-2 my-2 text-center">
+<div class="p-2 rounded-lg bg-surface-container-low">
+<div class="font-stat-display text-[22px] leading-tight text-on-surface">18</div>
+<div class="font-label-xs text-label-xs text-outline leading-tight mt-0.5">Renewals (7d)</div>
+</div>
+<div class="p-2 rounded-lg bg-[#fff1f2]">
+<div class="font-stat-display text-[22px] leading-tight text-[#e11d48]">22</div>
+<div class="font-label-xs text-label-xs text-[#e11d48] leading-tight mt-0.5">Overdue Action</div>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-high">
+<div class="font-stat-display text-[22px] leading-tight text-secondary">4</div>
+<div class="font-label-xs text-label-xs text-outline leading-tight mt-0.5">Promo Expiring</div>
+</div>
+</div>
+<div class="space-y-2 mt-4" id="task-checklist">
+<div class="p-3 rounded-lg bg-surface-container-low flex items-start gap-3 task-item transition-all" data-id="1">
+<input class="mt-1 h-4 w-4 rounded text-primary-container focus:ring-0 cursor-pointer" type="checkbox"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface truncate">Auto-Debit Retries Failed</span>
+<span class="font-label-xs text-label-xs text-[#e11d48] font-medium">High</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Batch #89: HDFC e-Mandate failure for 8 clients (₹1,44,000).</p>
+<div class="flex items-center gap-2 mt-2 font-label-xs text-label-xs">
+<button class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-medium hover:bg-secondary transition-colors" onclick="resolveTask(this)" type="button">Resolve</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="snoozeTask(this)" type="button">Snooze 24h</button>
+</div>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low flex items-start gap-3 task-item transition-all" data-id="2">
+<input class="mt-1 h-4 w-4 rounded text-primary-container focus:ring-0 cursor-pointer" type="checkbox"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface truncate">Annual Renewal Notice Due</span>
+<span class="font-label-xs text-label-xs text-[#d97706] font-medium">Nov 03</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Kalyan Infra Corp (₹3,80,000 ARR) requires custom proposal.</p>
+<div class="flex items-center gap-2 mt-2 font-label-xs text-label-xs">
+<button class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-medium hover:bg-secondary transition-colors" onclick="resolveTask(this)" type="button">Dispatch Quote</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="snoozeTask(this)" type="button">Snooze</button>
+</div>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low flex items-start gap-3 task-item transition-all" data-id="3">
+<input class="mt-1 h-4 w-4 rounded text-primary-container focus:ring-0 cursor-pointer" type="checkbox"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface truncate">Diwali Promo 15% Transition</span>
+<span class="font-label-xs text-label-xs text-tertiary font-medium">Scheduled</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">4 SaaS cohort accounts transitioning to full rack price.</p>
+<div class="flex items-center gap-2 mt-2 font-label-xs text-label-xs">
+<button class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-medium hover:bg-secondary transition-colors" onclick="resolveTask(this)" type="button">Acknowledge</button>
+<button class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" onclick="snoozeTask(this)" type="button">Review</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-3 flex items-center justify-between font-label-xs text-label-xs text-outline">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+            Autopilot handles Level-1 Dunning
+          </span>
+<a class="text-primary font-medium hover:underline" href="#">View All 44 Tasks</a>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col md:flex-row items-center justify-between gap-4 font-label-sm text-label-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">database</span>
+</div>
+<div>
+<span class="text-on-surface font-semibold">Continuous Audit Trail Active</span>
+<span class="text-outline mx-2">·</span>
+<span class="text-on-surface-variant">Last dry-run executed on Oct 30, 2026, 23:59:00 IST with 0 schema conflicts.</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-outline font-label-xs text-label-xs">Next automated run: in 5h 18m</span>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container-high shadow-sm font-label-xs text-label-xs font-semibold transition-colors" type="button">
+          Configure Rules
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function resolveTask(button) {
+    const task = button.closest('.task-item');
+    if (!task) return;
+    task.style.opacity = '0.4';
+    task.style.transform = 'scale(0.98)';
+    setTimeout(() => {
+      task.remove();
+    }, 250);
+  }
+
+  function snoozeTask(button) {
+    const task = button.closest('.task-item');
+    if (!task) return;
+    task.classList.add('bg-surface-container-high');
+    const badge = task.querySelector('span[class*="text-"]');
+    if (badge) badge.textContent = 'Snoozed';
+  }
+</script></main></div></body></html>

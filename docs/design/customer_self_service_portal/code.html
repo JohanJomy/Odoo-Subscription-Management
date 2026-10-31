@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-lowest":"#ffffff","secondary-fixed":"#e3dfff","on-primary-fixed-variant":"#3323cc","inverse-primary":"#c3c0ff","surface-container-highest":"#dae2fd","on-tertiary-container":"#d7dbe8","on-background":"#131b2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","on-tertiary-fixed-variant":"#424751","on-secondary-container":"#fffbff","inverse-surface":"#283044","on-surface-variant":"#464555","secondary-container":"#6860ef","secondary-fixed-dim":"#c3c0ff","on-error-container":"#93000a","surface-container":"#eaedff","on-primary-fixed":"#0f0069","primary-fixed-dim":"#c3c0ff","surface":"#faf8ff","on-secondary-fixed-variant":"#372abf","on-tertiary":"#ffffff","background":"#faf8ff","surface-container-low":"#f2f3ff","on-secondary":"#ffffff","on-tertiary-fixed":"#171c25","primary-fixed":"#e2dfff","outline-variant":"#c7c4d8","tertiary-fixed":"#dee2ef","tertiary":"#434853","on-primary-container":"#dad7ff","surface-container-high":"#e2e7ff","outline":"#777587","error-container":"#ffdad6","surface-tint":"#4d44e3","secondary":"#4e45d5","surface-dim":"#d2d9f4","primary-container":"#4f46e5","tertiary-fixed-dim":"#c2c6d3","on-secondary-fixed":"#100069","on-surface":"#131b2e","primary":"#3525cd","on-error":"#ffffff","tertiary-container":"#5b606b","surface-variant":"#dae2fd","surface-bright":"#faf8ff","on-primary":"#ffffff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{gutter:"1rem","margin-md":"1.5rem",margin:"1rem","space-lg":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","margin-lg":"2rem","space-xs":"0.25rem","gutter-lg":"1.5rem","space-md":"1rem"},fontFamily:{"label-md":["Geist"],"body-sm":["Geist"],"headline-xl-mobile":["Geist"],"body-md":["Geist"],"label-xs":["Geist"],"body-lg":["Geist"],"headline-lg":["Geist"],"label-sm":["Geist"],"headline-sm":["Geist"],"headline-xl":["Geist"],"stat-display":["Geist"],"headline-md":["Geist"]},fontSize:{"label-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"body-sm":["13px",{lineHeight:"18px",letterSpacing:"0em",fontWeight:"400"}],"headline-xl-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-sm":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-xl":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"stat-display":["28px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-xs"><img alt="LoopLedger Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ww7WmGsqWwTt0JuK95t44OoO3FSmccLcJXYBjqUunwBOEvRZl135ZKhIZzACDDRvaEjL1hhj2bofLhuDfmg65hhrLAJ2GAnRSI2-w3HVy_9T2nuc1xsUeAGR_nzG-lO2p4RTT1s9BlhKzIwaVoEnw_ckLiAWwi9T5l_WhBaahw2qD8z8Y88WvnDaMHPTa5Z8UnkhB6g-YNNPCq6IcEdWF69OWie2l-WlVtvkp_k9Fmyw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">LoopLedger</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-none mt-0.5">Billing Cloud</span></div></div><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-surface-variant">v2.4</span></div><div class="px-space-md py-space-xs"><div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs"><span class="truncate max-w-[130px] font-medium text-on-surface">Brightloop Production</span><span class="flex items-center gap-1 text-[10px] text-on-surface-variant"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>Live</span></div></div><div class="flex-1 overflow-y-auto px-space-sm py-space-xs"><nav class="flex flex-col gap-0.5" data-active-classes="bg-primary-container text-on-primary font-medium rounded-lg"><div class="px-2.5 pt-2 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Overview</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="revenue-radar" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span>Revenue Radar</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Core Operations</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="billing-run" href="#"><span class="material-symbols-outlined text-[18px]">play_circle</span><span>Billing Run</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="subscriptions" href="#"><span class="material-symbols-outlined text-[18px]">autorenew</span><span>Subscriptions</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="invoices" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Invoices</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="payments" href="#"><span class="material-symbols-outlined text-[18px]">payments</span><span>Payments</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Customers</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="customer-directory" href="#"><span class="material-symbols-outlined text-[18px]">group</span><span>Customer Directory</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="renewal-dunning-inbox" href="#"><span class="material-symbols-outlined text-[18px]">mark_email_unread</span><span>Renewal & Dunning Inbox</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Product & Catalog</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="products-variants" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span>Products & Variants</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="plans" href="#"><span class="material-symbols-outlined text-[18px]">layers</span><span>Plans</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="templates" href="#"><span class="material-symbols-outlined text-[18px]">description</span><span>Templates</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Settings</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="pricing-rules" href="#"><span class="material-symbols-outlined text-[18px]">percent</span><span>Pricing & Taxes</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="team-roles" href="#"><span class="material-symbols-outlined text-[18px]">shield_person</span><span>Team & Roles</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="audit-trail" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span>Audit Trail</span></a></nav></div><div class="p-space-sm bg-surface-container-lowest"><div class="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-2"><div class="flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>Online · Synced</span><span class="material-symbols-outlined text-[14px] text-outline">cloud_done</span></div><div class="flex items-center justify-between pt-1 text-on-surface"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-xs text-label-xs font-semibold">BL</div><span class="font-label-sm text-label-sm truncate max-w-[120px]">Acme Corp HQ</span></div><a class="text-primary hover:text-secondary font-label-xs text-label-xs flex items-center gap-0.5" data-path="customer-portal" href="#" title="Open Customer Portal"><span class="material-symbols-outlined text-[14px]">open_in_new</span></a></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-9 pl-9 pr-14 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search subscriptions, invoices, customers..." type="text"/><div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-xs text-label-xs"><span class="text-[10px]">⌘</span><span>K</span></div></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low font-label-xs text-label-xs text-on-surface"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="hidden sm:inline font-medium">Online · Synced</span></div><div class="flex items-center bg-surface-container-low p-0.5 rounded-lg"><button class="px-2 py-1 rounded font-label-xs text-label-xs font-semibold bg-surface-container-lowest text-on-surface shadow-[0_1px_2px_rgba(15,23,42,0.06)]" type="button">Admin</button><button class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">Staff</button><a class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface flex items-center gap-1" data-path="customer-portal" href="#">Portal<span class="material-symbols-outlined text-[12px]">arrow_outward</span></a></div><button aria-label="Notifications" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-2 pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-label-sm text-label-sm font-medium text-on-surface leading-tight">Alex Mercer</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-tight">RevOps Admin</span></div></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Portal Notice & Client Identification Bar -->
+<div class="px-gutter-lg pt-space-lg pb-space-sm flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider mb-1">
+<span>Apex Logix India Pvt Ltd</span>
+<span>•</span>
+<span>GSTIN: 27AABCA1234F1ZQ</span>
+<span>•</span>
+<span class="inline-flex items-center gap-1 text-secondary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> verified entity
+        </span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">
+        Welcome back, Vikram Mehta
+      </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+        LoopLedger Autonomous Billing Cloud · Client Self-Service Workspace
+      </p>
+</div>
+<!-- Quick Actions Header Cluster -->
+<div class="flex items-center flex-wrap gap-2">
+<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-low text-on-surface font-label-sm text-label-sm shadow-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-medium">Account Health: Good Standing</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm hover:bg-surface-container-high transition-colors" onclick="triggerToast('Downloading FY26 Tax & Invoices Consolidated Bundle...')" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">download</span>
+<span>GST Tax Bundle</span>
+</button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary-container text-on-primary font-label-sm text-label-sm shadow-sm hover:bg-primary transition-colors" onclick="openSupportModal()" type="button">
+<span class="material-symbols-outlined text-[16px]">support_agent</span>
+<span>Priority Support</span>
+</button>
+</div>
+</div>
+<!-- Hero Portal Overview Strip -->
+<div class="px-gutter-lg py-space-sm">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+<!-- Highlight Card 1 -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-xs text-label-xs uppercase tracking-wider">Next Auto-Debit</span>
+<span class="material-symbols-outlined text-primary text-[20px]">event_repeat</span>
+</div>
+<div class="mt-2">
+<div class="font-stat-display text-stat-display text-on-surface">₹30,500<span class="text-label-sm font-normal text-on-surface-variant">/mo</span></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Scheduled for <span class="font-medium text-on-surface">Nov 15, 2026</span></p>
+</div>
+<div class="mt-3 pt-2 text-[11px] font-label-xs text-emerald-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">format_image_left</span>
+<span>e-Mandate active on HDFC Corp Card ****9102</span>
+</div>
+</div>
+<!-- Highlight Card 2 -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-xs text-label-xs uppercase tracking-wider">Pending Invoice Due</span>
+<span class="material-symbols-outlined text-error text-[20px]">priority_high</span>
+</div>
+<div class="mt-2">
+<div class="font-stat-display text-stat-display text-error">₹24,500</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">INV-2026-0412 · Due <span class="font-semibold text-error">Nov 10, 2026</span></p>
+</div>
+<div class="mt-3 pt-2 flex items-center justify-between">
+<span class="text-[11px] font-label-xs text-on-surface-variant">UPI QR available below</span>
+<a class="font-label-xs text-label-xs font-semibold text-primary hover:underline flex items-center gap-0.5" href="#payment-section">Pay Now <span class="material-symbols-outlined text-[12px]">arrow_downward</span></a>
+</div>
+</div>
+<!-- Highlight Card 3 -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-xs text-label-xs uppercase tracking-wider">Allocated Cloud Seats</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">group</span>
+</div>
+<div class="mt-2">
+<div class="font-stat-display text-stat-display text-on-surface">18 <span class="text-label-sm font-normal text-on-surface-variant">/ 25 Capacity</span></div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 72%;"></div>
+</div>
+</div>
+<div class="mt-3 pt-2 text-[11px] font-label-xs text-on-surface-variant flex items-center justify-between">
+<span>7 unassigned licenses</span>
+<button class="text-primary font-semibold hover:underline" onclick="openSeatModal()">Adjust Seats</button>
+</div>
+</div>
+<!-- Highlight Card 4 -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-xs text-label-xs uppercase tracking-wider">Annual Savings Offer</span>
+<span class="material-symbols-outlined text-secondary-container text-[20px]">workspace_premium</span>
+</div>
+<div class="mt-2">
+<div class="font-headline-sm text-headline-sm text-on-surface">Save ₹54,900 / yr</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Switch from monthly to annual billing cycle with pre-applied 15% discount.</p>
+</div>
+<div class="mt-3 pt-2">
+<button class="w-full py-1.5 px-2.5 rounded-lg bg-surface-container-lowest font-label-xs text-label-xs font-semibold text-secondary hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-1" onclick="triggerToast('Switched quote generated! RevOps representative alerted.')">
+<span>Upgrade to Annual Plan</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Tabs Segment -->
+<div class="px-gutter-lg pt-space-md">
+<div class="flex items-center gap-2 p-1 rounded-xl bg-surface-container-low w-fit shadow-inner">
+<button class="px-4 py-2 rounded-lg font-label-md text-label-md font-semibold bg-surface-container-lowest text-on-surface shadow-sm transition-all flex items-center gap-2" id="tab-subscriptions" onclick="switchPortalTab('subscriptions')">
+<span class="material-symbols-outlined text-[18px] text-primary">autorenew</span>
+<span>My Subscriptions</span>
+<span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-primary-fixed text-on-primary-fixed">2</span>
+</button>
+<button class="px-4 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-2" id="tab-invoices" onclick="switchPortalTab('invoices')">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+<span>Invoices & Billing History</span>
+<span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-surface-container-highest text-on-surface-variant">6</span>
+</button>
+<button class="px-4 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-2" id="tab-account" onclick="switchPortalTab('account')">
+<span class="material-symbols-outlined text-[18px]">credit_card</span>
+<span>Payment Methods & Mandates</span>
+</button>
+</div>
+</div>
+<!-- TAB CONTENT 1: SUBSCRIPTIONS -->
+<div class="px-gutter-lg py-space-md flex flex-col gap-6" id="content-subscriptions">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Active Subscriptions & Self-Service</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Modify seat quotas, suspend billing windows, or lock-in annual discounted rates in real time.</p>
+</div>
+<div class="hidden sm:flex items-center gap-2">
+<span class="font-label-xs text-label-xs text-outline">Billing Entity: Apex Logix India (Mumbai Region)</span>
+</div>
+</div>
+<!-- Subscriptions Cards Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Primary Core Subscription: SUB-0199 -->
+<div class="lg:col-span-7 rounded-2xl bg-surface-container-lowest p-6 shadow-sm flex flex-col justify-between">
+<div>
+<!-- Card Header -->
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">rocket_launch</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Growth SaaS Suite — Monthly</h3>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Active
+                  </span>
+</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant flex items-center gap-2 mt-0.5">
+<span class="font-mono text-primary font-semibold">SUB-0199</span>
+<span>•</span>
+<span>Recurring Billing Tier 2</span>
+<span>•</span>
+<span>Contracted until Nov 2027</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-stat-display text-stat-display text-on-surface">₹24,500</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">per month (+ 18% GST)</div>
+</div>
+</div>
+<!-- Feature & Utilization Specs -->
+<div class="mt-6 p-4 rounded-xl bg-surface-container-low grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div>
+<div class="font-label-xs text-label-xs text-outline uppercase">Next Cycle Renewal</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-1">Nov 15, 2026</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Auto-charge enabled</div>
+</div>
+<div>
+<div class="font-label-xs text-label-xs text-outline uppercase">Licensed Seats</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-1 flex items-center gap-1.5">
+<span id="current-seats-count">18</span>
+<span class="text-label-sm font-normal text-on-surface-variant">Seats Active</span>
+</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Minimum contract: 5 seats</div>
+</div>
+<div>
+<div class="font-label-xs text-label-xs text-outline uppercase">Rate per User</div>
+<div class="font-headline-sm text-headline-sm text-on-surface mt-1">₹1,361.11</div>
+<div class="font-label-xs text-label-xs text-emerald-600">Volume discount tier applied</div>
+</div>
+</div>
+<!-- Included Features Summary -->
+<div class="mt-4 flex flex-wrap gap-2 text-[12px] font-label-xs text-on-surface-variant">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-emerald-600">check</span> 99.9% Uptime SLA</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-emerald-600">check</span> Priority Webhook Dispatch</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-emerald-600">check</span> 5 Custom Role Permissions</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-emerald-600">check</span> Dedicated Customer Success</span>
+</div>
+</div>
+<!-- Self-Service Control Hub -->
+<div class="mt-6 pt-5 bg-surface-container-lowest">
+<div class="font-label-xs text-label-xs uppercase tracking-wider text-outline mb-3">Self-Service Actions</div>
+<div class="flex flex-wrap items-center gap-2.5">
+<button class="px-3.5 py-2 rounded-xl bg-primary-container text-on-primary font-label-sm text-label-sm font-medium hover:bg-primary transition-colors flex items-center gap-1.5 shadow-sm" onclick="openSeatModal()" type="button">
+<span class="material-symbols-outlined text-[16px]">person_add</span>
+<span>Manage Seats Quota (+/-)</span>
+</button>
+<button class="px-3.5 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium hover:bg-surface-container-highest transition-colors flex items-center gap-1.5" onclick="openPauseModal()" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">pause_circle</span>
+<span>Pause Subscription (Up to 60d)</span>
+</button>
+<button class="px-3.5 py-2 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-medium hover:bg-secondary-fixed-dim transition-colors flex items-center gap-1.5" onclick="triggerToast('15% Discount lock applied to your quotation sheet.')" type="button">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>Upgrade to Annual (Save 15%)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Add-on Subscription SUB-0240 & Summary Card -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- SUB-0240 Card -->
+<div class="rounded-2xl bg-surface-container-lowest p-6 shadow-sm flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[24px]">api</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Dedicated API Add-on</h3>
+<div class="font-label-xs text-label-xs text-on-surface-variant flex items-center gap-2 mt-0.5">
+<span class="font-mono text-secondary font-semibold">SUB-0240</span>
+<span>•</span>
+<span class="inline-flex items-center px-2 py-0.2 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">Active</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-stat-display text-stat-display text-on-surface">₹6,000</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">/ month</div>
+</div>
+</div>
+<div class="mt-4 p-3 rounded-lg bg-surface-container-low text-on-surface-variant text-[12px] space-y-1.5">
+<div class="flex justify-between">
+<span>Allocated Rate Limit:</span>
+<span class="font-medium text-on-surface">1,000 req / minute</span>
+</div>
+<div class="flex justify-between">
+<span>Webhook Endpoints:</span>
+<span class="font-medium text-on-surface">Unlimited</span>
+</div>
+<div class="flex justify-between">
+<span>Next Cycle:</span>
+<span class="font-medium text-on-surface">Nov 15, 2026</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between">
+<button class="font-label-xs text-label-xs text-primary font-semibold hover:underline flex items-center gap-1" onclick="triggerToast('API Key generation details routed to registered developer email.')" type="button">
+<span class="material-symbols-outlined text-[14px]">key</span>
+<span>Manage API Keys</span>
+</button>
+<button class="font-label-xs text-label-xs text-outline hover:text-error transition-colors" onclick="openCancelModal('Dedicated API Add-on')" type="button">
+              Remove Add-on
+            </button>
+</div>
+</div>
+<!-- Billing Assistance Card -->
+<div class="rounded-2xl bg-gradient-to-br from-surface-container-low to-surface-container-highest/60 p-5 shadow-sm">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[24px]">verified</span>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Need a Custom Enterprise Scope?</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Have custom compliance, SOC2 NDA documentation, or special PO billing requisites? Reach out directly to your assigned LoopLedger billing partner.
+              </p>
+<div class="mt-3 flex items-center gap-3">
+<a class="font-label-sm text-label-sm font-semibold text-primary hover:underline" href="mailto:billing@loopledger.cloud">
+                  Email Account Partner →
+                </a>
+<span class="text-outline">•</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">SLA: Under 2 Hours</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB CONTENT 2: INVOICES & BILLING HISTORY -->
+<div class="px-gutter-lg py-space-md flex flex-col gap-6" id="content-invoices">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Invoices & Direct Settlement</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">View historical GST receipts, download certified PDFs, and make rapid settlements via UPI or NetBanking.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-label-sm text-label-sm shadow-sm hover:bg-surface-container-high transition-colors flex items-center gap-1.5" onclick="triggerToast('Downloading last 12 months invoice digest (ZIP)...')" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">archive</span>
+<span>Download All (FY 2026-27)</span>
+</button>
+</div>
+</div>
+<!-- Invoices Data Table -->
+<div class="rounded-2xl bg-surface-container-lowest shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider h-11">
+<th class="py-2 px-4 font-medium">Invoice Number</th>
+<th class="py-2 px-4 font-medium">Billing Period</th>
+<th class="py-2 px-4 font-medium">Due / Paid Date</th>
+<th class="py-2 px-4 font-medium text-right">Taxable</th>
+<th class="py-2 px-4 font-medium text-right">18% GST</th>
+<th class="py-2 px-4 font-medium text-right">Total Amount</th>
+<th class="py-2 px-4 font-medium text-center">Status</th>
+<th class="py-2 px-4 font-medium text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: UNPAID / DUE SOON -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-amber-50/30">
+<td class="py-3.5 px-4">
+<div class="font-label-md text-label-md font-semibold text-primary font-mono">INV-2026-0412</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Growth SaaS + Dedicated API</div>
+</td>
+<td class="py-3.5 px-4 font-label-sm text-label-sm text-on-surface-variant">Oct 15 – Nov 14, 2026</td>
+<td class="py-3.5 px-4">
+<div class="font-label-sm text-label-sm font-semibold text-error">Nov 10, 2026</div>
+<div class="font-label-xs text-label-xs text-outline">Due in 4 days</div>
+</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono">₹20,762.71</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono text-on-surface-variant">₹3,737.29</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono font-bold text-on-surface">₹24,500.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+<span>Confirmed • Due Soon</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center justify-end gap-1.5">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface" onclick="triggerToast('Downloading PDF for INV-2026-0412...')" title="Download GST Invoice PDF" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+<button class="px-3 py-1 rounded-lg bg-primary-container text-on-primary font-label-xs text-label-xs font-semibold shadow-sm hover:bg-primary transition-all flex items-center gap-1" onclick="openUpiPaymentModal('INV-2026-0412', '24,500')" type="button">
+<span>Pay Now</span>
+<span class="material-symbols-outlined text-[14px]">qr_code_2</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: PAID -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-label-md text-label-md font-semibold text-on-surface font-mono">INV-2026-0350</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Growth SaaS Suite</div>
+</td>
+<td class="py-3.5 px-4 font-label-sm text-label-sm text-on-surface-variant">Sep 15 – Oct 14, 2026</td>
+<td class="py-3.5 px-4">
+<div class="font-label-sm text-label-sm text-on-surface">Oct 10, 2026</div>
+<div class="font-label-xs text-label-xs text-emerald-600">Paid via UPI</div>
+</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono">₹20,762.71</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono text-on-surface-variant">₹3,737.29</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono font-medium text-on-surface">₹24,500.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Paid</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high transition-colors" onclick="triggerToast('Downloading PDF for INV-2026-0350...')" type="button">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>Receipt PDF</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: PAID -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-label-md text-label-md font-semibold text-on-surface font-mono">INV-2026-0280</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Growth SaaS Suite</div>
+</td>
+<td class="py-3.5 px-4 font-label-sm text-label-sm text-on-surface-variant">Aug 15 – Sep 14, 2026</td>
+<td class="py-3.5 px-4">
+<div class="font-label-sm text-label-sm text-on-surface">Sep 10, 2026</div>
+<div class="font-label-xs text-label-xs text-emerald-600">Auto-debited</div>
+</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono">₹20,762.71</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono text-on-surface-variant">₹3,737.29</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono font-medium text-on-surface">₹24,500.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Paid</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center justify-end gap-1.5">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high transition-colors" onclick="triggerToast('Downloading PDF for INV-2026-0280...')" type="button">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>Receipt PDF</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: PAID -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-label-md text-label-md font-semibold text-on-surface font-mono">INV-2026-0210</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Growth SaaS Suite</div>
+</td>
+<td class="py-3.5 px-4 font-label-sm text-label-sm text-on-surface-variant">Jul 15 – Aug 14, 2026</td>
+<td class="py-3.5 px-4">
+<div class="font-label-sm text-label-sm text-on-surface">Aug 10, 2026</div>
+<div class="font-label-xs text-label-xs text-emerald-600">Auto-debited</div>
+</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono">₹20,762.71</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono text-on-surface-variant">₹3,737.29</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono font-medium text-on-surface">₹24,500.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Paid</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high transition-colors" onclick="triggerToast('Downloading PDF for INV-2026-0210...')" type="button">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>Receipt PDF</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: PAID -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-label-md text-label-md font-semibold text-on-surface font-mono">INV-2026-0145</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Growth SaaS Suite</div>
+</td>
+<td class="py-3.5 px-4 font-label-sm text-label-sm text-on-surface-variant">Jun 15 – Jul 14, 2026</td>
+<td class="py-3.5 px-4">
+<div class="font-label-sm text-label-sm text-on-surface">Jul 10, 2026</div>
+<div class="font-label-xs text-label-xs text-emerald-600">Auto-debited</div>
+</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono">₹20,762.71</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono text-on-surface-variant">₹3,737.29</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono font-medium text-on-surface">₹24,500.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Paid</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high transition-colors" onclick="triggerToast('Downloading PDF for INV-2026-0145...')" type="button">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>Receipt PDF</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: PAID -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-label-md text-label-md font-semibold text-on-surface font-mono">INV-2026-0098</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Starter Tier Migration</div>
+</td>
+<td class="py-3.5 px-4 font-label-sm text-label-sm text-on-surface-variant">May 15 – Jun 14, 2026</td>
+<td class="py-3.5 px-4">
+<div class="font-label-sm text-label-sm text-on-surface">Jun 10, 2026</div>
+<div class="font-label-xs text-label-xs text-emerald-600">NetBanking</div>
+</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono">₹16,101.69</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono text-on-surface-variant">₹2,898.31</td>
+<td class="py-3.5 px-4 text-right tabular-nums font-mono font-medium text-on-surface">₹19,000.00</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+<span>Paid</span>
+</span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high transition-colors" onclick="triggerToast('Downloading PDF for INV-2026-0098...')" type="button">
+<span class="material-symbols-outlined text-[14px]">receipt</span>
+<span>Receipt PDF</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- INTEGRATED UPI QR CODE PAYMENT SECTION (Prominent feature from spec) -->
+<section class="px-gutter-lg py-space-md" id="payment-section">
+<div class="rounded-2xl bg-surface-container-lowest p-6 lg:p-8 shadow-md">
+<div class="flex flex-col lg:flex-row gap-8 items-start">
+<!-- Left Column: Bill Breakdown & Verification Metadata -->
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800">Direct Payment Gateway</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Ref: INV-2026-0412</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-2">Instant UPI & NetBanking Settlement</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+              Zero transaction surcharge. Powered by NPCI UPI Autonomous Reconciliation Engine.
+            </p>
+<!-- Line Items Table for this Invoice -->
+<div class="mt-6 p-4 rounded-xl bg-surface-container-low space-y-3">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface">
+<span>Growth SaaS Suite (18 seats • 1 Month)</span>
+<span class="font-mono font-medium">₹20,762.71</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Integrated CGST @ 9%</span>
+<span class="font-mono">₹1,868.65</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Integrated SGST @ 9%</span>
+<span class="font-mono">₹1,868.64</span>
+</div>
+<div class="pt-3 border-t border-surface-container-high flex justify-between items-baseline">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Total Payable Amount</span>
+<span class="font-stat-display text-stat-display text-primary font-bold">₹24,500.00</span>
+</div>
+</div>
+<!-- Instant Verification Reassurance Box -->
+<div class="mt-4 p-3 rounded-lg bg-surface-container-high/60 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-emerald-600 mt-0.5">verified_user</span>
+<div>
+<p class="font-label-xs text-label-xs font-semibold text-on-surface">Real-Time Ledger Reconciliation</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-[12px] mt-0.5">
+                  Payments are recorded instantaneously and matched to invoice <span class="font-mono font-bold text-on-surface">INV-2026-0412</span>. Your GST compliance credit memo updates upon transaction success.
+                </p>
+</div>
+</div>
+</div>
+<!-- Secondary Payment Options Alternative -->
+<div class="mt-6 pt-4 border-t border-surface-container-low flex flex-wrap items-center gap-3">
+<span class="font-label-xs text-label-xs text-on-surface-variant">Or alternative payment:</span>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold hover:bg-surface-container-high transition-colors flex items-center gap-1.5" onclick="triggerToast('Launching Razorpay Corporate Gateway...')" type="button">
+<span class="material-symbols-outlined text-[16px]">credit_card</span>
+<span>Pay via Card / NetBanking (Razorpay)</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs hover:text-on-surface transition-colors flex items-center gap-1" onclick="copyVpa('INV-2026-0412@loopledger')" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy UPI ID</span>
+</button>
+</div>
+</div>
+<!-- Right Column: Interactive UPI QR Code Unit -->
+<div class="w-full lg:w-96 p-6 rounded-2xl bg-surface-container-low flex flex-col items-center text-center shadow-inner">
+<div class="font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1 font-semibold">Scan with any UPI App</div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Apex Logix Corporate Portal</div>
+<div class="font-label-xs text-label-xs font-mono text-primary font-bold mt-0.5">UPI ID: INV-2026-0412@loopledger</div>
+<!-- Stylized High Precision QR Code Display -->
+<div class="relative my-4 p-4 rounded-xl bg-surface-container-lowest shadow-md flex flex-col items-center justify-center">
+<!-- Inline SVG QR Simulation Graphic -->
+<svg class="w-48 h-48 text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<!-- Corner Top Left Marker -->
+<rect fill="currentColor" height="24" rx="2" width="24" x="5" y="5"></rect>
+<rect fill="#FFFFFF" height="16" rx="1" width="16" x="9" y="9"></rect>
+<rect fill="currentColor" height="8" rx="0.5" width="8" x="13" y="13"></rect>
+<!-- Corner Top Right Marker -->
+<rect fill="currentColor" height="24" rx="2" width="24" x="71" y="5"></rect>
+<rect fill="#FFFFFF" height="16" rx="1" width="16" x="75" y="9"></rect>
+<rect fill="currentColor" height="8" rx="0.5" width="8" x="79" y="13"></rect>
+<!-- Corner Bottom Left Marker -->
+<rect fill="currentColor" height="24" rx="2" width="24" x="5" y="71"></rect>
+<rect fill="#FFFFFF" height="16" rx="1" width="16" x="9" y="75"></rect>
+<rect fill="currentColor" height="8" rx="0.5" width="8" x="13" y="79"></rect>
+<!-- Data Matrix Pixel Elements -->
+<rect height="5" width="5" x="33" y="7"></rect>
+<rect height="6" width="6" x="42" y="7"></rect>
+<rect height="4" width="4" x="52" y="7"></rect>
+<rect height="5" width="5" x="60" y="8"></rect>
+<rect height="5" width="5" x="7" y="34"></rect>
+<rect height="6" width="6" x="15" y="42"></rect>
+<rect height="4" width="6" x="23" y="34"></rect>
+<rect height="5" width="5" x="7" y="50"></rect>
+<rect height="6" width="4" x="16" y="58"></rect>
+<rect height="7" width="7" x="34" y="24"></rect>
+<rect height="5" width="5" x="45" y="22"></rect>
+<rect height="6" width="6" x="54" y="26"></rect>
+<!-- Center Badge Placeholder for LoopLedger -->
+<rect fill="#4F46E5" height="24" rx="4" width="24" x="38" y="38"></rect>
+<path d="M46 50 L49 53 L54 46" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<rect height="5" width="6" x="66" y="34"></rect>
+<rect height="6" width="5" x="75" y="42"></rect>
+<rect height="6" width="6" x="85" y="36"></rect>
+<rect height="5" width="5" x="33" y="66"></rect>
+<rect height="6" width="6" x="42" y="68"></rect>
+<rect height="5" width="4" x="52" y="65"></rect>
+<rect height="6" width="7" x="66" y="66"></rect>
+<rect height="5" width="5" x="77" y="74"></rect>
+<rect height="6" width="6" x="86" y="68"></rect>
+<rect height="5" width="5" x="74" y="84"></rect>
+<rect height="6" width="6" x="83" y="82"></rect>
+</svg>
+<!-- Verification Tag below QR -->
+<div class="mt-2 text-[10px] font-mono font-medium text-outline">AMOUNT LOCKED: ₹24,500.00</div>
+</div>
+<!-- Supported UPI Badges List -->
+<div class="w-full">
+<span class="text-[11px] font-label-xs text-on-surface-variant font-medium">Supported UPI Apps:</span>
+<div class="mt-2 flex items-center justify-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-[11px] font-bold text-on-surface shadow-xs">GPay</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-[11px] font-bold text-on-surface shadow-xs">PhonePe</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-[11px] font-bold text-on-surface shadow-xs">Paytm</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-[11px] font-bold text-on-surface shadow-xs">BHIM</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-[11px] font-bold text-on-surface shadow-xs">Cred</span>
+</div>
+</div>
+<!-- Dynamic Verification Trigger Simulator -->
+<div class="mt-5 w-full">
+<button class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 text-white font-label-md text-label-md font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-sm" id="verify-payment-btn" onclick="simulatePaymentVerification()" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span>I Have Sent Payment • Verify Now</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TAB CONTENT 3: PAYMENT METHODS & MANDATES -->
+<div class="px-gutter-lg py-space-md hidden flex-col gap-6" id="content-account">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Payment Methods & Auto-Debit Mandates</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Active e-Mandates comply with RBI guidelines for recurring corporate billing.</p>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold shadow-sm hover:bg-primary transition-colors flex items-center gap-1" onclick="triggerToast('Opening card tokenization modal...')" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add Corporate Card</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Card 1 (Primary) -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center font-bold font-mono text-primary">
+              HDFC
+            </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-mono">•••• 9102</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">Default Auto-Debit</span>
+</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant mt-0.5">Corporate Visa Commercial • Exp 08/29</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600">verified</span>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container-low flex items-center justify-between text-[12px]">
+<span class="text-on-surface-variant">e-Mandate Max Limit: ₹1,00,000</span>
+<button class="text-primary font-semibold hover:underline" onclick="triggerToast('Mandate limits updated.')" type="button">Edit Limits</button>
+</div>
+</div>
+<!-- Card 2 (Secondary) -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center font-bold font-mono text-secondary">
+              ICICI
+            </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-mono">•••• 4431</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-surface-container-high text-on-surface-variant">Backup</span>
+</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant mt-0.5">Corporate Mastercard • Exp 12/28</div>
+</div>
+</div>
+<button class="text-[11px] font-semibold text-primary hover:underline" onclick="triggerToast('Set as default card.')" type="button">Set as Default</button>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container-low flex items-center justify-between text-[12px]">
+<span class="text-on-surface-variant">e-Mandate Max Limit: ₹50,000</span>
+<button class="text-error font-medium hover:underline" onclick="triggerToast('Card removed.')" type="button">Remove</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Modal 1: Manage Seats (Modal Trigger from Spec) -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-xs p-4" id="seat-modal">
+<div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl transition-all">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Manage Subscription Seats</h3>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface" onclick="closeSeatModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+        Adjust active licenses for <strong class="text-on-surface">Growth SaaS Suite (SUB-0199)</strong>. Prorated adjustments take effect immediately.
+      </p>
+<!-- Stepper Component -->
+<div class="my-6 p-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div>
+<span class="font-label-xs text-label-xs text-outline uppercase font-semibold">Active User Seats</span>
+<div class="font-stat-display text-stat-display text-on-surface mt-1" id="modal-seat-display">18</div>
+<span class="text-[11px] text-on-surface-variant">Min contract requirement: 5 seats</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container-high transition-colors font-bold text-xl flex items-center justify-center shadow-xs" onclick="adjustSeatCount(-1)" type="button">
+            -
+          </button>
+<button class="w-10 h-10 rounded-xl bg-primary-container text-on-primary hover:bg-primary transition-colors font-bold text-xl flex items-center justify-center shadow-xs" onclick="adjustSeatCount(1)" type="button">
+            +
+          </button>
+</div>
+</div>
+<!-- Dynamic Calculation Info -->
+<div class="p-3 rounded-lg bg-surface-container text-[12px] space-y-1">
+<div class="flex justify-between">
+<span>New Monthly Run-Rate:</span>
+<span class="font-mono font-bold text-on-surface" id="modal-projected-cost">₹24,500 / mo</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Prorated Debit Today:</span>
+<span class="font-mono font-medium" id="modal-prorated-delta">₹0.00</span>
+</div>
+</div>
+<div class="mt-6 flex items-center justify-end gap-2">
+<button class="px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-sm text-label-sm" onclick="closeSeatModal()" type="button">
+          Cancel
+        </button>
+<button class="px-4 py-2 rounded-xl bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold hover:bg-primary transition-colors" onclick="confirmSeatUpdate()" type="button">
+          Confirm Seat Update
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive Modal 2: Pause Subscription (Spec item) -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-xs p-4" id="pause-modal">
+<div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[22px]">pause_circle</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Pause Subscription</h3>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface" onclick="closePauseModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
+        You can temporarily pause billing for <strong class="text-on-surface">SUB-0199</strong> for up to 60 days. Your data, workspace instances, and settings will remain completely intact.
+      </p>
+<div class="mt-4">
+<label class="font-label-xs text-label-xs text-outline uppercase font-semibold">Select Pause Duration</label>
+<select class="w-full mt-1.5 h-10 px-3 rounded-lg bg-surface-container-low border-0 text-on-surface font-body-sm text-body-sm focus:ring-1 focus:ring-primary" id="pause-duration">
+<option value="15">15 Days (Resume Dec 1, 2026)</option>
+<option selected="" value="30">30 Days (Resume Dec 15, 2026)</option>
+<option value="45">45 Days (Resume Dec 30, 2026)</option>
+<option value="60">60 Days (Resume Jan 15, 2027 • Max Allowable)</option>
+</select>
+</div>
+<div class="mt-3 p-3 rounded-lg bg-surface-container-low text-[12px] text-on-surface-variant">
+<p>• Auto-renewal is halted for the selected window.</p>
+<p>• Users can login in read-only mode during the pause period.</p>
+</div>
+<div class="mt-6 flex items-center justify-end gap-2">
+<button class="px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-sm text-label-sm" onclick="closePauseModal()" type="button">
+          Nevermind
+        </button>
+<button class="px-4 py-2 rounded-xl bg-secondary text-white font-label-sm text-label-sm font-semibold hover:bg-secondary-container transition-colors" onclick="confirmPause()" type="button">
+          Confirm Pause Window
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive Modal 3: Priority Support Ticket Trigger -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-xs p-4" id="support-modal">
+<div class="bg-surface-container-lowest rounded-2xl max-w-md w-full p-6 shadow-2xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">contact_support</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Client Support Desk</h3>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface" onclick="closeSupportModal()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
+        Direct channel to your assigned billing coordinator at LoopLedger RevOps.
+      </p>
+<div class="mt-4 space-y-3">
+<div>
+<label class="font-label-xs text-label-xs text-outline uppercase font-semibold">Subject / Area</label>
+<select class="w-full mt-1 h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm">
+<option>Invoice Clarification (INV-2026-0412)</option>
+<option>GST Credit Note or Input Tax Requisite</option>
+<option>Upgrade to Multi-Year Enterprise Agreement</option>
+<option>Bank Remittance Confirmation</option>
+</select>
+</div>
+<div>
+<label class="font-label-xs text-label-xs text-outline uppercase font-semibold">Message</label>
+<textarea class="w-full mt-1 p-2 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm" placeholder="Describe your query..." rows="3"></textarea>
+</div>
+</div>
+<div class="mt-5 flex items-center justify-end gap-2">
+<button class="px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-sm text-label-sm" onclick="closeSupportModal()" type="button">
+          Cancel
+        </button>
+<button class="px-4 py-2 rounded-xl bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold hover:bg-primary transition-colors" onclick="triggerToast('Support ticket #SUP-9921 lodged! Dispatch in < 15 mins.'); closeSupportModal();" type="button">
+          Send Priority Ticket
+        </button>
+</div>
+</div>
+</div>
+<!-- Micro Interaction Notification Toast (Fixed Bottom) -->
+<div class="fixed bottom-6 right-6 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-inverse-surface text-inverse-on-surface shadow-2xl font-label-md text-label-md transition-all" id="portal-toast">
+<span class="material-symbols-outlined text-[18px] text-emerald-400">check_circle</span>
+<span id="portal-toast-msg">Action performed successfully.</span>
+</div>
+</div>
+<script>
+  let currentSeats = 18;
+  const baseRatePerSeat = 1361.11;
+
+  function switchPortalTab(tabKey) {
+    const tabs = ['subscriptions', 'invoices', 'account'];
+    tabs.forEach(t => {
+      const btn = document.getElementById(`tab-${t}`);
+      const content = document.getElementById(`content-${t}`);
+      if (btn && content) {
+        if (t === tabKey) {
+          btn.className = "px-4 py-2 rounded-lg font-label-md text-label-md font-semibold bg-surface-container-lowest text-on-surface shadow-sm transition-all flex items-center gap-2";
+          content.classList.remove('hidden');
+          content.classList.add('flex');
+        } else {
+          btn.className = "px-4 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-2";
+          content.classList.add('hidden');
+          content.classList.remove('flex');
+        }
+      }
+    });
+  }
+
+  function openSeatModal() {
+    document.getElementById('seat-modal').classList.remove('hidden');
+    document.getElementById('seat-modal').classList.add('flex');
+    updateModalDisplay();
+  }
+
+  function closeSeatModal() {
+    document.getElementById('seat-modal').classList.add('hidden');
+    document.getElementById('seat-modal').classList.remove('flex');
+  }
+
+  function adjustSeatCount(delta) {
+    if (currentSeats + delta >= 5) {
+      currentSeats += delta;
+      updateModalDisplay();
+    } else {
+      triggerToast('Minimum subscription commitment is 5 seats.');
+    }
+  }
+
+  function updateModalDisplay() {
+    document.getElementById('modal-seat-display').innerText = currentSeats;
+    const projected = Math.round(currentSeats * baseRatePerSeat);
+    document.getElementById('modal-projected-cost').innerText = '₹' + projected.toLocaleString('en-IN') + ' / mo';
+    
+    const deltaDiff = (currentSeats - 18) * baseRatePerSeat;
+    if (deltaDiff > 0) {
+      document.getElementById('modal-prorated-delta').innerText = '+₹' + Math.round(deltaDiff).toLocaleString('en-IN');
+      document.getElementById('modal-prorated-delta').className = 'font-mono font-medium text-amber-600';
+    } else if (deltaDiff < 0) {
+      document.getElementById('modal-prorated-delta').innerText = '-₹' + Math.round(Math.abs(deltaDiff)).toLocaleString('en-IN') + ' (Credited)';
+      document.getElementById('modal-prorated-delta').className = 'font-mono font-medium text-emerald-600';
+    } else {
+      document.getElementById('modal-prorated-delta').innerText = '₹0.00';
+      document.getElementById('modal-prorated-delta').className = 'font-mono font-medium text-on-surface-variant';
+    }
+  }
+
+  function confirmSeatUpdate() {
+    document.getElementById('current-seats-count').innerText = currentSeats;
+    closeSeatModal();
+    triggerToast(`License count updated to ${currentSeats} seats. Prorated balance adjusted!`);
+  }
+
+  function openPauseModal() {
+    document.getElementById('pause-modal').classList.remove('hidden');
+    document.getElementById('pause-modal').classList.add('flex');
+  }
+
+  function closePauseModal() {
+    document.getElementById('pause-modal').classList.add('hidden');
+    document.getElementById('pause-modal').classList.remove('flex');
+  }
+
+  function confirmPause() {
+    const days = document.getElementById('pause-duration').value;
+    closePauseModal();
+    triggerToast(`Subscription SUB-0199 pause schedule recorded for ${days} days.`);
+  }
+
+  function openSupportModal() {
+    document.getElementById('support-modal').classList.remove('hidden');
+    document.getElementById('support-modal').classList.add('flex');
+  }
+
+  function closeSupportModal() {
+    document.getElementById('support-modal').classList.add('hidden');
+    document.getElementById('support-modal').classList.remove('flex');
+  }
+
+  function openUpiPaymentModal(invNum, amt) {
+    const paySec = document.getElementById('payment-section');
+    paySec.scrollIntoView({ behavior: 'smooth' });
+    triggerToast(`Ready to settle invoice ${invNum} for ₹${amt}. Scan QR or use UPI ID.`);
+  }
+
+  function copyVpa(vpa) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(vpa);
+      triggerToast(`Copied UPI ID "${vpa}" to clipboard!`);
+    } else {
+      triggerToast(`UPI ID is: ${vpa}`);
+    }
+  }
+
+  function simulatePaymentVerification() {
+    const btn = document.getElementById('verify-payment-btn');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Verifying with NPCI Gateway...</span>`;
+    
+    setTimeout(() => {
+      btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">verified</span><span>Payment Verified! Receipt Generated</span>`;
+      btn.className = "w-full py-2.5 px-4 rounded-xl bg-emerald-700 text-white font-label-md text-label-md font-semibold flex items-center justify-center gap-2 shadow-sm";
+      triggerToast('Settlement successful! Invoice INV-2026-0412 marked as PAID.');
+    }, 1800);
+  }
+
+  function triggerToast(msg) {
+    const toast = document.getElementById('portal-toast');
+    const toastMsg = document.getElementById('portal-toast-msg');
+    toastMsg.innerText = msg;
+    toast.classList.remove('hidden');
+    toast.classList.add('flex');
+    
+    setTimeout(() => {
+      toast.classList.add('hidden');
+      toast.classList.remove('flex');
+    }, 3800);
+  }
+</script></main></div></body></html>

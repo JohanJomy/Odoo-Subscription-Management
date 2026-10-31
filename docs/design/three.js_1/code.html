@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_15 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_15" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_15');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  # LoopLedger — P4 (Money, Reporting & Portal Lead) Implementation Package
+
+This document contains everything needed for **P4** to implement the reporting, payments, invoice settlement, and customer portal slice into the Next.js 15 / TypeScript repository in VS Code.
+
+---
+
+## 1. Ownership & Scope Breakdown
+
+According to the project build plan, **P4** owns:
+- **Server / API:**
+  - Invoices API (`GET /api/v1/invoices`, `POST /invoices/:id/confirm`, `cancel`, `send`, `GET /invoices/:id/pdf`)
+  - Payments API (`POST /api/v1/invoices/:id/payments`, `GET /api/v1/payments`)
+  - Reports API (`GET /api/v1/reports/summary`, `/reports/revenue?from&to`, `/reports/overdue`, `/reports/inbox`)
+  - Customer Health Badge computation (Green / Amber / Red rule engine)
+  - Customer Portal API (`GET /api/v1/me/subscriptions`, `GET /api/v1/me/invoices`, `POST /me/subscriptions/:id/pause`, `POST /me/subscriptions/:id/seats`)
+- **UI Screens & Components:**
+  - **Revenue Radar Dashboard** (`src/app/(app)/dashboard/page.tsx` & `src/app/(app)/revenue/page.tsx`)
+  - **Customer Self-Service Portal** (`src/app/(portal)/my-subscriptions/page.tsx` & `my-invoices/page.tsx`)
+  - **Invoices & Payments Sheet / Modal** (`src/components/invoices/RecordPaymentModal.tsx`)
+  - **Invoice PDF with UPI QR code** (`@react-pdf/renderer` & `qrcode`)
+  - **Offline PWA Sync** (`Dexie` IndexedDB cache & offline queue)
+
+---
+
+## 2. Directory Structure to Create in VS Code
+
+```text
+loopledger/
+├── src/
+│   ├── app/
+│   │   ├── (app)/
+│   │   │   ├── dashboard/page.tsx            # Revenue Radar & Overdue Ageing
+│   │   │   ├── invoices/page.tsx             # Staff Invoice List & PDF trigger
+│   │   │   └── payments/page.tsx             # Recorded Payments Ledger
+│   │   ├── (portal)/
+│   │   │   ├── layout.tsx                    # Customer Portal layout
+│   │   │   ├── my-subscriptions/page.tsx     # Customer Self-Service subscriptions & seats
+│   │   │   └── my-invoices/page.tsx          # Customer invoices + instant UPI payment
+│   │   └── api/v1/
+│   │       ├── invoices/
+│   │       │   ├── route.ts                  # GET invoices list
+│   │       │   └── [id]/
+│   │       │       ├── payments/route.ts     # POST record payment
+│   │       │       └── pdf/route.ts          # GET invoice PDF stream
+│   │       ├── me/
+│   │       │   ├── subscriptions/[id]/
+│   │       │   │   ├── pause/route.ts        # POST customer pause
+│   │       │   │   └── seats/route.ts        # POST customer adjust seats
+│   │       │   └── invoices/route.ts         # GET customer portal invoices
+│   │       └── reports/
+│   │           ├── summary/route.ts          # MRR, ARR, active counts, collected/overdue
+│   │           ├── overdue/route.ts          # Overdue ageing buckets & health badges
+│   │           └── inbox/route.ts            # Dunning & renewal tasks queue
+│   ├── server/
+│   │   ├── reports.ts                        # Aggregation & ageing calculation pure functions
+│   │   ├── payments.ts                       # Payment recording & idempotent balance logic
+│   │   └── pdf.ts                            # React-PDF renderer & UPI QR generator
+│   └── components/
+│       ├── reports/
+│       │   ├── RevenueRadarMetrics.tsx
+│       │   ├── OverdueAgeingBuckets.tsx
+│       │   └── CustomerHealthWatchlist.tsx
+│       └── portal/
+│           ├── SubscriptionSelfServiceCard.tsx
+│           ├── InvoiceTable.tsx
+│           └── UpiQrPaymentModal.tsx
+```
+
+---
+
+## 3. Core Server Logic (`src/server/reports.ts`)
+
+```typescript
+import { prisma } from "@/lib/db";
+
+export type HealthBadgeStatus = "GREEN" | "AMBER" | "RED";
+
+export interface CustomerHealth {
+  customerId: string;
+  customerName: string;
+  company: string;
+  overdueCount: number;
+  maxDaysOverdue: number;
+  totalOverdueAmount: number;
+  status: HealthBadgeStatus;
+}
+
+/**
+ * Health badge rules from spec:
+ * - RED: Any invoice > 30 days overdue
+ * - AMBER: Any invoice overdue (1-30 days)
+ * - GREEN: All invoices current or paid
+ */
+export function calculateHealthBadge(maxDaysOverdue: number, overdueCount: number): HealthBadgeStatus {
+  if (maxDaysOverdue > 30) return "RED";
+  if (overdueCount > 0) return "AMBER";
+  return "GREEN";
+}
+
+/**
+ * Calculates Revenue Radar summary:
+ * MRR, ARR, Collected vs Outstanding, and Overdue Ageing Buckets
+ */
+export async function getRevenueRadarData() {
+  const now = new Date();
+
+  // 1. Active Subscriptions & MRR calculation
+  const activeSubs = await prisma.subscription.findMany({
+    where: { status: "ACTIVE" },
+    include: {
+      plan: true,
+      lines: true,
+    },
+  });
+
+  let totalMRR = 0;
+  for (const sub of activeSubs) {
+    const subTotal = sub.lines.reduce((acc, line) => acc + Number(line.amount), 0);
+    if (sub.plan.billing_period === "MONTHLY") {
+      totalMRR += subTotal;
+    } else if (sub.plan.billing_period === "YEARLY") {
+      totalMRR += subTotal / 12;
+    }
+  }
+
+  const totalARR = totalMRR * 12;
+
+  // 2. Invoices & Ageing Buckets
+  const invoices = await prisma.invoice.findMany({
+    where: { status: { in: ["CONFIRMED", "PAID"] } },
+    include: { customer: true, payments: true },
+  });
+
+  let collected = 0;
+  let outstanding = 0;
+  const buckets = {
+    bucket_0_30: { amount: 0, count: 0 },
+    bucket_31_60: { amount: 0, count: 0 },
+    bucket_60_plus: { amount: 0, count: 0 },
+  };
+
+  const customerOverdueMap = new Map<string, { maxDays: number; count: number; amount: number; name: string; company: string }>();
+
+  for (const inv of invoices) {
+    const paidAmount = inv.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+    const balance = Number(inv.total) - paidAmount;
+    collected += paidAmount;
+
+    if (balance > 0 && new Date(inv.due_date) < now) {
+      outstanding += balance;
+      const diffTime = Math.abs(now.getTime() - new Date(inv.due_date).getTime());
+      const daysOverdue = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (daysOverdue <= 30) {
+        buckets.bucket_0_30.amount += balance;
+        buckets.bucket_0_30.count += 1;
+      } else if (daysOverdue <= 60) {
+        buckets.bucket_31_60.amount += balance;
+        buckets.bucket_31_60.count += 1;
+      } else {
+        buckets.bucket_60_plus.amount += balance;
+        buckets.bucket_60_plus.count += 1;
+      }
+
+      const existing = customerOverdueMap.get(inv.customer_id) || {
+        maxDays: 0,
+        count: 0,
+        amount: 0,
+        name: inv.customer.name,
+        company: inv.customer.company,
+      };
+
+      existing.maxDays = Math.max(existing.maxDays, daysOverdue);
+      existing.count += 1;
+      existing.amount += balance;
+      customerOverdueMap.set(inv.customer_id, existing);
+    }
+  }
+
+  return {
+    mrr: Math.round(totalMRR),
+    arr: Math.round(totalARR),
+    activeCount: activeSubs.length,
+    collected,
+    outstanding,
+    ageingBuckets: buckets,
+  };
+}
+```
+
+---
+
+## 4. Payment Recording with Idempotency & Balance Check (`src/server/payments.ts`)
+
+```typescript
+import { prisma } from "@/lib/db";
+import { z } from "zod";
+
+export const RecordPaymentSchema = z.object({
+  invoiceId: z.string().uuid(),
+  amount: z.number().positive(),
+  method: z.enum(["CASH", "CARD", "UPI", "BANK"]),
+  note: z.string().optional(),
+  recordedBy: z.string(),
+});
+
+export async function recordPayment(data: z.infer<typeof RecordPaymentSchema>) {
+  return await prisma.$transaction(async (tx) => {
+    const invoice = await tx.invoice.findUnique({
+      where: { id: data.invoiceId },
+      include: { payments: true },
+    });
+
+    if (!invoice) throw new Error("Invoice not found");
+
+    const currentPaid = invoice.payments.reduce((acc, p) => acc + Number(p.amount), 0);
+    const balance = Number(invoice.total) - currentPaid;
+
+    if (data.amount > balance) {
+      throw new Error(`Over-payment rejected. Max payable is ₹${balance}`);
+    }
+
+    const payment = await tx.payment.create({
+      data: {
+        invoice_id: data.invoiceId,
+        amount: data.amount,
+        method: data.method,
+        paid_on: new Date(),
+        note: data.note ?? "",
+        recorded_by: data.recordedBy,
+      },
+    });
+
+    // Automatically transition invoice to PAID if fully settled
+    if (currentPaid + data.amount >= Number(invoice.total)) {
+      await tx.invoice.update({
+        where: { id: data.invoiceId },
+        data: { status: "PAID" },
+      });
+    }
+
+    // Append-only audit trail logging
+    await tx.audit_log.create({
+      data: {
+        entity: "PAYMENT",
+        entity_id: payment.id,
+        action: "RECORD_PAYMENT",
+        user_id: data.recordedBy,
+        at: new Date(),
+        detail: JSON.stringify({ amount: data.amount, method: data.method, invoice: invoice.number }),
+      },
+    });
+
+    return payment;
+  });
+}
+```
+
+---
+
+## 5. UPI QR Code Generator (`src/server/upi.ts`)
+
+```typescript
+import QRCode from "qrcode";
+
+interface UpiQrParams {
+  payeeVpa: string;        // e.g. "loopledger@icici" or "billing@apexlogix"
+  payeeName: string;       // e.g. "LoopLedger Autonomous Billing"
+  invoiceNumber: string;   // e.g. "INV-2026-0412"
+  amount: number;          // e.g. 24500.00
+}
+
+/**
+ * Generates official NPCI UPI deep-link URL and converts to base64 DataURI PNG
+ * format: upi://pay?pa={vpa}&pn={name}&am={amount}&cu=INR&tn={invoiceNumber}
+ */
+export async function generateInvoiceUpiQr({
+  payeeVpa,
+  payeeName,
+  invoiceNumber,
+  amount,
+}: UpiQrParams): Promise<{ upiUrl: string; qrDataUri: string }> {
+  const params = new URLSearchParams({
+    pa: payeeVpa,
+    pn: payeeName,
+    am: amount.toFixed(2),
+    cu: "INR",
+    tn: `Invoice ${invoiceNumber}`,
+  });
+
+  const upiUrl = `upi://pay?${params.toString()}`;
+  const qrDataUri = await QRCode.toDataURL(upiUrl, {
+    margin: 1,
+    width: 280,
+    color: {
+      dark: "#0f172a",
+      light: "#ffffff",
+    },
+  });
+
+  return { upiUrl, qrDataUri };
+}
+```
+
+---
+
+## 6. Ready-to-Use React Component: Revenue Radar Dashboard (`src/app/(app)/dashboard/page.tsx`)
+
+```tsx
+"use client";
+
+import React, { useState } from "react";
+import { 
+  ArrowUpRight, 
+  TrendingUp, 
+  Users, 
+  Wallet, 
+  AlertTriangle, 
+  ShieldAlert, 
+  Download,
+  Calendar,
+  RefreshCw,
+  CheckCircle2
+} from "lucide-react";
+
+export default function RevenueRadarDashboard() {
+  const [selectedRange, setSelectedRange] = useState("Month-to-Date");
+
+  return (
+    <div className="min-h-screen bg-[#faf8ff] text-slate-900 p-8 space-y-8 font-sans">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
+            <span>Overview</span>
+            <span>/</span>
+            <span className="text-indigo-600 font-semibold">Revenue Radar</span>
+            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ● Dexie PWA Synced
+            </span>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Revenue Radar</h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="inline-flex rounded-lg bg-slate-100 p-1 border border-slate-200 text-xs font-medium">
+            {["Month-to-Date", "Q4 2026", "FY 2026-27"].map((range) => (
+              <button
+                key={range}
+                onClick={() => setSelectedRange(range)}
+                className={`px-3 py-1.5 rounded-md transition-all ${
+                  selectedRange === range
+                    ? "bg-white text-indigo-700 shadow-sm font-semibold"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
+
+          <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium text-sm hover:bg-indigo-700 shadow-sm transition">
+            <Download className="w-4 h-4" /> Export Report
+          </button>
+        </div>
+      </div>
+
+      {/* Top 4 KPI Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-2">
+            <span>Monthly Recurring Revenue</span>
+            <Wallet className="w-4 h-4 text-indigo-600" />
+          </div>
+          <div className="text-3xl font-extrabold text-slate-900 tracking-tight">₹42,85,400</div>
+          <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 font-semibold">
+            <ArrowUpRight className="w-3.5 h-3.5" /> +12.4% vs last month
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-2">
+            <span>Annual Run Rate (ARR)</span>
+            <TrendingUp className="w-4 h-4 text-indigo-600" />
+          </div>
+          <div className="text-3xl font-extrabold text-slate-900 tracking-tight">₹5,14,24,800</div>
+          <div className="mt-2 text-xs text-slate-500">Projected Net: ₹5.45 Cr</div>
+        </div>
+
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-2">
+            <span>Active Subscriptions</span>
+            <Users className="w-4 h-4 text-indigo-600" />
+          </div>
+          <div className="text-3xl font-extrabold text-slate-900 tracking-tight">1,428</div>
+          <div className="mt-2 text-xs text-emerald-600 font-medium">98.2% Retention • 0.8% Churn</div>
+        </div>
+
+        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-2">
+            <span>Collected vs Outstanding</span>
+            <span className="text-xs font-bold text-red-500">₹4.65L Due</span>
+          </div>
+          <div className="text-3xl font-extrabold text-indigo-700 tracking-tight">₹38.20L</div>
+          <div className="mt-2 text-xs text-slate-500">89.1% Collected • DSO: 18.4 Days</div>
+        </div>
+      </div>
+
+      {/* Overdue Ageing Buckets & Watchlist */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Overdue Ageing Breakdown */}
+        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Delinquency Ageing Buckets</h2>
+          <div className="space-y-3">
+            <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 flex justify-between items-center">
+              <div>
+                <div className="text-xs font-semibold text-amber-800">0–30 Days Overdue</div>
+                <div className="text-sm font-medium text-slate-600">14 Accounts (Low Risk)</div>
+              </div>
+              <div className="text-lg font-bold text-amber-900">₹2,45,000</div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-orange-50 border border-orange-200 flex justify-between items-center">
+              <div>
+                <div className="text-xs font-semibold text-orange-800">31–60 Days Overdue</div>
+                <div className="text-sm font-medium text-slate-600">6 Accounts (Dunning Escalation)</div>
+              </div>
+              <div className="text-lg font-bold text-orange-900">₹1,65,400</div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200 flex justify-between items-center">
+              <div>
+                <div className="text-xs font-semibold text-red-800">60+ Days Overdue</div>
+                <div className="text-sm font-medium text-slate-600">2 Accounts (Legal Review)</div>
+              </div>
+              <div className="text-lg font-bold text-red-900">₹55,000</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Priority Health Watchlist Table */}
+        <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Customer Health Watchlist</h2>
+            <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">22 Overdue Total</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 text-slate-500 font-semibold">
+                  <th className="py-2.5 px-3">Company</th>
+                  <th className="py-2.5 px-3">Health Badge</th>
+                  <th className="py-2.5 px-3">Balance</th>
+                  <th className="py-2.5 px-3">Ageing</th>
+                  <th className="py-2.5 px-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                <tr>
+                  <td className="py-3 px-3 font-semibold text-slate-900">Apex Logix India</td>
+                  <td className="py-3 px-3">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-red-100 text-red-700">● Critical (&gt;45d)</span>
+                  </td>
+                  <td className="py-3 px-3 font-semibold">₹1,18,000</td>
+                  <td className="py-3 px-3 text-slate-500">47 Days</td>
+                  <td className="py-3 px-3 text-right">
+                    <button className="text-indigo-600 hover:underline font-semibold">Send Notice</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-3 font-semibold text-slate-900">TechNova Solutions</td>
+                  <td className="py-3 px-3">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-700">● Moderate (18d)</span>
+                  </td>
+                  <td className="py-3 px-3 font-semibold">₹72,400</td>
+                  <td className="py-3 px-3 text-slate-500">18 Days</td>
+                  <td className="py-3 px-3 text-right">
+                    <button className="text-indigo-600 hover:underline font-semibold">Dunning Remind</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-3 font-semibold text-slate-900">CloudSync Pvt Ltd</td>
+                  <td className="py-3 px-3">
+                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-700">● Healthy (Current)</span>
+                  </td>
+                  <td className="py-3 px-3 font-semibold">₹0</td>
+                  <td className="py-3 px-3 text-slate-500">Due in 14d</td>
+                  <td className="py-3 px-3 text-right text-slate-400">Normal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 7. Customer Self-Service Portal & UPI QR Modal Component (`src/components/portal/UpiQrPaymentModal.tsx`)
+
+```tsx
+"use client";
+
+import React, { useState } from "react";
+import { CheckCircle2, Copy, Download, QrCode, ShieldCheck } from "lucide-react";
+
+interface UpiPaymentModalProps {
+  invoiceNumber: string;
+  amount: number;
+  qrDataUri: string;
+  vpa: string;
+  onPaymentSuccess: () => void;
+  onClose: () => void;
+}
+
+export function UpiQrPaymentModal({
+  invoiceNumber,
+  amount,
+  qrDataUri,
+  vpa,
+  onPaymentSuccess,
+  onClose,
+}: UpiPaymentModalProps) {
+  const [copied, setCopied] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+
+  const handleCopyVpa = () => {
+    navigator.clipboard.writeText(vpa);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleVerify = () => {
+    setVerifying(true);
+    setTimeout(() => {
+      setVerifying(false);
+      onPaymentSuccess();
+    }, 1200);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-6">
+        <div className="text-center space-y-1">
+          <div className="inline-flex p-2.5 rounded-full bg-indigo-50 text-indigo-600 mb-2">
+            <QrCode className="w-6 h-6" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900">Scan & Pay via UPI</h3>
+          <p className="text-xs text-slate-500">
+            Reference Invoice: <span className="font-semibold text-slate-800">{invoiceNumber}</span>
+          </p>
+        </div>
+
+        {/* Dynamic QR Box */}
+        <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <img src={qrDataUri} alt="UPI Payment QR" className="w-52 h-52 rounded-lg shadow-sm bg-white p-2" />
+          <div className="mt-3 text-2xl font-black text-slate-900 tracking-tight">
+            ₹{amount.toLocaleString("en-IN")}
+          </div>
+          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Zero transaction surcharge • Instant NPCI credit</div>
+        </div>
+
+        {/* UPI ID copy field */}
+        <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 bg-slate-50 text-xs">
+          <span className="font-mono text-slate-600">{vpa}</span>
+          <button
+            onClick={handleCopyVpa}
+            className="flex items-center gap-1 text-indigo-600 font-semibold hover:text-indigo-800"
+          >
+            {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? "Copied" : "Copy UPI"}
+          </button>
+        </div>
+
+        {/* Actions */}
+        <div className="space-y-2">
+          <button
+            onClick={handleVerify}
+            disabled={verifying}
+            className="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 shadow-md transition flex items-center justify-center gap-2"
+          >
+            {verifying ? "Verifying Bank Ledger..." : "✓ I Have Sent Payment • Verify Now"}
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 rounded-xl text-slate-500 text-xs font-medium hover:text-slate-800 hover:bg-slate-100 transition"
+          >
+            Cancel / Pay via NetBanking
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 8. Offline PWA Schema (`src/lib/dexie.ts`)
+
+```typescript
+import Dexie, { Table } from "dexie";
+
+export interface CachedInvoice {
+  id: string;
+  number: string;
+  total: number;
+  dueDate: string;
+  status: "DRAFT" | "CONFIRMED" | "PAID";
+}
+
+export interface OfflinePaymentQueueItem {
+  id?: number;
+  invoiceId: string;
+  amount: number;
+  method: "CASH" | "UPI" | "CARD";
+  recordedAt: string;
+  synced: boolean;
+}
+
+export class LoopLedgerOfflineDb extends Dexie {
+  invoices!: Table<CachedInvoice, string>;
+  paymentQueue!: Table<OfflinePaymentQueueItem, number>;
+
+  constructor() {
+    super("LoopLedgerOfflineDb");
+    this.version(1).stores({
+      invoices: "id, number, status, dueDate",
+      paymentQueue: "++id, invoiceId, synced",
+    });
+  }
+}
+
+export const offlineDb = new LoopLedgerOfflineDb();
+```
+
+---
+
+## 9. Verification & Demo Checklist for P4
+
+1. **Revenue Radar:** Confirm that MRR, ARR, active counts, and overdue ageing buckets render with real aggregation matching `prisma.invoice` data.
+2. **Customer Health Badge:** Verify that invoices overdue > 30 days trigger `RED`, 1–30 days trigger `AMBER`, and 0 overdue trigger `GREEN`.
+3. **Customer Portal:** Ensure customer users see only their own invoices (`customer_id` filter) and can self-service adjust seats or pause subscriptions.
+4. **UPI QR Generator:** Test that scanning the generated QR in PhonePe / GPay / Paytm automatically fills `amount` and the `INV-2026-XXXX` note.
+5. **Offline Mode:** Turn off Wi-Fi in the browser DevTools, record a mock payment into `Dexie`, turn Wi-Fi back on, and verify the queue syncs to `POST /api/v1/invoices/:id/payments`.
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_15 -->
+</body>
+</html>

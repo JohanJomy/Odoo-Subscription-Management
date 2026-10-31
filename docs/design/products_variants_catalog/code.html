@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-lowest":"#ffffff","secondary-fixed":"#e3dfff","on-primary-fixed-variant":"#3323cc","inverse-primary":"#c3c0ff","surface-container-highest":"#dae2fd","on-tertiary-container":"#d7dbe8","on-background":"#131b2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","on-tertiary-fixed-variant":"#424751","on-secondary-container":"#fffbff","inverse-surface":"#283044","on-surface-variant":"#464555","secondary-container":"#6860ef","secondary-fixed-dim":"#c3c0ff","on-error-container":"#93000a","surface-container":"#eaedff","on-primary-fixed":"#0f0069","primary-fixed-dim":"#c3c0ff","surface":"#faf8ff","on-secondary-fixed-variant":"#372abf","on-tertiary":"#ffffff","background":"#faf8ff","surface-container-low":"#f2f3ff","on-secondary":"#ffffff","on-tertiary-fixed":"#171c25","primary-fixed":"#e2dfff","outline-variant":"#c7c4d8","tertiary-fixed":"#dee2ef","tertiary":"#434853","on-primary-container":"#dad7ff","surface-container-high":"#e2e7ff","outline":"#777587","error-container":"#ffdad6","surface-tint":"#4d44e3","secondary":"#4e45d5","surface-dim":"#d2d9f4","primary-container":"#4f46e5","tertiary-fixed-dim":"#c2c6d3","on-secondary-fixed":"#100069","on-surface":"#131b2e","primary":"#3525cd","on-error":"#ffffff","tertiary-container":"#5b606b","surface-variant":"#dae2fd","surface-bright":"#faf8ff","on-primary":"#ffffff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{gutter:"1rem","margin-md":"1.5rem",margin:"1rem","space-lg":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","margin-lg":"2rem","space-xs":"0.25rem","gutter-lg":"1.5rem","space-md":"1rem"},fontFamily:{"label-md":["Geist"],"body-sm":["Geist"],"headline-xl-mobile":["Geist"],"body-md":["Geist"],"label-xs":["Geist"],"body-lg":["Geist"],"headline-lg":["Geist"],"label-sm":["Geist"],"headline-sm":["Geist"],"headline-xl":["Geist"],"stat-display":["Geist"],"headline-md":["Geist"]},fontSize:{"label-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"body-sm":["13px",{lineHeight:"18px",letterSpacing:"0em",fontWeight:"400"}],"headline-xl-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-sm":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-xl":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"stat-display":["28px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-xs"><img alt="LoopLedger Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ww7WmGsqWwTt0JuK95t44OoO3FSmccLcJXYBjqUunwBOEvRZl135ZKhIZzACDDRvaEjL1hhj2bofLhuDfmg65hhrLAJ2GAnRSI2-w3HVy_9T2nuc1xsUeAGR_nzG-lO2p4RTT1s9BlhKzIwaVoEnw_ckLiAWwi9T5l_WhBaahw2qD8z8Y88WvnDaMHPTa5Z8UnkhB6g-YNNPCq6IcEdWF69OWie2l-WlVtvkp_k9Fmyw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">LoopLedger</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-none mt-0.5">Billing Cloud</span></div></div><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-surface-variant">v2.4</span></div><div class="px-space-md py-space-xs"><div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs"><span class="truncate max-w-[130px] font-medium text-on-surface">Brightloop Production</span><span class="flex items-center gap-1 text-[10px] text-on-surface-variant"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>Live</span></div></div><div class="flex-1 overflow-y-auto px-space-sm py-space-xs"><nav class="flex flex-col gap-0.5" data-active-classes="bg-primary-container text-on-primary font-medium rounded-lg"><div class="px-2.5 pt-2 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Overview</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="revenue-radar" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span>Revenue Radar</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Core Operations</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="billing-run" href="#"><span class="material-symbols-outlined text-[18px]">play_circle</span><span>Billing Run</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="subscriptions" href="#"><span class="material-symbols-outlined text-[18px]">autorenew</span><span>Subscriptions</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="invoices" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Invoices</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="payments" href="#"><span class="material-symbols-outlined text-[18px]">payments</span><span>Payments</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Customers</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="customer-directory" href="#"><span class="material-symbols-outlined text-[18px]">group</span><span>Customer Directory</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="renewal-dunning-inbox" href="#"><span class="material-symbols-outlined text-[18px]">mark_email_unread</span><span>Renewal &amp; Dunning Inbox</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Product &amp; Catalog</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="products-variants" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span>Products &amp; Variants</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="plans" href="#"><span class="material-symbols-outlined text-[18px]">layers</span><span>Plans</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="templates" href="#"><span class="material-symbols-outlined text-[18px]">description</span><span>Templates</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Settings</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="pricing-rules" href="#"><span class="material-symbols-outlined text-[18px]">percent</span><span>Pricing &amp; Taxes</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="team-roles" href="#"><span class="material-symbols-outlined text-[18px]">shield_person</span><span>Team &amp; Roles</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="audit-trail" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span>Audit Trail</span></a></nav></div><div class="p-space-sm bg-surface-container-lowest"><div class="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-2"><div class="flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>Online · Synced</span><span class="material-symbols-outlined text-[14px] text-outline">cloud_done</span></div><div class="flex items-center justify-between pt-1 text-on-surface"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-xs text-label-xs font-semibold">BL</div><span class="font-label-sm text-label-sm truncate max-w-[120px]">Acme Corp HQ</span></div><a class="text-primary hover:text-secondary font-label-xs text-label-xs flex items-center gap-0.5" data-path="customer-portal" href="#" title="Open Customer Portal"><span class="material-symbols-outlined text-[14px]">open_in_new</span></a></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-9 pl-9 pr-14 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search subscriptions, invoices, customers..." type="text"/><div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-xs text-label-xs"><span class="text-[10px]">⌘</span><span>K</span></div></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low font-label-xs text-label-xs text-on-surface"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="hidden sm:inline font-medium">Online · Synced</span></div><div class="flex items-center bg-surface-container-low p-0.5 rounded-lg"><button class="px-2 py-1 rounded font-label-xs text-label-xs font-semibold bg-surface-container-lowest text-on-surface shadow-[0_1px_2px_rgba(15,23,42,0.06)]" type="button">Admin</button><button class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">Staff</button><a class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface flex items-center gap-1" data-path="customer-portal" href="#">Portal<span class="material-symbols-outlined text-[12px]">arrow_outward</span></a></div><button aria-label="Notifications" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-2 pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-label-sm text-label-sm font-medium text-on-surface leading-tight">Alex Mercer</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-tight">RevOps Admin</span></div></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-space-lg py-space-md space-y-space-lg">
+<!-- Header & Navigation -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-1">
+<nav aria-label="Breadcrumbs" class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span>Catalog</span>
+<span class="text-outline text-xs">/</span>
+<span class="text-on-surface font-medium">Products &amp; Variants</span>
+</nav>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight mt-0.5">Products &amp; Product Variants</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+          Manage base subscription products, SKU variant matrix, and custom add-on surcharges (e.g. Odoo connector +₹560/mo).
+        </p>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap self-start lg:self-center">
+<button class="px-3.5 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">file_upload</span>
+<span>Import Catalog CSV</span>
+</button>
+<button class="px-3.5 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-tertiary">tune</span>
+<span>Tax Matrix Config</span>
+</button>
+<button class="px-4 h-9 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-colors" onclick="document.getElementById('drawer-variant-editor').classList.remove('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ New Product</span>
+</button>
+</div>
+</div>
+<!-- KPI Summary Ribbon -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- KPI 1 -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Active Base Products</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</span>
+</div>
+<div class="mt-2">
+<div class="flex items-baseline gap-2">
+<span class="font-stat-display text-stat-display text-on-surface">18</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-wider">SKUs live</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 truncate">Software, Add-ons, Infra core</p>
+</div>
+<div class="mt-3 pt-2.5 bg-surface-container-low -mx-space-md -mb-space-md px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs">
+<span class="text-secondary font-medium">92% active in catalog</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Configured Variants</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+</span>
+</div>
+<div class="mt-2">
+<div class="flex items-baseline gap-2">
+<span class="font-stat-display text-stat-display text-on-surface">42</span>
+<span class="font-label-xs text-label-xs text-secondary font-medium">+4 this cycle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 truncate">Brands, SLA tiers, Hosting nodes</p>
+</div>
+<div class="mt-3 pt-2.5 bg-surface-container-low -mx-space-md -mb-space-md px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs">
+<span>Matrix density: 2.33 / product</span>
+<span class="font-semibold text-on-surface">Stable</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Average Variant Surcharge</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</span>
+</div>
+<div class="mt-2">
+<div class="flex items-baseline gap-1">
+<span class="font-stat-display text-stat-display text-on-surface">₹2,450</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/mo</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 truncate">+12.8% ARPU contribution</p>
+</div>
+<div class="mt-3 pt-2.5 bg-surface-container-low -mx-space-md -mb-space-md px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs">
+<span class="font-medium text-secondary">High-margin attach rate</span>
+<span class="font-mono">81.4%</span>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-start justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Catalog Integrity</span>
+<span class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</span>
+</div>
+<div class="mt-2">
+<div class="flex items-baseline gap-2">
+<span class="font-stat-display text-stat-display text-on-surface">100%</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container-high text-primary-container">Validated</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 truncate">Sales ≥ Cost ≥ 0 | GST code set</p>
+</div>
+<div class="mt-3 pt-2.5 bg-surface-container-low -mx-space-md -mb-space-md px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs">
+<span>Prisma Schema check</span>
+<span class="font-medium text-primary">All pass</span>
+</div>
+</div>
+</div>
+<!-- Main Workspace Layout (Table + Right Surcharge Rules Quick Dock) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Catalog Table Section (Span 8 or full) -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<!-- Toolbar & Filters -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm space-y-3">
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+<!-- Search bar -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-4 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search by Product name, SKU, or attribute..." type="text"/>
+</div>
+<!-- Segmented Type Selector -->
+<div class="flex items-center bg-surface-container-low p-0.5 rounded-lg overflow-x-auto text-nowrap">
+<button class="px-3 py-1.5 rounded-md font-label-xs text-label-xs font-semibold bg-surface-container-lowest text-on-surface shadow-sm" type="button">All Types</button>
+<button class="px-3 py-1.5 rounded-md font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">Core Platform</button>
+<button class="px-3 py-1.5 rounded-md font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">Add-ons</button>
+<button class="px-3 py-1.5 rounded-md font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">API &amp; Usage</button>
+<button class="px-3 py-1.5 rounded-md font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">SLA Packs</button>
+</div>
+</div>
+<!-- Secondary Filter Chips -->
+<div class="flex items-center justify-between pt-1 text-on-surface-variant font-label-xs text-label-xs flex-wrap gap-2">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-outline uppercase font-semibold">Filters:</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container text-on-surface">
+<span>Status: Active</span>
+<span class="material-symbols-outlined text-[12px] cursor-pointer hover:text-error">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container text-on-surface">
+<span>Tax: 18% GST</span>
+<span class="material-symbols-outlined text-[12px] cursor-pointer hover:text-error">close</span>
+</span>
+<button class="text-primary hover:underline font-label-xs text-label-xs" type="button">Reset All</button>
+</div>
+<div class="flex items-center gap-3">
+<span>Showing <strong class="text-on-surface">4</strong> of 18 products</span>
+<button class="p-1 rounded hover:bg-surface-container text-on-surface-variant" type="button">
+<span class="material-symbols-outlined text-[18px]">view_column</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Catalog Items Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low h-10 font-label-xs text-label-xs uppercase tracking-wider text-on-surface-variant">
+<th class="w-10 px-3 py-2 text-center"></th>
+<th class="px-4 py-2">Product Name &amp; SKU</th>
+<th class="px-3 py-2">Category</th>
+<th class="px-3 py-2 text-right">Base Sales Price</th>
+<th class="px-3 py-2 text-right">Base Cost</th>
+<th class="px-3 py-2 text-center">Variants</th>
+<th class="px-3 py-2">Tax Code</th>
+<th class="px-3 py-2">Status</th>
+<th class="w-12 px-3 py-2 text-right"></th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<!-- Row 1: LoopLedger Cloud Core (Expanded by default) -->
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low/60 transition-colors">
+<td class="px-3 py-3 text-center align-middle">
+<button class="w-6 h-6 rounded flex items-center justify-center hover:bg-surface-container text-on-surface-variant transition-transform" onclick="document.getElementById('variants-p1').classList.toggle('hidden'); this.querySelector('span').classList.toggle('rotate-90')" type="button">
+<span class="material-symbols-outlined text-[18px] transition-transform rotate-90">chevron_right</span>
+</button>
+</td>
+<td class="px-4 py-3 align-middle">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">LoopLedger Cloud Core</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-mono text-label-xs text-label-xs text-outline">PROD-CORE-01</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Software License</span>
+</div>
+</div>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-xs text-label-xs bg-surface-container text-on-surface">Core Platform</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono font-medium text-on-surface">
+                    ₹85,000<span class="text-outline font-sans text-xs">/yr</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono text-on-surface-variant">
+                    ₹18,000<span class="text-outline font-sans text-xs">/yr</span>
+</td>
+<td class="px-3 py-3 text-center align-middle">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-primary-fixed text-on-primary-fixed font-semibold">
+<span class="material-symbols-outlined text-[13px]">account_tree</span>
+                      3 Configured
+                    </span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="font-label-xs text-label-xs font-mono bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface">GST 18%</span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-surface-container-low text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Active
+                    </span>
+</td>
+<td class="px-3 py-3 text-right align-middle">
+<button class="w-7 h-7 rounded hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 1 EXPANDED VARIANT SUB-TABLE -->
+<tr class="bg-surface-container-low/40" id="variants-p1">
+<td class="p-0" colspan="9">
+<div class="px-8 py-3 bg-surface-container-low/60">
+<div class="rounded-lg bg-surface-container-lowest p-3 shadow-sm">
+<div class="flex items-center justify-between pb-2 mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary-container">schema</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">Attached Attribute Matrix &amp; Surcharge Rules</span>
+<span class="text-label-xs font-label-xs text-outline">(Inherits Base Tax: 18% GST)</span>
+</div>
+<button class="font-label-xs text-label-xs text-primary hover:underline flex items-center gap-1" onclick="document.getElementById('drawer-variant-editor').classList.remove('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[14px]">add_circle</span>
+                            Add Surcharge Variant
+                          </button>
+</div>
+<table class="w-full text-left text-body-sm">
+<thead>
+<tr class="font-label-xs text-label-xs text-outline uppercase bg-surface-container-low h-7">
+<th class="px-3 py-1 rounded-l">Attribute Dimension</th>
+<th class="px-3 py-1">Attribute Value / Option</th>
+<th class="px-3 py-1">Surcharge Model</th>
+<th class="px-3 py-1 text-right">Incremental Surcharge</th>
+<th class="px-3 py-1 text-center">Status</th>
+<th class="px-3 py-1 text-right rounded-r">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-sm">
+<tr class="hover:bg-surface-container-low/50">
+<td class="px-3 py-2 font-medium text-on-surface">Connector / Brand</td>
+<td class="px-3 py-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-semibold text-on-surface">Odoo Connector</span>
+</div>
+</td>
+<td class="px-3 py-2 text-on-surface-variant font-label-xs">Recurring Monthly</td>
+<td class="px-3 py-2 text-right font-mono font-semibold text-on-surface">
+<span class="text-secondary">+₹560</span><span class="text-outline font-sans text-xs">/mo</span>
+<span class="text-on-surface-variant text-[11px] block">(+₹6,720/yr)</span>
+</td>
+<td class="px-3 py-2 text-center">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-surface">Active</span>
+</td>
+<td class="px-3 py-2 text-right">
+<button class="text-outline hover:text-primary font-label-xs text-label-xs" type="button">Edit</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50">
+<td class="px-3 py-2 font-medium text-on-surface">Connector / Brand</td>
+<td class="px-3 py-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="font-semibold text-on-surface">SAP ERP Bridge</span>
+</div>
+</td>
+<td class="px-3 py-2 text-on-surface-variant font-label-xs">Recurring Monthly</td>
+<td class="px-3 py-2 text-right font-mono font-semibold text-on-surface">
+<span class="text-secondary">+₹1,850</span><span class="text-outline font-sans text-xs">/mo</span>
+<span class="text-on-surface-variant text-[11px] block">(+₹22,200/yr)</span>
+</td>
+<td class="px-3 py-2 text-center">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-surface">Active</span>
+</td>
+<td class="px-3 py-2 text-right">
+<button class="text-outline hover:text-primary font-label-xs text-label-xs" type="button">Edit</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50">
+<td class="px-3 py-2 font-medium text-on-surface">Deployment Node</td>
+<td class="px-3 py-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-semibold text-on-surface">Dedicated Mumbai VPC</span>
+</div>
+</td>
+<td class="px-3 py-2 text-on-surface-variant font-label-xs">Annual Infrastructure Add-on</td>
+<td class="px-3 py-2 text-right font-mono font-semibold text-on-surface">
+<span class="text-secondary">+₹12,000</span><span class="text-outline font-sans text-xs">/yr</span>
+<span class="text-on-surface-variant text-[11px] block">(Flat fee)</span>
+</td>
+<td class="px-3 py-2 text-center">
+<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-surface">Active</span>
+</td>
+<td class="px-3 py-2 text-right">
+<button class="text-outline hover:text-primary font-label-xs text-label-xs" type="button">Edit</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 2: Enterprise User Seats -->
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low/60 transition-colors">
+<td class="px-3 py-3 text-center align-middle">
+<button class="w-6 h-6 rounded flex items-center justify-center hover:bg-surface-container text-on-surface-variant transition-transform" onclick="document.getElementById('variants-p2').classList.toggle('hidden'); this.querySelector('span').classList.toggle('rotate-90')" type="button">
+<span class="material-symbols-outlined text-[18px] transition-transform">chevron_right</span>
+</button>
+</td>
+<td class="px-4 py-3 align-middle">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Enterprise User Seats</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-mono text-label-xs text-label-xs text-outline">PROD-SEAT-ENT</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Seat Licensing</span>
+</div>
+</div>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-xs text-label-xs bg-surface-container text-on-surface">Core Platform</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono font-medium text-on-surface">
+                    ₹4,800<span class="text-outline font-sans text-xs">/seat/yr</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono text-on-surface-variant">
+                    ₹600<span class="text-outline font-sans text-xs">/yr</span>
+</td>
+<td class="px-3 py-3 text-center align-middle">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-primary-fixed text-on-primary-fixed font-semibold">
+<span class="material-symbols-outlined text-[13px]">account_tree</span>
+                      2 Configured
+                    </span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="font-label-xs text-label-xs font-mono bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface">GST 18%</span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-surface-container-low text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Active
+                    </span>
+</td>
+<td class="px-3 py-3 text-right align-middle">
+<button class="w-7 h-7 rounded hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 EXPANDED (Hidden initially) -->
+<tr class="hidden bg-surface-container-low/40" id="variants-p2">
+<td class="p-0" colspan="9">
+<div class="px-8 py-3 bg-surface-container-low/60">
+<div class="rounded-lg bg-surface-container-lowest p-3 shadow-sm">
+<table class="w-full text-left text-body-sm">
+<thead>
+<tr class="font-label-xs text-label-xs text-outline uppercase bg-surface-container-low h-7">
+<th class="px-3 py-1">Attribute Dimension</th>
+<th class="px-3 py-1">Attribute Value</th>
+<th class="px-3 py-1">Surcharge Model</th>
+<th class="px-3 py-1 text-right">Incremental Surcharge</th>
+<th class="px-3 py-1 text-center">Status</th>
+<th class="px-3 py-1 text-right">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="px-3 py-2 font-medium">Authentication</td>
+<td class="px-3 py-2 font-semibold text-on-surface">SSO &amp; SAML 2.0 Enforced</td>
+<td class="px-3 py-2 text-on-surface-variant font-label-xs">Per seat surcharge</td>
+<td class="px-3 py-2 text-right font-mono font-semibold text-secondary">+₹800<span class="text-outline font-sans text-xs">/seat/yr</span></td>
+<td class="px-3 py-2 text-center"><span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-surface">Active</span></td>
+<td class="px-3 py-2 text-right"><button class="text-outline hover:text-primary font-label-xs text-label-xs" type="button">Edit</button></td>
+</tr>
+<tr>
+<td class="px-3 py-2 font-medium">Storage Quota</td>
+<td class="px-3 py-2 font-semibold text-on-surface">Unlimited Document Vault</td>
+<td class="px-3 py-2 text-on-surface-variant font-label-xs">Per seat surcharge</td>
+<td class="px-3 py-2 text-right font-mono font-semibold text-secondary">+₹1,200<span class="text-outline font-sans text-xs">/seat/yr</span></td>
+<td class="px-3 py-2 text-center"><span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-surface">Active</span></td>
+<td class="px-3 py-2 text-right"><button class="text-outline hover:text-primary font-label-xs text-label-xs" type="button">Edit</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 3: Dedicated High-Throughput API -->
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low/60 transition-colors">
+<td class="px-3 py-3 text-center align-middle">
+<button class="w-6 h-6 rounded flex items-center justify-center hover:bg-surface-container text-on-surface-variant opacity-50 cursor-not-allowed" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</td>
+<td class="px-4 py-3 align-middle">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Dedicated High-Throughput API</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-mono text-label-xs text-label-xs text-outline">PROD-API-DED</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Metering &amp; Calls</span>
+</div>
+</div>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-xs text-label-xs bg-surface-container text-on-surface">API &amp; Usage</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono font-medium text-on-surface">
+                    ₹6,000<span class="text-outline font-sans text-xs">/mo</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono text-on-surface-variant">
+                    ₹1,200<span class="text-outline font-sans text-xs">/mo</span>
+</td>
+<td class="px-3 py-3 text-center align-middle">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-surface-container text-on-surface font-medium">
+                      1 Variant
+                    </span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="font-label-xs text-label-xs font-mono bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface">GST 18%</span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-surface-container-low text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Active
+                    </span>
+</td>
+<td class="px-3 py-3 text-right align-middle">
+<button class="w-7 h-7 rounded hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Priority 24/7 SLA Guarantee -->
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low/60 transition-colors">
+<td class="px-3 py-3 text-center align-middle">
+<button class="w-6 h-6 rounded flex items-center justify-center hover:bg-surface-container text-outline opacity-40 cursor-not-allowed" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+</td>
+<td class="px-4 py-3 align-middle">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Priority 24/7 SLA Guarantee</span>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-mono text-label-xs text-label-xs text-outline">PROD-SLA-CRIT</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Tier-1 Escalation</span>
+</div>
+</div>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center px-2 py-0.5 rounded font-label-xs text-label-xs bg-surface-container text-on-surface">SLA Pack</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono font-medium text-on-surface">
+                    ₹15,000<span class="text-outline font-sans text-xs">/mo</span>
+</td>
+<td class="px-3 py-3 text-right align-middle font-mono text-on-surface-variant">
+                    ₹4,000<span class="text-outline font-sans text-xs">/mo</span>
+</td>
+<td class="px-3 py-3 text-center align-middle">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-xs text-label-xs text-outline bg-surface-container-low">
+                      0 Variants
+                    </span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="font-label-xs text-label-xs font-mono bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface">GST 18%</span>
+</td>
+<td class="px-3 py-3 align-middle">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full font-label-xs text-label-xs bg-surface-container-low text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Active
+                    </span>
+</td>
+<td class="px-3 py-3 text-right align-middle">
+<button class="w-7 h-7 rounded hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Bar -->
+<div class="px-space-md py-2.5 bg-surface-container-low flex items-center justify-between font-label-xs text-label-xs text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span>Rows per page:</span>
+<select class="bg-surface-container-lowest text-on-surface rounded px-1.5 py-1 focus:outline-none">
+<option>10</option>
+<option>25</option>
+<option>50</option>
+</select>
+</div>
+<div class="flex items-center gap-3">
+<span>1–4 of 18 products</span>
+<div class="flex items-center gap-1">
+<button class="w-6 h-6 rounded flex items-center justify-center bg-surface-container-lowest hover:bg-surface-container text-on-surface opacity-50 cursor-not-allowed" type="button">
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+</button>
+<button class="w-6 h-6 rounded flex items-center justify-center bg-surface-container-lowest hover:bg-surface-container text-on-surface" type="button">
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Catalog Health Banner -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5">verified_user</span>
+<div class="flex-1 text-body-sm text-on-surface-variant">
+<span class="font-semibold text-on-surface">Integrity Guard Active:</span> All variant surcharges inherit parent product GST HSN/SAC codes automatically unless explicitly overridden via Tax Matrix Config. Negative margin exceptions trigger an automatic checkout freeze.
+          </div>
+</div>
+</div>
+<!-- Right Column: Live Surcharge Rule Matrix & Quick Editor Panel -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- Embedded Variant Rule Creator / Inspector -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+<h2 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Variant Surcharge Rule Editor</h2>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-surface-container-high text-primary-container">Schema v2.4</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Quickly attach a conditional SKU modifier or integration surcharge to an existing base platform item.
+          </p>
+<form class="space-y-3.5" onsubmit="event.preventDefault()">
+<!-- Base Product Selector -->
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Target Base Product</label>
+<select class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container">
+<option value="PROD-CORE-01">LoopLedger Cloud Core (PROD-CORE-01)</option>
+<option value="PROD-SEAT-ENT">Enterprise User Seats (PROD-SEAT-ENT)</option>
+<option value="PROD-API-DED">Dedicated High-Throughput API (PROD-API-DED)</option>
+</select>
+</div>
+<!-- Attribute Name -->
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Dimension Name</label>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container" type="text" value="Brand / ERP Extension"/>
+</div>
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Attribute Value</label>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container" type="text" value="Odoo"/>
+</div>
+</div>
+<!-- Surcharge Configuration -->
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Surcharge Type</label>
+<select class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container">
+<option>Fixed Surcharge (₹)</option>
+<option>Percentage Markup (%)</option>
+<option>Per-Seat Recurring</option>
+</select>
+</div>
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Amount (INR)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-body-sm text-body-sm">₹</span>
+<input class="w-full h-9 pl-7 pr-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm font-mono font-medium focus:outline-none focus:ring-1 focus:ring-primary-container" type="text" value="560.00"/>
+</div>
+</div>
+</div>
+<!-- Billing Frequency & Tax -->
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Billing Interval</label>
+<select class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container">
+<option>Monthly (/mo)</option>
+<option>Annually (/yr)</option>
+<option>One-Time Fee</option>
+</select>
+</div>
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Tax Applicability</label>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-high text-on-surface-variant font-label-xs text-label-xs cursor-not-allowed" disabled="" type="text" value="Inherit 18% GST"/>
+</div>
+</div>
+<!-- Validation Note -->
+<div class="p-2.5 rounded-lg bg-surface-container-low text-on-surface-variant text-[11px] leading-relaxed flex items-start gap-2">
+<span class="material-symbols-outlined text-[15px] text-tertiary mt-0.5">lock_clock</span>
+<span>Unique <code class="font-mono text-on-surface">(product_id, attribute, value)</code> enforced by Prisma schema. Sales price strictly validated ≥ 0.</span>
+</div>
+<!-- Form Actions -->
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 h-9 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md transition-colors flex items-center justify-center gap-1.5 shadow-sm" type="submit">
+<span class="material-symbols-outlined text-[16px]">save</span>
+<span>Save Surcharge Rule</span>
+</button>
+<button class="px-3 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors" type="reset">
+                Clear
+              </button>
+</div>
+</form>
+</div>
+<!-- Add-on Surcharge Revenue Contribution Card -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Top Attached Surcharges</span>
+<span class="font-label-xs text-label-xs text-secondary font-semibold">MRR Boost</span>
+</div>
+<div class="space-y-3 pt-1">
+<!-- Item 1 -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-medium text-on-surface">Odoo Connector (+₹560/mo)</span>
+<span class="font-mono text-on-surface font-semibold">₹1,45,600 /mo</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary-container h-1.5 rounded-full" style="width: 72%"></div>
+</div>
+<div class="flex justify-between text-[11px] text-outline">
+<span>260 Active Subscriptions</span>
+<span>72% of target</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-medium text-on-surface">SAP ERP Bridge (+₹1,850/mo)</span>
+<span class="font-mono text-on-surface font-semibold">₹96,200 /mo</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-secondary-container h-1.5 rounded-full" style="width: 48%"></div>
+</div>
+<div class="flex justify-between text-[11px] text-outline">
+<span>52 Active Subscriptions</span>
+<span>48% of target</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="space-y-1">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-medium text-on-surface">Dedicated Mumbai VPC</span>
+<span class="font-mono text-on-surface font-semibold">₹4,20,000 /yr</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-tertiary-container h-1.5 rounded-full" style="width: 35%"></div>
+</div>
+<div class="flex justify-between text-[11px] text-outline">
+<span>35 Enclaves</span>
+<span>Annual Commit</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide-over Drawer for "+ New Product / Variant Modal" (Accessible via Trigger) -->
+<div class="fixed inset-y-0 right-0 w-full max-w-md bg-surface-container-lowest shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col" id="drawer-variant-editor">
+<!-- Drawer Header -->
+<div class="p-space-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">New Catalog Product &amp; Matrix</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Prisma Schema v2.4 Compliant</span>
+</div>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" onclick="document.getElementById('drawer-variant-editor').classList.add('translate-x-full')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="flex-1 overflow-y-auto p-space-lg space-y-4">
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Product Display Name</label>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="e.g. LoopLedger Cloud Pro" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Product SKU</label>
+<input class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm font-mono uppercase focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="PROD-CLOUD-PRO" type="text"/>
+</div>
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Product Type</label>
+<select class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none">
+<option>Core Platform</option>
+<option>Add-on Integration</option>
+<option>Usage Metered</option>
+<option>SLA Pack</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Base Price (Sales)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-body-sm text-body-sm">₹</span>
+<input class="w-full h-9 pl-7 pr-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm font-mono focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="45000" type="number"/>
+</div>
+</div>
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Cost of Goods (COGS)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-body-sm text-body-sm">₹</span>
+<input class="w-full h-9 pl-7 pr-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm font-mono focus:outline-none focus:ring-1 focus:ring-primary-container" placeholder="9500" type="number"/>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label-xs text-label-xs uppercase tracking-wider text-outline mb-1">Tax Code / GST Bracket</label>
+<select class="w-full h-9 px-3 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none">
+<option>GST 18% (SAC 998313 - IT Software as a Service)</option>
+<option>GST 12% (SAC 998314 - Maintenance &amp; Support)</option>
+<option>Exempt / Zero Rated (Export Billing)</option>
+</select>
+</div>
+<div class="pt-3">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface block mb-2">Initial Variant Rules (Optional)</span>
+<div class="p-3 rounded-lg bg-surface-container-low space-y-2">
+<div class="flex items-center justify-between text-body-sm">
+<span class="font-medium text-on-surface">Include Surcharge Matrix</span>
+<input checked="" class="w-4 h-4 rounded text-primary-container" type="checkbox"/>
+</div>
+<p class="text-[11px] text-on-surface-variant">Check to immediately configure ERP or infrastructure connectors for this SKU once provisioned.</p>
+</div>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="p-space-md bg-surface-container-low flex items-center justify-end gap-2">
+<button class="px-4 h-9 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md" onclick="document.getElementById('drawer-variant-editor').classList.add('translate-x-full')" type="button">Cancel</button>
+<button class="px-4 h-9 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md shadow-sm" onclick="document.getElementById('drawer-variant-editor').classList.add('translate-x-full')" type="button">Save Product</button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>
