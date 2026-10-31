@@ -34,7 +34,7 @@ export const GET = apiHandler(async (request: NextRequest) => {
       orderBy: { createdAt: 'desc' },
       include: {
         customer: { select: { id: true, name: true, company: true } },
-        plan: { select: { id: true, name: true, billingPeriod: true, price: true } },
+        plan: { select: { id: true, name: true, billingPeriod: true, price: true, pausable: true, closable: true, renewable: true } },
         lines: true,
         _count: { select: { invoices: true, lines: true } },
       },

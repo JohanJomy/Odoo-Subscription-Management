@@ -19,7 +19,7 @@ export default function SubscriptionsListPage() {
       if (json.success) {
         setSubscriptions(json.data);
       } else {
-        setError(json.error);
+        setError(json.error?.message || (typeof json.error === "string" ? json.error : "Failed to load subscriptions"));
       }
     } catch (err: any) {
       setError(err.message || "Failed to load subscriptions");
@@ -32,20 +32,24 @@ export default function SubscriptionsListPage() {
     fetchSubscriptions();
   }, []);
 
-  const handleStatusChange = async (id: string, newStatus: SubscriptionStatus) => {
+  const handleStatusChange = async (id: string, newStatus: SubscriptionStatus, reason?: string) => {
     try {
       const res = await fetch(`/api/v1/subscriptions/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status: newStatus, reason }),
       });
       const json = await res.json();
       if (!res.ok || !json.success) {
-        throw new Error(json.error || `Failed to change status to ${newStatus}`);
+        const errorMsg =
+          json.error?.message ||
+          (typeof json.error === "string" ? json.error : null) ||
+          `Failed to change status to ${newStatus}`;
+        throw new Error(errorMsg);
       }
       fetchSubscriptions();
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || "An unexpected error occurred");
     }
   };
 
@@ -115,48 +119,63 @@ export default function SubscriptionsListPage() {
       key: "status",
       header: "Status",
       sortable: true,
-      render: (row) => <StatusChip status={row.status} />,
+      render: (row: any) => {
+        if (row.status === "CLOSED" && row.closeReason === "PAUSED") {
+          return <StatusChip status="PAUSED" />;
+        }
+        return <StatusChip status={row.status} />;
+      },
     },
     {
       key: "actions",
       header: "Actions",
       align: "right",
-      render: (row) => (
-        <div className="flex items-center justify-end gap-1.5 text-xs">
-          {row.status === "ACTIVE" && (
-            <>
+      render: (row: any) => {
+        const isPaused = row.status === "PAUSED" || (row.status === "CLOSED" && row.closeReason === "PAUSED");
+        const isClosed = row.status === "CLOSED" && row.closeReason !== "PAUSED";
+        const canPause = row.status === "ACTIVE" && (row.plan ? row.plan.pausable : true);
+
+        return (
+          <div className="flex items-center justify-end gap-1.5 text-xs">
+            {row.status === "ACTIVE" && (
+              <>
+                {canPause && (
+                  <button
+                    type="button"
+                    onClick={() => handleStatusChange(row.id, "CLOSED", "PAUSED")}
+                    className="px-2 py-0.5 rounded border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  >
+                    Pause
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleStatusChange(row.id, "CLOSED", "CLOSED_EARLY")}
+                  className="px-2 py-0.5 rounded border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-red-500"
+                >
+                  Close
+                </button>
+              </>
+            )}
+
+            {isPaused && (
               <button
                 type="button"
-                onClick={() => handleStatusChange(row.id, "PAUSED")}
-                className="px-2 py-0.5 rounded border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                onClick={() => handleStatusChange(row.id, "ACTIVE")}
+                className="px-2 py-0.5 rounded border border-emerald-300 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
               >
-                Pause
+                Resume
               </button>
-              <button
-                type="button"
-                onClick={() => handleStatusChange(row.id, "CLOSED")}
-                className="px-2 py-0.5 rounded border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-red-500"
-              >
-                Close
-              </button>
-            </>
-          )}
+            )}
 
-          {row.status === "PAUSED" && (
-            <button
-              type="button"
-              onClick={() => handleStatusChange(row.id, "ACTIVE")}
-              className="px-2 py-0.5 rounded border border-emerald-300 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
-            >
-              Resume
-            </button>
-          )}
-
-          {row.status === "CLOSED" && (
-            <span className="text-neutral-400 italic">Closed</span>
-          )}
-        </div>
-      ),
+            {isClosed && (
+              <span className="text-neutral-400 italic">
+                Closed {row.closeReason ? `(${row.closeReason})` : ""}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
