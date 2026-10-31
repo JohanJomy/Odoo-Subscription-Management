@@ -298,14 +298,11 @@ export function AppShell({ children, user }: AppShellProps) {
                 Staff
               </span>
               <Link
-                href="/portal"
-                target="_blank"
-                rel="noreferrer"
+                href="/my/subscriptions"
                 className="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-900 flex items-center gap-1"
-                title="Open customer self-service portal"
+                title="Customer portal view"
               >
                 Portal
-                <ExternalLink className="h-3 w-3" />
               </Link>
             </div>
 
