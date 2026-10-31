@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Enable instrumentation.ts for cron job registration at server startup
+  experimental: {
+    instrumentationHook: true,
+  },
   turbopack: {
     rules: {
       "*.css": {

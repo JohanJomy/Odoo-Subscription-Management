@@ -14,6 +14,7 @@ export function formatMoney(paise: number): string {
   }).format(rupees);
 }
 
+// P1 naming
 export function paiseToRupees(paise: number): number {
   return Number(((paise ?? 0) / 100).toFixed(2));
 }
@@ -22,3 +23,6 @@ export function rupeesToPaise(rupees: number): number {
   return Math.round((rupees ?? 0) * 100);
 }
 
+// P2 aliases for compatibility
+export const toPaise = rupeesToPaise;
+export const toRupees = paiseToRupees;
