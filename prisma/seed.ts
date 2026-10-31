@@ -579,13 +579,16 @@ const invoices = [
 ];
 
 async function main() {
-  for (const invoice of invoices) {
-    await prisma.invoice.upsert({
-      where: { id: invoice.id },
-      update: invoice,
-      create: invoice,
-    });
-  }
+  await prisma.$transaction(async (transaction) => {
+    await transaction.payment.deleteMany({ where: { invoiceId: { in: invoices.map((invoice) => invoice.id) } } });
+    for (const invoice of invoices) {
+      await transaction.invoice.upsert({
+        where: { id: invoice.id },
+        update: { ...invoice, paidTotal: invoice.paidTotal ?? 0 },
+        create: { ...invoice, paidTotal: invoice.paidTotal ?? 0 },
+      });
+    }
+  });
 }
 
 main()
