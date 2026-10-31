@@ -21,8 +21,8 @@ export const POST = apiHandler(async (request: NextRequest) => {
   if (taxId) {
     const tax = await prisma.tax.findUnique({ where: { id: taxId } });
     if (tax) {
-      defaultTaxRate = tax.rate;
-      taxName = `${tax.name} (${tax.rate}%)`;
+      defaultTaxRate = tax.ratePercent;
+      taxName = `${tax.name} (${tax.ratePercent}%)`;
     }
   }
 
