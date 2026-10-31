@@ -18,9 +18,7 @@ export const TaxSchema = z.object({
    * Tax rate percentage, e.g. 18 for 18% GST, 5 for 5% Reduced tax
    */
   rate: z
-    .number({
-      invalid_type_error: "Tax rate must be a valid percentage",
-    })
+    .number()
     .min(0, "Tax rate cannot be negative")
     .max(100, "Tax rate cannot exceed 100%"),
   active: z.boolean().default(true),
@@ -54,9 +52,7 @@ export const DiscountSchema = z
      * If type is FIXED: value is integer paise (e.g. 50000 for ₹500)
      */
     value: z
-      .number({
-        invalid_type_error: "Discount value must be a valid number",
-      })
+      .number()
       .min(0.01, "Discount value must be greater than 0"),
     target: DiscountTargetEnum.default("SUBSCRIPTION"),
     // Product ID if target is PRODUCT

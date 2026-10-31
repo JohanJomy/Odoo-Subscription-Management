@@ -17,9 +17,7 @@ export const ProductVariantSchema = z.object({
   name: z.string().min(1, "Variant name is required"),
   sku: z.string().optional(),
   extraPrice: z
-    .number({
-      invalid_type_error: "Extra price must be a number in paise",
-    })
+    .number()
     .int("Price must be an integer (paise)")
     .min(0, "Extra price cannot be negative"),
   active: z.boolean().default(true),
@@ -34,9 +32,7 @@ export const ProductSchema = z.object({
   description: z.string().optional(),
   category: z.string().optional(),
   basePrice: z
-    .number({
-      invalid_type_error: "Base price must be a number in paise",
-    })
+    .number()
     .int("Price must be an integer (paise)")
     .min(0, "Base price cannot be negative"),
   active: z.boolean().default(true),
@@ -66,9 +62,7 @@ export const PlanSchema = z.object({
   code: z.string().min(1, "Plan code is required"),
   description: z.string().optional(),
   price: z
-    .number({
-      invalid_type_error: "Plan price must be an integer in paise",
-    })
+    .number()
     .int("Price must be an integer in paise")
     .min(0, "Plan price cannot be negative"),
   billingPeriod: BillingPeriodEnum.default("MONTHLY"),

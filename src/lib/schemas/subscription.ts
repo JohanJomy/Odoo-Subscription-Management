@@ -16,9 +16,7 @@ export const SubscriptionLineSchema = z.object({
   variantId: z.string().optional().nullable(),
   variantName: z.string().optional().nullable(),
   quantity: z
-    .number({
-      invalid_type_error: "Quantity must be a number",
-    })
+    .number()
     .int("Quantity must be an integer")
     .min(1, "Quantity must be at least 1"),
   // Unit price in integer paise (base price + variant extra price)
