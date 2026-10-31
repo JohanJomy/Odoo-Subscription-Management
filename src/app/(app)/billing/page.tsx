@@ -3,6 +3,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import {
   PlayCircle,
   Eye,
@@ -16,6 +17,7 @@ import {
   ShieldCheck,
   FileText,
   AlertTriangle,
+  RotateCcw,
 } from 'lucide-react';
 import { formatMoney } from '@/lib/money';
 
@@ -63,6 +65,11 @@ export default function BillingRunCenterPage() {
   const [running, setRunning] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Table filter and pagination
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'CREATED' | 'SKIPPED_EXISTS' | 'FAILED'>('ALL');
+  const [previewPage, setPreviewPage] = useState(1);
+  const PREVIEW_PAGE_SIZE = 10;
 
   // History state
   const [history, setHistory] = useState<HistoricalRun[]>([]);
@@ -134,6 +141,8 @@ export default function BillingRunCenterPage() {
       const json = await res.json();
       if (res.ok) {
         setLastRunResult(json.data);
+        setStatusFilter('ALL');
+        setPreviewPage(1);
         // Refresh preview and history
         fetchPreview();
         fetchHistory(1);
@@ -150,7 +159,23 @@ export default function BillingRunCenterPage() {
 
   const totalHistoryPages = Math.ceil(historyTotal / 5) || 1;
   const currentItems = lastRunResult ? lastRunResult.items : preview?.items ?? [];
+
+  // Filter items based on selected tab
+  const readyCount = currentItems.filter((i) => i.outcome === 'CREATED').length;
+  const skippedCount = currentItems.filter((i) => i.outcome === 'SKIPPED_EXISTS').length;
+  const failedCount = currentItems.filter((i) => i.outcome === 'FAILED').length;
   const failures = currentItems.filter((i) => i.outcome === 'FAILED');
+
+  const filteredItems = currentItems.filter((item) => {
+    if (statusFilter === 'ALL') return true;
+    return item.outcome === statusFilter;
+  });
+
+  const totalPreviewPages = Math.ceil(filteredItems.length / PREVIEW_PAGE_SIZE) || 1;
+  const paginatedItems = filteredItems.slice(
+    (previewPage - 1) * PREVIEW_PAGE_SIZE,
+    previewPage * PREVIEW_PAGE_SIZE
+  );
 
   return (
     <div className="space-y-6">
@@ -159,7 +184,7 @@ export default function BillingRunCenterPage() {
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
             <span>Core Operations</span>
-            <span>â€¢</span>
+            <span>•</span>
             <span className="text-indigo-600 font-semibold">Recurring Engine</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Billing Run Center</h1>
@@ -179,7 +204,11 @@ export default function BillingRunCenterPage() {
               id="billingDate"
               type="date"
               value={billingDate}
-              onChange={(e) => setBillingDate(e.target.value)}
+              onChange={(e) => {
+                setBillingDate(e.target.value);
+                setLastRunResult(null);
+                setPreviewPage(1);
+              }}
               disabled={running || loadingPreview}
               className="text-xs font-semibold text-slate-900 bg-transparent focus:outline-none cursor-pointer"
             />
@@ -187,7 +216,10 @@ export default function BillingRunCenterPage() {
 
           <button
             type="button"
-            onClick={fetchPreview}
+            onClick={() => {
+              setLastRunResult(null);
+              fetchPreview();
+            }}
             disabled={running || loadingPreview}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs disabled:opacity-50 transition"
           >
@@ -220,6 +252,37 @@ export default function BillingRunCenterPage() {
             className="text-rose-600 font-semibold hover:underline text-xs"
           >
             Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* 4. Billing Execution Result Summary Banner after Run */}
+      {lastRunResult && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-emerald-950 shadow-2xs">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-bold text-sm text-slate-900">
+                Billing Execution Batch Completed for {billingDate}
+              </p>
+              <p className="text-[11px] text-slate-600 mt-0.5">
+                Successfully created <strong className="text-emerald-700">{lastRunResult.created}</strong> new invoices totaling <strong className="text-indigo-700">{formatMoney(lastRunResult.totalAmount)}</strong>. Skipped {lastRunResult.skipped} duplicate cycles. {lastRunResult.failed > 0 ? `Encountered ${lastRunResult.failed} isolated failure(s).` : '100% clean run without errors.'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setLastRunResult(null);
+              setStatusFilter('ALL');
+              setPreviewPage(1);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-semibold text-slate-700 transition self-start sm:self-auto shrink-0 shadow-2xs"
+          >
+            <RotateCcw className="h-3.5 w-3.5 text-slate-500" />
+            Back to Live Preview
           </button>
         </div>
       )}
@@ -292,7 +355,12 @@ export default function BillingRunCenterPage() {
             {failures.map((f, i) => (
               <div key={i} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <span className="font-semibold text-slate-900">{f.subscriptionNumber || f.subscriptionId}</span>
+                  <Link
+                    href={`/subscriptions/${f.subscriptionId}`}
+                    className="font-semibold text-slate-900 hover:text-indigo-600 hover:underline"
+                  >
+                    {f.subscriptionNumber || f.subscriptionId}
+                  </Link>
                   <span className="text-slate-500 ml-2">({f.customerName})</span>
                 </div>
                 <div className="text-rose-700 font-medium">{f.message || 'Unknown processing error'}</div>
@@ -304,7 +372,7 @@ export default function BillingRunCenterPage() {
 
       {/* Main Table: Preview or Last Run Report */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+        <div className="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
           <div>
             <h2 className="text-sm font-bold text-slate-900">
               {lastRunResult ? 'Execution Output Report' : 'Upcoming Invoice Preview (Dry Run)'}
@@ -315,20 +383,73 @@ export default function BillingRunCenterPage() {
                 : `Simulated dry-run calculations for subscriptions due on or before ${billingDate}`}
             </p>
           </div>
-          {lastRunResult && (
+
+          {/* 1. Status Filter Tabs (Ready, Already Billed, Failed) */}
+          <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-2xs text-xs font-medium text-slate-600">
             <button
               type="button"
-              onClick={() => setLastRunResult(null)}
-              className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+              onClick={() => {
+                setStatusFilter('ALL');
+                setPreviewPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-md transition ${
+                statusFilter === 'ALL'
+                  ? 'bg-indigo-600 text-white font-semibold shadow-xs'
+                  : 'hover:text-slate-900'
+              }`}
             >
-              Back to Live Preview
+              All ({currentItems.length})
             </button>
-          )}
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('CREATED');
+                setPreviewPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-md transition ${
+                statusFilter === 'CREATED'
+                  ? 'bg-emerald-600 text-white font-semibold shadow-xs'
+                  : 'hover:text-slate-900'
+              }`}
+            >
+              Ready ({readyCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('SKIPPED_EXISTS');
+                setPreviewPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-md transition ${
+                statusFilter === 'SKIPPED_EXISTS'
+                  ? 'bg-slate-700 text-white font-semibold shadow-xs'
+                  : 'hover:text-slate-900'
+              }`}
+            >
+              Already Billed ({skippedCount})
+            </button>
+            {failedCount > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setStatusFilter('FAILED');
+                  setPreviewPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-md transition ${
+                  statusFilter === 'FAILED'
+                    ? 'bg-rose-600 text-white font-semibold shadow-xs'
+                    : 'hover:text-slate-900'
+                }`}
+              >
+                Failed ({failedCount})
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-600">
-                        <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+            <thead className="bg-slate-50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3">Subscription</th>
                 <th className="px-4 py-3">Customer</th>
@@ -348,23 +469,37 @@ export default function BillingRunCenterPage() {
                     <span>Calculating upcoming billing schedule...</span>
                   </td>
                 </tr>
-              ) : currentItems.length === 0 ? (
+              ) : paginatedItems.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-5 py-12 text-center text-slate-400">
                     <CheckCircle2 className="h-6 w-6 text-emerald-500 mx-auto mb-2" />
-                    <p className="font-semibold text-slate-700 text-sm">All caught up!</p>
+                    <p className="font-semibold text-slate-700 text-sm">
+                      {statusFilter === 'ALL'
+                        ? 'All caught up!'
+                        : `No ${statusFilter.toLowerCase()} items found.`}
+                    </p>
                     <p className="text-xs mt-1">
-                      No subscriptions are due for billing on or before {billingDate}.
+                      {statusFilter === 'ALL'
+                        ? `No subscriptions are due for billing on or before ${billingDate}.`
+                        : 'Try changing the filter or selecting a different billing date.'}
                     </p>
                   </td>
                 </tr>
               ) : (
-                currentItems.map((item, idx) => (
-                                    <tr key={idx} className="hover:bg-slate-50/70 transition">
-                    <td className="px-4 py-3 font-semibold text-slate-900">
-                      {item.subscriptionNumber || item.subscriptionId}
+                paginatedItems.map((item, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50/70 transition">
+                    {/* 3. Clickable Subscription Number */}
+                    <td className="px-4 py-3 font-semibold">
+                      <Link
+                        href={`/subscriptions/${item.subscriptionId}`}
+                        className="text-indigo-600 hover:text-indigo-900 hover:underline"
+                        title="View Subscription Details"
+                      >
+                        {item.subscriptionNumber || item.subscriptionId}
+                      </Link>
                     </td>
                     <td className="px-4 py-3 text-slate-700">{item.customerName || '—'}</td>
+                    {/* Repeated rows represent distinct valid billing periods */}
                     <td className="px-4 py-3 text-slate-500">
                       {item.periodStart
                         ? `${new Date(item.periodStart).toLocaleDateString('en-IN')} → ${
@@ -408,9 +543,36 @@ export default function BillingRunCenterPage() {
             </tbody>
           </table>
         </div>
+
+        {/* 2. Preview Table Pagination */}
+        {totalPreviewPages > 1 && (
+          <div className="px-5 py-3 border-t border-slate-200 bg-slate-50/60 flex items-center justify-between text-xs">
+            <span className="text-slate-500">
+              Showing {(previewPage - 1) * PREVIEW_PAGE_SIZE + 1}–{Math.min(previewPage * PREVIEW_PAGE_SIZE, filteredItems.length)} of {filteredItems.length} items (Page {previewPage} of {totalPreviewPages})
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
+                disabled={previewPage <= 1 || loadingPreview}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" /> Prev
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewPage((p) => Math.min(totalPreviewPages, p + 1))}
+                disabled={previewPage >= totalPreviewPages || loadingPreview}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+              >
+                Next <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Historical Runs Section */}
+      {/* 5. Historical Runs Section with Pagination */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
           <div>
@@ -458,13 +620,13 @@ export default function BillingRunCenterPage() {
             <tbody className="divide-y divide-slate-100">
               {loadingHistory ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-8 text-center text-slate-400">
+                  <td colSpan={5} className="px-5 py-8 text-center text-slate-400">
                     Loading historical runs...
                   </td>
                 </tr>
               ) : history.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-8 text-center text-slate-400">
+                  <td colSpan={5} className="px-5 py-8 text-center text-slate-400">
                     No billing runs recorded yet.
                   </td>
                 </tr>
@@ -508,7 +670,7 @@ export default function BillingRunCenterPage() {
         </div>
       </div>
 
-      {/* Confirmation Dialog Modal */}
+      {/* 6. Confirmation Dialog Modal before running billing */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl border border-slate-200">
@@ -585,16 +747,19 @@ export default function BillingRunCenterPage() {
                 selectedRunReport.map((item, i) => (
                   <div key={i} className="py-3 flex items-center justify-between text-xs">
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <Link
+                        href={`/subscriptions/${item.subscriptionId}`}
+                        className="font-semibold text-indigo-600 hover:underline"
+                      >
                         {item.subscriptionNumber || item.subscriptionId}
-                      </p>
+                      </Link>
                       <p className="text-[11px] text-slate-500">
-                        {item.customerName} {item.invoiceNumber ? `Â· ${item.invoiceNumber}` : ''}
+                        {item.customerName} {item.invoiceNumber ? `· ${item.invoiceNumber}` : ''}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-slate-900">
-                        {item.total !== undefined ? formatMoney(item.total) : 'â€”'}
+                        {item.total !== undefined ? formatMoney(item.total) : '—'}
                       </p>
                       <span
                         className={`text-[10px] font-semibold ${
@@ -618,4 +783,3 @@ export default function BillingRunCenterPage() {
     </div>
   );
 }
-

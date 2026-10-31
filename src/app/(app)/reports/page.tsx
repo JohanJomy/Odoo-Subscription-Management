@@ -1,13 +1,12 @@
-import { BarChart3 } from "lucide-react";
 import { redirect } from "next/navigation";
-import { formatMoney } from "@/lib/money";
 import { getSession } from "@/server/auth/guard";
-import { ageingReport, customerHealthReport, revenueReport } from "@/server/reports";
+import { ReportsClient } from "./reports-client";
 
 export const dynamic = "force-dynamic";
+
 export default async function ReportsPage() {
-  if ((await getSession())?.role === "CUSTOMER") redirect("/my/invoices");
-  const [revenue, ageing, customers] = await Promise.all([revenueReport(), ageingReport(), customerHealthReport()]);
-  return <div className="space-y-6"><header><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500"><BarChart3 className="h-4 w-4 text-indigo-600" /> Live reporting</div><h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">Revenue Analytics</h1><p className="mt-1 text-xs text-slate-500">Revenue, collection, ageing, and customer health from the ledger.</p></header><div className="grid grid-cols-1 gap-4 sm:grid-cols-4"><Metric label="Invoiced" value={formatMoney(revenue.totals.invoiced)} /><Metric label="Collected" value={formatMoney(revenue.totals.collected)} /><Metric label="Outstanding" value={formatMoney(revenue.totals.outstanding)} /><Metric label="Collection rate" value={`${revenue.collectionRate}%`} /></div><section className="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs"><h2 className="font-semibold">Ageing buckets</h2><div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">{Object.entries(ageing.buckets).map(([name, bucket]) => <div key={name} className="rounded-lg bg-slate-50 p-3"><p className="text-xs text-slate-500">{name}</p><p className="mt-1 font-mono font-semibold">{formatMoney(bucket.amount)}</p><p className="text-xs text-slate-500">{bucket.count} invoices</p></div>)}</div></section><section className="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs"><h2 className="font-semibold">Customer health</h2><div className="mt-4 space-y-2">{customers.slice(0, 10).map((customer) => <div key={customer.customer} className="flex justify-between border-b border-slate-100 py-2 text-xs"><span className="font-mono">{customer.customer}</span><span className="font-semibold">{formatMoney(customer.outstanding)} · {customer.health}</span></div>)}</div></section></div>;
+  const session = await getSession();
+  if (session?.role === "CUSTOMER") redirect("/my/invoices");
+
+  return <ReportsClient />;
 }
-function Metric({ label, value }: { label: string; value: string }) { return <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs"><p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">{label}</p><p className="mt-2 text-xl font-bold font-mono">{value}</p></div>; }

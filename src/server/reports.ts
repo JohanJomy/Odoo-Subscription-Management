@@ -1,4 +1,5 @@
 import { listInvoices, type Invoice } from "@/server/payments";
+import { prisma } from "@/server/db";
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -49,7 +50,11 @@ export async function ageingReport() {
 }
 
 export async function customerHealthReport() {
-  const invoices = await listInvoices();
+  const [invoices, customersList] = await Promise.all([
+    listInvoices(),
+    prisma.customer.findMany({ select: { id: true, name: true, company: true } }),
+  ]);
+  const customerMap = new Map(customersList.map((c) => [c.id, c]));
   const grouped = new Map<string, Invoice[]>();
   for (const invoice of invoices) grouped.set(invoice.customer, [...(grouped.get(invoice.customer) || []), invoice]);
   return [...grouped.entries()].map(([customer, customerInvoices]) => {
@@ -57,8 +62,12 @@ export async function customerHealthReport() {
     const overdue = customerInvoices.filter((invoice) => invoice.total > invoice.paidTotal && daysOverdue(invoice.dueDate) > 0);
     const overdueAmount = sum(overdue.map((invoice) => Math.max(0, invoice.total - invoice.paidTotal)));
     const health = outstanding === 0 ? "HEALTHY" : overdueAmount > 0 ? "AT_RISK" : "WATCH";
+    const info = customerMap.get(customer);
     return {
       customer,
+      customerId: customer,
+      customerName: info?.name || customer,
+      company: info?.company || null,
       invoiceCount: customerInvoices.length,
       outstanding,
       overdueAmount,
