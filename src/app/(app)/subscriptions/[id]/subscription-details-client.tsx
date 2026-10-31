@@ -774,3 +774,4 @@ export function SubscriptionDetailsClient({
     </div>
   );
 }
+
