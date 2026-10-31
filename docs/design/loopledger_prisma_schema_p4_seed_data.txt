@@ -1,0 +1,809 @@
+# LoopLedger — Prisma Schema & P4 Seed Data Test Suite
+
+This package provides the complete `prisma/schema.prisma` and an executable `prisma/seed.ts` specifically tailored for **P4 (Money, Reporting & Portal Lead)** to verify:
+1. **Revenue Radar Calculations**: MRR, ARR, Collected vs. Outstanding balance aggregation.
+2. **Ageing Buckets**: Exact test fixtures for `0–30 Days`, `31–60 Days`, and `60+ Days` overdue delinquency buckets.
+3. **Customer Health Badges**: Test scenarios for `GREEN`, `AMBER`, and `RED` critical status.
+4. **Customer Portal Scopes**: Multi-tenant customer isolation (`customer_id` filter) and self-service subscriptions.
+5. **Idempotency & Partial Payments**: Invoices with partial payment balances and UPI settlement test records.
+
+---
+
+## 1. Complete Prisma Schema (`prisma/schema.prisma`)
+
+```prisma
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum BillingPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  DRAFT
+  QUOTATION
+  CONFIRMED
+  ACTIVE
+  CLOSED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  CONFIRMED
+  PAID
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  BANK
+}
+
+enum DiscountType {
+  FIXED
+  PERCENT
+}
+
+enum DiscountAppliesTo {
+  PRODUCT
+  SUBSCRIPTION
+}
+
+// ----------------------------------------------------
+// 1. Users & Multitenant Customers
+// ----------------------------------------------------
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password_hash String
+  role          Role      @default(STAFF)
+  customer_id   String?
+  customer      Customer? @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([role])
+  @@index([customer_id])
+}
+
+model Customer {
+  id            String         @id @default(uuid())
+  name          String
+  company       String
+  phone         String
+  address       String
+  gstin         String?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+
+  users         User[]
+  subscriptions Subscription[]
+  invoices      Invoice[]
+
+  @@index([company])
+}
+
+// ----------------------------------------------------
+// 2. Products, Variants, & Catalog
+// ----------------------------------------------------
+
+model Product {
+  id                 String             @id @default(uuid())
+  name               String
+  type               String             // e.g. "Core Platform", "Add-on", "SLA Pack"
+  sales_price        Float              // Must be >= 0
+  cost_price         Float              // Must be >= 0
+  notes              String?
+  active             Boolean            @default(true)
+  created_at         DateTime           @default(now())
+
+  variants           ProductVariant[]
+  template_lines     TemplateLine[]
+  subscription_lines SubscriptionLine[]
+}
+
+model ProductVariant {
+  id                 String             @id @default(uuid())
+  product_id         String
+  product            Product            @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  attribute          String             // e.g. "Connector / Brand", "Deployment Node"
+  value              String             // e.g. "Odoo", "SAP ERP Bridge", "Dedicated Mumbai VPC"
+  extra_price        Float              // e.g. 560.00
+  active             Boolean            @default(true)
+
+  template_lines     TemplateLine[]
+  subscription_lines SubscriptionLine[]
+
+  @@unique([product_id, attribute, value])
+  @@index([product_id])
+}
+
+// ----------------------------------------------------
+// 3. Plans, Quotations & Templates
+// ----------------------------------------------------
+
+model Plan {
+  id             String         @id @default(uuid())
+  name           String
+  price          Float
+  billing_period BillingPeriod  @default(MONTHLY)
+  min_qty        Int            @default(1)
+  start_date     DateTime
+  end_date       DateTime?
+  auto_close     Boolean        @default(false)
+  closable       Boolean        @default(true)
+  pausable       Boolean        @default(true)
+  renewable      Boolean        @default(true)
+
+  templates      QuotationTemplate[]
+  subscriptions  Subscription[]
+}
+
+model QuotationTemplate {
+  id            String         @id @default(uuid())
+  name          String
+  validity_days Int            @default(15)
+  plan_id       String
+  plan          Plan           @relation(fields: [plan_id], references: [id])
+  lines         TemplateLine[]
+}
+
+model TemplateLine {
+  id          String          @id @default(uuid())
+  template_id String
+  template    QuotationTemplate @relation(fields: [template_id], references: [id], onDelete: Cascade)
+  product_id  String
+  product     Product         @relation(fields: [product_id], references: [id])
+  variant_id  String?
+  variant     ProductVariant? @relation(fields: [variant_id], references: [id])
+  qty         Int             @default(1)
+}
+
+// ----------------------------------------------------
+// 4. Subscriptions & Line Items
+// ----------------------------------------------------
+
+model Subscription {
+  id                String             @id @default(uuid())
+  number            String             @unique // e.g. "SUB-0284"
+  customer_id       String
+  customer          Customer           @relation(fields: [customer_id], references: [id])
+  plan_id           String
+  plan              Plan               @relation(fields: [plan_id], references: [id])
+  start_date        DateTime
+  expiry_date       DateTime?
+  payment_term      String             @default("NET_30") // e.g. "IMMEDIATE", "NET_15", "NET_30"
+  status            SubscriptionStatus @default(DRAFT)
+  next_invoice_date DateTime
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+
+  lines             SubscriptionLine[]
+  invoices          Invoice[]
+
+  @@index([status])
+  @@index([customer_id])
+  @@index([next_invoice_date])
+}
+
+model SubscriptionLine {
+  id              String          @id @default(uuid())
+  subscription_id String
+  subscription    Subscription    @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  product_id      String
+  product         Product         @relation(fields: [product_id], references: [id])
+  variant_id      String?
+  variant         ProductVariant? @relation(fields: [variant_id], references: [id])
+  qty             Int             @default(1)
+  unit_price      Float
+  tax_id          String?
+  tax             Tax?            @relation(fields: [tax_id], references: [id])
+  amount          Float
+
+  @@index([subscription_id])
+}
+
+// ----------------------------------------------------
+// 5. Taxes & Discounts
+// ----------------------------------------------------
+
+model Tax {
+  id                 String             @id @default(uuid())
+  name               String             // e.g. "GST 18%", "GST 12%"
+  rate_percent       Float              // 0 to 100
+  active             Boolean            @default(true)
+  subscription_lines SubscriptionLine[]
+}
+
+model Discount {
+  id           String            @id @default(uuid())
+  name         String            // e.g. "DI-ENTERPRISE-Q4", "DI-FESTIVE25"
+  type         DiscountType      @default(PERCENT)
+  fixed_amount Float?            // in Rupees
+  percent      Float?            // whole number (e.g. 10.0 for 10%)
+  min_purchase Float?
+  min_qty      Int?
+  start_date   DateTime
+  end_date     DateTime
+  usage_limit  Int               @default(100)
+  used_count   Int               @default(0)
+  applies_to   DiscountAppliesTo @default(SUBSCRIPTION)
+  target_id    String?           // product or plan ID if applicable
+}
+
+// ----------------------------------------------------
+// 6. Invoices & Payments (P4 Core Domain)
+// ----------------------------------------------------
+
+model Invoice {
+  id              String        @id @default(uuid())
+  number          String        @unique // e.g. "INV-2026-0412"
+  subscription_id String
+  subscription    Subscription  @relation(fields: [subscription_id], references: [id])
+  customer_id     String
+  customer        Customer      @relation(fields: [customer_id], references: [id])
+  period_start    DateTime
+  period_end      DateTime
+  status          InvoiceStatus @default(CONFIRMED)
+  subtotal        Float
+  discount_total  Float         @default(0)
+  tax_total       Float         @default(0)
+  total           Float
+  due_date        DateTime
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  lines           InvoiceLine[]
+  payments        Payment[]
+
+  // Critical spec constraint preventing duplicate billing runs:
+  @@unique([subscription_id, period_start])
+  @@index([status])
+  @@index([customer_id])
+  @@index([due_date])
+}
+
+model InvoiceLine {
+  id              String   @id @default(uuid())
+  invoice_id      String
+  invoice         Invoice  @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  description     String
+  qty             Int      @default(1)
+  unit_price      Float
+  tax_amount      Float    @default(0)
+  discount_amount Float    @default(0)
+  amount          Float
+
+  @@index([invoice_id])
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  invoice_id  String
+  invoice     Invoice       @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  method      PaymentMethod @default(UPI)
+  amount      Float         // Must be > 0 and sum <= invoice.total
+  paid_on     DateTime      @default(now())
+  note        String?
+  recorded_by String        // user ID or 'SYSTEM_UPI_AUTONOMOUS'
+  created_at  DateTime      @default(now())
+
+  @@index([invoice_id])
+  @@index([paid_on])
+}
+
+// ----------------------------------------------------
+// 7. Audit Log
+// ----------------------------------------------------
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  entity    String   // e.g. "INVOICE", "PAYMENT", "SUBSCRIPTION"
+  entity_id String
+  action    String   // e.g. "RECORD_PAYMENT", "STATUS_CHANGE", "DISCOUNT_APPLIED"
+  user_id   String
+  at        DateTime @default(now())
+  detail    String   // JSON stringified metadata
+
+  @@index([entity, entity_id])
+  @@index([at])
+}
+```
+
+---
+
+## 2. Seed Script for P4 Testing (`prisma/seed.ts`)
+
+```typescript
+import { PrismaClient, Role, SubscriptionStatus, InvoiceStatus, PaymentMethod, BillingPeriod } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log("🌱 Cleaning existing data...");
+  await prisma.auditLog.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.invoiceLine.deleteMany();
+  await prisma.invoice.deleteMany();
+  await prisma.subscriptionLine.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.templateLine.deleteMany();
+  await prisma.quotationTemplate.deleteMany();
+  await prisma.plan.deleteMany();
+  await prisma.productVariant.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.tax.deleteMany();
+  await prisma.discount.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.customer.deleteMany();
+
+  console.log("🏢 Seeding Tax & Discounts...");
+  const gst18 = await prisma.tax.create({
+    data: { name: "GST 18%", rate_percent: 18.0, active: true },
+  });
+
+  await prisma.discount.create({
+    data: {
+      name: "DI-ENTERPRISE-Q4",
+      type: "PERCENT",
+      percent: 10.0,
+      min_purchase: 100000,
+      start_date: new Date("2026-01-01"),
+      end_date: new Date("2026-12-31"),
+      usage_limit: 100,
+      used_count: 14,
+    },
+  });
+
+  console.log("📦 Seeding Catalog Products & Variants...");
+  const cloudCore = await prisma.product.create({
+    data: {
+      name: "LoopLedger Cloud Core Platform (v4.0)",
+      type: "Core Platform",
+      sales_price: 85000,
+      cost_price: 18000,
+      notes: "Annual baseline cluster node",
+    },
+  });
+
+  const userSeats = await prisma.product.create({
+    data: {
+      name: "Enterprise User Seats",
+      type: "User Licensing",
+      sales_price: 4800,
+      cost_price: 600,
+      notes: "Per seat / year license",
+    },
+  });
+
+  const apiPack = await prisma.product.create({
+    data: {
+      name: "Dedicated High-Throughput API Gateway",
+      type: "Add-on",
+      sales_price: 6000,
+      cost_price: 1200,
+    },
+  });
+
+  // Variant Surcharges (including Odoo +₹560 from spec)
+  const odooVariant = await prisma.productVariant.create({
+    data: {
+      product_id: cloudCore.id,
+      attribute: "Connector / Brand",
+      value: "Odoo Connector",
+      extra_price: 560,
+    },
+  });
+
+  console.log("📋 Seeding Plans...");
+  const enterprisePlan = await prisma.plan.create({
+    data: {
+      name: "Enterprise Scale (Yearly)",
+      price: 199830,
+      billing_period: BillingPeriod.YEARLY,
+      min_qty: 10,
+      start_date: new Date("2026-01-01"),
+      auto_close: true,
+      closable: true,
+      pausable: true,
+      renewable: true,
+    },
+  });
+
+  const growthPlan = await prisma.plan.create({
+    data: {
+      name: "Growth SaaS Suite (Monthly)",
+      price: 24500,
+      billing_period: BillingPeriod.MONTHLY,
+      min_qty: 5,
+      start_date: new Date("2026-01-01"),
+      auto_close: false,
+      closable: true,
+      pausable: true,
+      renewable: true,
+    },
+  });
+
+  console.log("👥 Seeding Test Customers for Health Badges & P4 Reports...");
+
+  // Customer 1: RED HEALTH BADGE (Delinquent > 45 days overdue)
+  const apexLogix = await prisma.customer.create({
+    data: {
+      name: "Vikram Mehta",
+      company: "Apex Logix India Pvt Ltd",
+      phone: "+91 98401 23410",
+      address: "Tower B, Prestige Tech Park, Outer Ring Road, Bengaluru",
+      gstin: "27AABCA1234F1ZQ",
+    },
+  });
+
+  // Customer 2: AMBER HEALTH BADGE (Moderate 18 days overdue)
+  const techNova = await prisma.customer.create({
+    data: {
+      name: "Deepa Rao",
+      company: "TechNova Solutions",
+      phone: "+91 98712 99014",
+      address: "Plot 44, HITEC City, Hyderabad",
+      gstin: "36AAACT9812G1Z1",
+    },
+  });
+
+  // Customer 3: GREEN HEALTH BADGE (Completely healthy / all settled)
+  const cloudSync = await prisma.customer.create({
+    data: {
+      name: "Siddharth V.",
+      company: "CloudSync Pvt Ltd",
+      phone: "+91 94230 11982",
+      address: "Magarpatta Cybercity, Tower 7, Pune",
+      gstin: "27AAACS4412P1ZN",
+    },
+  });
+
+  // Customer 4: GREEN HEALTH BADGE (Active customer for Customer Portal verification)
+  const nexusCloud = await prisma.customer.create({
+    data: {
+      name: "Pooja Rao",
+      company: "Nexus Cloud Technologies",
+      phone: "+91 98200 44101",
+      address: "Mindspace Malad West, Mumbai",
+      gstin: "27AAACN1234F1Z8",
+    },
+  });
+
+  console.log("🔐 Seeding Users (Admin, Staff, Portal Client)...");
+  await prisma.user.create({
+    data: {
+      email: "admin@loopledger.internal",
+      password_hash: "$2b$10$abcdefghijklmnopqrstuvwxyz123456", // mocked hashed
+      role: Role.ADMIN,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "finance@loopledger.internal",
+      password_hash: "$2b$10$abcdefghijklmnopqrstuvwxyz123456",
+      role: Role.STAFF,
+    },
+  });
+
+  // Customer Portal User (tied to Apex Logix)
+  const portalUser = await prisma.user.create({
+    data: {
+      email: "vikram@apexlogix.in",
+      password_hash: "$2b$10$abcdefghijklmnopqrstuvwxyz123456",
+      role: Role.CUSTOMER,
+      customer_id: apexLogix.id,
+    },
+  });
+
+  console.log("🔄 Seeding Active Subscriptions (For MRR / ARR aggregation)...");
+  const subApex = await prisma.subscription.create({
+    data: {
+      number: "SUB-0199",
+      customer_id: apexLogix.id,
+      plan_id: growthPlan.id,
+      start_date: new Date("2026-05-15"),
+      expiry_date: new Date("2027-11-14"),
+      status: SubscriptionStatus.ACTIVE,
+      next_invoice_date: new Date("2026-11-15"),
+      lines: {
+        create: [
+          {
+            product_id: cloudCore.id,
+            variant_id: odooVariant.id,
+            qty: 1,
+            unit_price: 18500,
+            amount: 18500,
+            tax_id: gst18.id,
+          },
+          {
+            product_id: apiPack.id,
+            qty: 1,
+            unit_price: 6000,
+            amount: 6000,
+            tax_id: gst18.id,
+          },
+        ],
+      },
+    },
+  });
+
+  const subNexus = await prisma.subscription.create({
+    data: {
+      number: "SUB-0284",
+      customer_id: nexusCloud.id,
+      plan_id: enterprisePlan.id,
+      start_date: new Date("2026-10-15"),
+      expiry_date: new Date("2027-10-14"),
+      status: SubscriptionStatus.ACTIVE,
+      next_invoice_date: new Date("2026-11-15"),
+      lines: {
+        create: [
+          {
+            product_id: cloudCore.id,
+            qty: 1,
+            unit_price: 85000,
+            amount: 85000,
+            tax_id: gst18.id,
+          },
+          {
+            product_id: userSeats.id,
+            qty: 25,
+            unit_price: 4800,
+            amount: 120000,
+            tax_id: gst18.id,
+          },
+        ],
+      },
+    },
+  });
+
+  const now = new Date();
+  const daysAgo = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+  const daysAhead = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
+  console.log("💰 Seeding Overdue Invoices & Delinquency Ageing Buckets...");
+
+  // 1. CRITICAL RED HEALTH (>45d overdue) -> Ageing Bucket 3: "60+ / 45+ Days Overdue"
+  const invRed = await prisma.invoice.create({
+    data: {
+      number: "INV-2026-0301",
+      subscription_id: subApex.id,
+      customer_id: apexLogix.id,
+      period_start: daysAgo(77),
+      period_end: daysAgo(47),
+      status: InvoiceStatus.CONFIRMED,
+      subtotal: 100000,
+      tax_total: 18000,
+      total: 118000,
+      due_date: daysAgo(47), // 47 Days Overdue -> RED
+      lines: {
+        create: [
+          {
+            description: "Growth SaaS Suite & Odoo Sync (Overdue Cycle)",
+            qty: 1,
+            unit_price: 100000,
+            amount: 100000,
+            tax_amount: 18000,
+          },
+        ],
+      },
+    },
+  });
+
+  // 2. MODERATE AMBER HEALTH (18d overdue) -> Ageing Bucket 1: "0–30 Days Overdue"
+  const invAmber = await prisma.invoice.create({
+    data: {
+      number: "INV-2026-0388",
+      subscription_id: subApex.id,
+      customer_id: techNova.id,
+      period_start: daysAgo(48),
+      period_end: daysAgo(18),
+      status: InvoiceStatus.CONFIRMED,
+      subtotal: 61355.93,
+      tax_total: 11044.07,
+      total: 72400,
+      due_date: daysAgo(18), // 18 Days Overdue -> AMBER
+      lines: {
+        create: [
+          {
+            description: "Custom SaaS Subscription - September 2026",
+            qty: 1,
+            unit_price: 61355.93,
+            amount: 61355.93,
+            tax_amount: 11044.07,
+          },
+        ],
+      },
+    },
+  });
+
+  // 3. 31–60 DAYS OVERDUE BUCKET FIXTURE
+  const invOrange = await prisma.invoice.create({
+    data: {
+      number: "INV-2026-0350",
+      subscription_id: subApex.id,
+      customer_id: apexLogix.id,
+      period_start: daysAgo(65),
+      period_end: daysAgo(35),
+      status: InvoiceStatus.CONFIRMED,
+      subtotal: 140169.49,
+      tax_total: 25230.51,
+      total: 165400,
+      due_date: daysAgo(35), // 35 Days Overdue -> Bucket 31-60d
+      lines: {
+        create: [
+          {
+            description: "Dedicated Enclave Hosting Q3",
+            qty: 1,
+            unit_price: 140169.49,
+            amount: 140169.49,
+            tax_amount: 25230.51,
+          },
+        ],
+      },
+    },
+  });
+
+  // 4. CURRENT / DUE SOON INVOICE (Due in 4 days - Shown on Vikram Mehta's Portal)
+  const invDueSoon = await prisma.invoice.create({
+    data: {
+      number: "INV-2026-0412",
+      subscription_id: subApex.id,
+      customer_id: apexLogix.id,
+      period_start: daysAgo(26),
+      period_end: daysAhead(4),
+      status: InvoiceStatus.CONFIRMED,
+      subtotal: 20762.71,
+      tax_total: 3737.29,
+      total: 24500,
+      due_date: daysAhead(4), // Current / Due soon
+      lines: {
+        create: [
+          {
+            description: "Growth SaaS Suite (18 seats) + Dedicated API",
+            qty: 1,
+            unit_price: 20762.71,
+            amount: 20762.71,
+            tax_amount: 3737.29,
+          },
+        ],
+      },
+    },
+  });
+
+  // 5. FULLY PAID INVOICE WITH SETTLED UPI PAYMENT
+  const invPaid1 = await prisma.invoice.create({
+    data: {
+      number: "INV-2026-0182",
+      subscription_id: subNexus.id,
+      customer_id: nexusCloud.id,
+      period_start: daysAgo(60),
+      period_end: daysAgo(30),
+      status: InvoiceStatus.PAID,
+      subtotal: 169347.46,
+      tax_total: 30482.54,
+      total: 199830,
+      due_date: daysAgo(30),
+      lines: {
+        create: [
+          {
+            description: "Enterprise Scale Yearly License",
+            qty: 1,
+            unit_price: 169347.46,
+            amount: 169347.46,
+            tax_amount: 30482.54,
+          },
+        ],
+      },
+    },
+  });
+
+  // Record settled payment for invPaid1
+  await prisma.payment.create({
+    data: {
+      invoice_id: invPaid1.id,
+      method: PaymentMethod.UPI,
+      amount: 199830,
+      paid_on: daysAgo(29),
+      note: "Instant NPCI Settlement ref: UPI-849204812",
+      recorded_by: "SYSTEM_UPI_AUTONOMOUS",
+    },
+  });
+
+  // 6. PARTIALLY PAID INVOICE (To test over-payment prevention and balance tracking)
+  const invPartial = await prisma.invoice.create({
+    data: {
+      number: "INV-2026-0210",
+      subscription_id: subApex.id,
+      customer_id: apexLogix.id,
+      period_start: daysAgo(90),
+      period_end: daysAgo(60),
+      status: InvoiceStatus.CONFIRMED,
+      subtotal: 42372.88,
+      tax_total: 7627.12,
+      total: 50000,
+      due_date: daysAgo(62), // 62 Days Overdue (Bucket 60+)
+      lines: {
+        create: [
+          {
+            description: "Quarterly Infrastructure Surcharges",
+            qty: 1,
+            unit_price: 42372.88,
+            amount: 42372.88,
+            tax_amount: 7627.12,
+          },
+        ],
+      },
+    },
+  });
+
+  // Partial payment of ₹25,000 against ₹50,000 total (Outstanding balance = ₹25,000)
+  await prisma.payment.create({
+    data: {
+      invoice_id: invPartial.id,
+      method: PaymentMethod.BANK,
+      amount: 25000,
+      paid_on: daysAgo(50),
+      note: "NEFT Part payment trn #99104",
+      recorded_by: "finance@loopledger.internal",
+    },
+  });
+
+  console.log("✅ Seed completed successfully!");
+  console.log({
+    testCustomer: "Vikram Mehta (Apex Logix) - Role: CUSTOMER",
+    loginEmail: "vikram@apexlogix.in",
+    pendingInvoice: "INV-2026-0412 (₹24,500 due in 4 days)",
+    redHealthFixture: "INV-2026-0301 (₹1,18,000 overdue by 47 days)",
+    amberHealthFixture: "INV-2026-0388 (₹72,400 overdue by 18 days)",
+    settledUpiFixture: "INV-2026-0182 (₹1,99,830 settled via UPI)",
+  });
+}
+
+main()
+  .catch((e) => {
+    console.error("❌ Seed failed:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+```
+
+---
+
+## 3. How to Run in VS Code
+
+1. In your `loopledger` directory, update `prisma/schema.prisma` with the content above.
+2. Ensure `package.json` includes the Prisma seed configuration:
+   ```json
+   "prisma": {
+     "seed": "tsx prisma/seed.ts"
+   }
+   ```
+3. Run migrations and execute the seed:
+   ```bash
+   pnpm prisma migrate dev --name init_p4_schema
+   pnpm prisma db seed
+   ```
+4. Verify by running the reports pure functions in `src/server/reports.ts` or launching `pnpm dev` and visiting `/dashboard` and `/my-invoices`.

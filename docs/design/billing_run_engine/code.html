@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-lowest":"#ffffff","secondary-fixed":"#e3dfff","on-primary-fixed-variant":"#3323cc","inverse-primary":"#c3c0ff","surface-container-highest":"#dae2fd","on-tertiary-container":"#d7dbe8","on-background":"#131b2e","inverse-on-surface":"#eef0ff","error":"#ba1a1a","on-tertiary-fixed-variant":"#424751","on-secondary-container":"#fffbff","inverse-surface":"#283044","on-surface-variant":"#464555","secondary-container":"#6860ef","secondary-fixed-dim":"#c3c0ff","on-error-container":"#93000a","surface-container":"#eaedff","on-primary-fixed":"#0f0069","primary-fixed-dim":"#c3c0ff","surface":"#faf8ff","on-secondary-fixed-variant":"#372abf","on-tertiary":"#ffffff","background":"#faf8ff","surface-container-low":"#f2f3ff","on-secondary":"#ffffff","on-tertiary-fixed":"#171c25","primary-fixed":"#e2dfff","outline-variant":"#c7c4d8","tertiary-fixed":"#dee2ef","tertiary":"#434853","on-primary-container":"#dad7ff","surface-container-high":"#e2e7ff","outline":"#777587","error-container":"#ffdad6","surface-tint":"#4d44e3","secondary":"#4e45d5","surface-dim":"#d2d9f4","primary-container":"#4f46e5","tertiary-fixed-dim":"#c2c6d3","on-secondary-fixed":"#100069","on-surface":"#131b2e","primary":"#3525cd","on-error":"#ffffff","tertiary-container":"#5b606b","surface-variant":"#dae2fd","surface-bright":"#faf8ff","on-primary":"#ffffff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{gutter:"1rem","margin-md":"1.5rem",margin:"1rem","space-lg":"1.5rem","space-xl":"2rem","space-sm":"0.5rem","margin-lg":"2rem","space-xs":"0.25rem","gutter-lg":"1.5rem","space-md":"1rem"},fontFamily:{"label-md":["Geist"],"body-sm":["Geist"],"headline-xl-mobile":["Geist"],"body-md":["Geist"],"label-xs":["Geist"],"body-lg":["Geist"],"headline-lg":["Geist"],"label-sm":["Geist"],"headline-sm":["Geist"],"headline-xl":["Geist"],"stat-display":["Geist"],"headline-md":["Geist"]},fontSize:{"label-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"500"}],"body-sm":["13px",{lineHeight:"18px",letterSpacing:"0em",fontWeight:"400"}],"headline-xl-mobile":["26px",{lineHeight:"34px",letterSpacing:"-0.015em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"label-xs":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"600"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg":["24px",{lineHeight:"32px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-sm":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-sm":["16px",{lineHeight:"24px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-xl":["32px",{lineHeight:"40px",letterSpacing:"-0.02em",fontWeight:"600"}],"stat-display":["28px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["20px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-lowest"><div class="flex items-center gap-space-xs"><img alt="LoopLedger Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Ww7WmGsqWwTt0JuK95t44OoO3FSmccLcJXYBjqUunwBOEvRZl135ZKhIZzACDDRvaEjL1hhj2bofLhuDfmg65hhrLAJ2GAnRSI2-w3HVy_9T2nuc1xsUeAGR_nzG-lO2p4RTT1s9BlhKzIwaVoEnw_ckLiAWwi9T5l_WhBaahw2qD8z8Y88WvnDaMHPTa5Z8UnkhB6g-YNNPCq6IcEdWF69OWie2l-WlVtvkp_k9Fmyw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">LoopLedger</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-none mt-0.5">Billing Cloud</span></div></div><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-surface-variant">v2.4</span></div><div class="px-space-md py-space-xs"><div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs"><span class="truncate max-w-[130px] font-medium text-on-surface">Brightloop Production</span><span class="flex items-center gap-1 text-[10px] text-on-surface-variant"><span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>Live</span></div></div><div class="flex-1 overflow-y-auto px-space-sm py-space-xs"><nav class="flex flex-col gap-0.5" data-active-classes="bg-primary-container text-on-primary font-medium rounded-lg"><div class="px-2.5 pt-2 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Overview</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="revenue-radar" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span>Revenue Radar</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Core Operations</div><a aria-current="page" class="flex items-center gap-2.5 px-2.5 py-1.5 transition-colors bg-primary-container text-on-primary font-medium rounded-lg" data-path="billing-run" href="#"><span class="material-symbols-outlined text-[18px]">play_circle</span><span>Billing Run</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="subscriptions" href="#"><span class="material-symbols-outlined text-[18px]">autorenew</span><span>Subscriptions</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="invoices" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Invoices</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="payments" href="#"><span class="material-symbols-outlined text-[18px]">payments</span><span>Payments</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Customers</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="customer-directory" href="#"><span class="material-symbols-outlined text-[18px]">group</span><span>Customer Directory</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="renewal-dunning-inbox" href="#"><span class="material-symbols-outlined text-[18px]">mark_email_unread</span><span>Renewal & Dunning Inbox</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Product & Catalog</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="products-variants" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span>Products & Variants</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="plans" href="#"><span class="material-symbols-outlined text-[18px]">layers</span><span>Plans</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="templates" href="#"><span class="material-symbols-outlined text-[18px]">description</span><span>Templates</span></a><div class="px-2.5 pt-3 pb-1 font-label-xs text-label-xs uppercase tracking-wider text-outline">Settings</div><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="pricing-rules" href="#"><span class="material-symbols-outlined text-[18px]">percent</span><span>Pricing & Taxes</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="team-roles" href="#"><span class="material-symbols-outlined text-[18px]">shield_person</span><span>Team & Roles</span></a><a class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-label-md text-label-md" data-path="audit-trail" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span>Audit Trail</span></a></nav></div><div class="p-space-sm bg-surface-container-lowest"><div class="p-2.5 rounded-lg bg-surface-container-low flex flex-col gap-2"><div class="flex items-center justify-between text-on-surface-variant font-label-xs text-label-xs"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>Online · Synced</span><span class="material-symbols-outlined text-[14px] text-outline">cloud_done</span></div><div class="flex items-center justify-between pt-1 text-on-surface"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-label-xs text-label-xs font-semibold">BL</div><span class="font-label-sm text-label-sm truncate max-w-[120px]">Acme Corp HQ</span></div><a class="text-primary hover:text-secondary font-label-xs text-label-xs flex items-center gap-0.5" data-path="customer-portal" href="#" title="Open Customer Portal"><span class="material-symbols-outlined text-[14px]">open_in_new</span></a></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-space-lg flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-9 pl-9 pr-14 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary-container transition-all" placeholder="Search subscriptions, invoices, customers..." type="text"/><div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-xs text-label-xs"><span class="text-[10px]">⌘</span><span>K</span></div></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-low font-label-xs text-label-xs text-on-surface"><span class="w-2 h-2 rounded-full bg-secondary-container"></span><span class="hidden sm:inline font-medium">Online · Synced</span></div><div class="flex items-center bg-surface-container-low p-0.5 rounded-lg"><button class="px-2 py-1 rounded font-label-xs text-label-xs font-semibold bg-surface-container-lowest text-on-surface shadow-[0_1px_2px_rgba(15,23,42,0.06)]" type="button">Admin</button><button class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface" type="button">Staff</button><a class="px-2 py-1 rounded font-label-xs text-label-xs text-on-surface-variant hover:text-on-surface flex items-center gap-1" data-path="customer-portal" href="#">Portal<span class="material-symbols-outlined text-[12px]">arrow_outward</span></a></div><button aria-label="Notifications" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span></button><div class="flex items-center gap-2 pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden md:flex flex-col text-left"><span class="font-label-sm text-label-sm font-medium text-on-surface leading-tight">Alex Mercer</span><span class="font-label-xs text-label-xs text-on-surface-variant leading-tight">RevOps Admin</span></div></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Subtle decorative ambient glow container -->
+<div class="relative w-full px-space-lg py-space-md space-y-space-md overflow-hidden">
+<!-- Floating ambient accent -->
+<div class="absolute -top-24 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-80 -left-20 w-80 h-80 bg-secondary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Breadcrumb & Top Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm relative z-10">
+<div class="space-y-1">
+<nav class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="hover:text-on-surface transition-colors cursor-pointer">Operations</span>
+<span class="text-outline">/</span>
+<span class="hover:text-on-surface transition-colors cursor-pointer">Cycle Orchestration</span>
+<span class="text-outline">/</span>
+<span class="text-on-surface font-medium">Billing Run Engine</span>
+</nav>
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Billing Run Engine</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span>
+            Orchestrator v4.18
+          </span>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-2.5">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-xs text-label-xs shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>Scheduler: <strong class="text-on-surface">Cron Daily @ 00:00 UTC</strong></span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-lowest text-on-surface font-label-md text-label-md shadow-sm hover:bg-surface-container-high transition-all active:scale-[0.98]" id="btn-dry-run" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">visibility</span>
+<span>Dry-Run Preview</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md shadow-md hover:bg-primary transition-all active:scale-[0.98]" id="btn-execute-run" type="button">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>Execute Live Billing Run</span>
+</button>
+</div>
+</div>
+<!-- Idempotent Safeguard Banner -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-surface-container via-surface-container-low to-surface-container-lowest p-4 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 relative z-10">
+<div class="flex items-start md:items-center gap-3">
+<div class="p-2 rounded-lg bg-primary-container text-on-primary shadow-sm shrink-0">
+<span class="material-symbols-outlined text-[20px]">lock_reset</span>
+</div>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface">Billing Cycle: October 31, 2026</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-xs text-label-xs font-semibold">
+                IDEMPOTENT GUARD ACTIVE
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Unique deterministic collision hash: <code class="px-1.5 py-0.5 rounded bg-surface-container-highest font-mono text-[12px] text-on-surface">hash([subscription_id, period_start])</code> · Zero risk of double-billing or skipped invoices across retries.
+            </p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 self-end md:self-center">
+<span class="font-label-xs text-label-xs text-outline">Safety Envelope:</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-label-xs text-label-xs">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span> 100% Deterministic Commit
+          </span>
+</div>
+</div>
+</div>
+<!-- Execution Metric Cards (Bento-style KPI matrix) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-space-sm">
+<!-- 1: Ready to Bill -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Ready to Bill Today</span>
+<span class="material-symbols-outlined text-outline text-[18px]">receipt_long</span>
+</div>
+<div class="my-2">
+<span class="font-stat-display text-stat-display text-on-surface">48</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">Subscriptions</span>
+</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span>100% cycle coverage</span>
+</div>
+</div>
+<!-- 2: Gross Invoiced -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Total Gross</span>
+<span class="material-symbols-outlined text-outline text-[18px]">payments</span>
+</div>
+<div class="my-2">
+<span class="font-stat-display text-stat-display text-on-surface tracking-tight">₹18,92,450</span>
+</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface-variant">
+<span>Standard line value before disc.</span>
+</div>
+</div>
+<!-- 3: Automated Discounts -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Auto Discounts</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">loyalty</span>
+</div>
+<div class="my-2">
+<span class="font-stat-display text-stat-display text-on-surface text-secondary-container">₹1,42,800</span>
+</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface-variant">
+<span class="truncate">Max savings solver matched</span>
+</div>
+</div>
+<!-- 4: Tax GST -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Tax (GST 18% / 12%)</span>
+<span class="material-symbols-outlined text-outline text-[18px]">account_balance</span>
+</div>
+<div class="my-2">
+<span class="font-stat-display text-stat-display text-on-surface tracking-tight">₹3,14,937</span>
+</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface-variant">
+<span>CGST ₹1,57,468 + SGST/IGST</span>
+</div>
+</div>
+<!-- 5: Net Invoicing -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Net Invoicing</span>
+<span class="material-symbols-outlined text-primary text-[18px]">point_of_sale</span>
+</div>
+<div class="my-2">
+<span class="font-stat-display text-stat-display text-primary font-bold tracking-tight">₹20,64,587</span>
+</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Projected net ledger credit</span>
+</div>
+</div>
+<!-- 6: Idempotent Skips -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Idempotent Skips</span>
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+</div>
+<div class="my-2">
+<span class="font-stat-display text-stat-display text-on-surface">0</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">Duplicates</span>
+</div>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface-variant">
+<span>No duplicate cycles identified</span>
+</div>
+</div>
+</div>
+<!-- Main Workspace Split: Preview Table (70%) + Engine Run Inspector (30%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md items-start">
+<!-- Dry-Run Preview Table Container (8 cols) -->
+<section class="lg:col-span-8 flex flex-col gap-3">
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm space-y-3">
+<!-- Table Toolbar -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Dry-Run Preview Ledger</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-xs text-label-xs text-on-surface">48 Items</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pre-execution verification before committing the cycle batch.</p>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap items-center gap-2">
+<div class="relative flex-1 sm:w-56">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
+<input class="w-full h-8 pl-8 pr-3 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary-container transition-all" id="table-search" placeholder="Filter subscriber, ID..." type="text"/>
+</div>
+<select class="h-8 px-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs focus:outline-none focus:ring-1 focus:ring-primary-container" id="filter-plan">
+<option value="all">All Plans</option>
+<option value="enterprise">Enterprise Annual</option>
+<option value="pro">Pro Monthly</option>
+<option value="starter">Starter Monthly</option>
+</select>
+<select class="h-8 px-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-xs text-label-xs focus:outline-none focus:ring-1 focus:ring-primary-container" id="filter-gst">
+<option value="all">All GST</option>
+<option value="18">GST 18% (9+9)</option>
+<option value="12">GST 12% (6+6)</option>
+</select>
+</div>
+</div>
+<!-- Table with Shadcn UI styling -->
+<div class="overflow-x-auto rounded-lg bg-surface-container-lowest">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead class="bg-surface-container-low text-on-surface-variant font-label-xs text-label-xs uppercase tracking-wider">
+<tr>
+<th class="py-2.5 px-3">Subscription</th>
+<th class="py-2.5 px-3">Customer / Enterprise</th>
+<th class="py-2.5 px-3">Plan & Period</th>
+<th class="py-2.5 px-3">Base & Add-ons</th>
+<th class="py-2.5 px-3">Discounts</th>
+<th class="py-2.5 px-3">Tax (CGST+SGST)</th>
+<th class="py-2.5 px-3 text-right">Net Total</th>
+<th class="py-2.5 px-3 text-center">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high/60" id="preview-table-body">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3 px-3">
+<span class="font-mono text-[12px] font-semibold text-primary px-1.5 py-0.5 rounded bg-surface-container">SUB-0042</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Bharat Logistics Corp</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">GSTIN: 27AAACB2212R1Z8</div>
+</td>
+<td class="py-3 px-3">
+<div class="inline-flex items-center gap-1 text-on-surface font-medium">Enterprise Annual</div>
+<div class="text-on-surface-variant text-[11px]">Nov 01, 26 – Oct 31, 27</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-medium">₹3,40,000 <span class="text-on-surface-variant text-[11px]">(50 seats)</span></div>
+<div class="text-on-surface-variant text-[11px] flex items-center gap-1">+ ERP Sync ₹14,500</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container font-mono text-[11px] text-secondary font-medium">
+                      DI-FESTIVE25: -₹25,000
+                    </span>
+<div class="text-[10px] text-outline mt-0.5">Tier 2 Auto-selected</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-mono text-[12px]">₹59,310</div>
+<div class="text-[11px] text-outline">18% (9% + 9%)</div>
+</td>
+<td class="py-3 px-3 text-right">
+<div class="font-headline-sm text-headline-sm text-on-surface tracking-tight">₹3,88,810</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Validated
+                    </span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3 px-3">
+<span class="font-mono text-[12px] font-semibold text-primary px-1.5 py-0.5 rounded bg-surface-container">SUB-0043</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Odoo Retail Mart</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">GSTIN: 29AABCO9918M1Z2</div>
+</td>
+<td class="py-3 px-3">
+<div class="inline-flex items-center gap-1 text-on-surface font-medium">Pro Monthly</div>
+<div class="text-on-surface-variant text-[11px]">Nov 01 – Nov 30, 26</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-medium">₹24,000 <span class="text-on-surface-variant text-[11px]">(12 seats)</span></div>
+<div class="text-on-surface-variant text-[11px] flex items-center gap-1">+ POS Webhook ₹560</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container font-mono text-[11px] text-secondary font-medium">
+                      DI-VOL10: -₹2,456
+                    </span>
+<div class="text-[10px] text-outline mt-0.5">Volumetric Rule #3</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-mono text-[12px]">₹3,978</div>
+<div class="text-[11px] text-outline">18% (9% + 9%)</div>
+</td>
+<td class="py-3 px-3 text-right">
+<div class="font-headline-sm text-headline-sm text-on-surface tracking-tight">₹26,082</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Validated
+                    </span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3 px-3">
+<span class="font-mono text-[12px] font-semibold text-primary px-1.5 py-0.5 rounded bg-surface-container">SUB-0044</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Zenith Systems Ltd</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">GSTIN: 07AAACZ1092K1Z9</div>
+</td>
+<td class="py-3 px-3">
+<div class="inline-flex items-center gap-1 text-on-surface font-medium">Enterprise Annual</div>
+<div class="text-on-surface-variant text-[11px]">Nov 01, 26 – Oct 31, 27</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-medium">₹5,20,000 <span class="text-on-surface-variant text-[11px]">(80 seats)</span></div>
+<div class="text-on-surface-variant text-[11px] flex items-center gap-1">+ Dedicated Gateway ₹18,000</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container font-mono text-[11px] text-secondary font-medium">
+                      DI-FESTIVE25: -₹2,500
+                    </span>
+<div class="text-[10px] text-outline mt-0.5">Used 14/50 quota</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-mono text-[12px]">₹96,390</div>
+<div class="text-[11px] text-outline">18% (IGST interstate)</div>
+</td>
+<td class="py-3 px-3 text-right">
+<div class="font-headline-sm text-headline-sm text-on-surface tracking-tight">₹6,31,890</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Validated
+                    </span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3 px-3">
+<span class="font-mono text-[12px] font-semibold text-primary px-1.5 py-0.5 rounded bg-surface-container">SUB-0045</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Kaveri MicroTech Infra</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">GSTIN: 33AAACK4490P1ZN</div>
+</td>
+<td class="py-3 px-3">
+<div class="inline-flex items-center gap-1 text-on-surface font-medium">Pro Monthly</div>
+<div class="text-on-surface-variant text-[11px]">Nov 01 – Nov 30, 26</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-medium">₹45,000 <span class="text-on-surface-variant text-[11px]">(25 seats)</span></div>
+<div class="text-on-surface-variant text-[11px] flex items-center gap-1">+ Telemetry Retention ₹3,200</div>
+</td>
+<td class="py-3 px-3">
+<span class="text-outline text-[11px]">No active promo</span>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-mono text-[12px]">₹5,784</div>
+<div class="text-[11px] text-outline">12% Software Tech SLA</div>
+</td>
+<td class="py-3 px-3 text-right">
+<div class="font-headline-sm text-headline-sm text-on-surface tracking-tight">₹53,984</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Validated
+                    </span>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3 px-3">
+<span class="font-mono text-[12px] font-semibold text-primary px-1.5 py-0.5 rounded bg-surface-container">SUB-0046</span>
+</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Nexus Payments Lab</div>
+<div class="font-label-xs text-label-xs text-outline font-mono">GSTIN: 27AAACN5531L1Z4</div>
+</td>
+<td class="py-3 px-3">
+<div class="inline-flex items-center gap-1 text-on-surface font-medium">Starter Monthly</div>
+<div class="text-on-surface-variant text-[11px]">Nov 01 – Nov 30, 26</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-medium">₹12,500 <span class="text-on-surface-variant text-[11px]">(5 seats)</span></div>
+<div class="text-on-surface-variant text-[11px] flex items-center gap-1">+ Multi-currency API ₹1,200</div>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container font-mono text-[11px] text-secondary font-medium">
+                      DI-GROWTH5: -₹685
+                    </span>
+<div class="text-[10px] text-outline mt-0.5">Welcome discount</div>
+</td>
+<td class="py-3 px-3">
+<div class="text-on-surface font-mono text-[12px]">₹2,342</div>
+<div class="text-[11px] text-outline">18% (9% + 9%)</div>
+</td>
+<td class="py-3 px-3 text-right">
+<div class="font-headline-sm text-headline-sm text-on-surface tracking-tight">₹15,357</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-xs text-label-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                      Validated
+                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Bottom Bar -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-surface-container-high/40">
+<span class="font-label-xs text-label-xs text-on-surface-variant">
+              Showing 5 of 48 subscriptions ready for commit (Preview checksum: <code class="font-mono text-outline">#0x7a89f92</code>)
+            </span>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high">Previous</button>
+<button class="px-2.5 py-1 rounded bg-primary-container text-on-primary font-label-xs text-label-xs">1</button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high">2</button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high">3</button>
+<button class="px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-xs text-label-xs hover:bg-surface-container-high">Next</button>
+</div>
+</div>
+</div>
+<!-- Inline Visual Breakdown: Discount Optimization Logic -->
+<div class="p-4 rounded-xl bg-surface-container-low shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">psychology</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Auto-Discount Optimization Algorithm</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              System resolved conflicts across 11 overlapping coupon campaigns, auto-favoring highest net customer retention benefit. Total savings calculated: ₹1,42,800.
+            </p>
+</div>
+<!-- Miniature horizontal comparison bar (Visual SVG) -->
+<div class="w-full md:w-64 bg-surface-container-lowest p-2.5 rounded-lg shrink-0 space-y-1.5 shadow-sm">
+<div class="flex justify-between font-label-xs text-label-xs">
+<span class="text-on-surface">Coupon Savings Applied</span>
+<span class="font-semibold text-secondary">7.54% off Gross</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full" style="width: 75.4%;"></div>
+</div>
+<div class="flex justify-between text-[10px] text-outline">
+<span>Gross: ₹18.92L</span>
+<span>Net: ₹20.64L (incl. GST)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Run Report & Audit Log Drawer / Sidebar (4 cols) -->
+<section class="lg:col-span-4 flex flex-col gap-3">
+<!-- Run Audit Drawer Box -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">history_toggle_off</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Run Audit & History</h2>
+</div>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Last 5 Runs</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Persistent ledger commits recorded under SQLite Write-Ahead Logging with immediate lock arbitration.
+          </p>
+<!-- History Timeline Cards -->
+<div class="space-y-2.5">
+<!-- Run Item 1 (Today's Pre-Run) -->
+<div class="p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs font-semibold text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+                  RUN #2026-1031-01
+                </span>
+<span class="font-mono text-[11px] text-outline">Today, 06:14 UTC</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[12px]">
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Triggered By</span>
+<span class="font-medium text-on-surface">Johan Admin (Manual)</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Latency / Speed</span>
+<span class="font-mono font-medium text-on-surface">1.42s (SQLite WAL)</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Created / Skips</span>
+<span class="font-medium text-on-surface">48 Generated · 0 Skips</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Commit Status</span>
+<span class="inline-flex items-center gap-1 font-semibold text-secondary">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> Dry-Run Verified
+                  </span>
+</div>
+</div>
+</div>
+<!-- Run Item 2 -->
+<div class="p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs font-semibold text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                  RUN #2026-1030-00
+                </span>
+<span class="font-mono text-[11px] text-outline">Oct 30, 00:00 UTC</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[12px]">
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Triggered By</span>
+<span class="font-medium text-on-surface">Cron Scheduler</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Latency / Speed</span>
+<span class="font-mono font-medium text-on-surface">0.98s</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Created / Skips</span>
+<span class="font-medium text-on-surface">32 Generated · 4 Skips</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Commit Status</span>
+<span class="inline-flex items-center gap-1 font-semibold text-on-surface">
+<span class="material-symbols-outlined text-[13px] text-primary">done_all</span> Committed
+                  </span>
+</div>
+</div>
+</div>
+<!-- Run Item 3 -->
+<div class="p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-xs text-label-xs font-semibold text-on-surface flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                  RUN #2026-1029-00
+                </span>
+<span class="font-mono text-[11px] text-outline">Oct 29, 00:00 UTC</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[12px]">
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Triggered By</span>
+<span class="font-medium text-on-surface">Cron Scheduler</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Latency / Speed</span>
+<span class="font-mono font-medium text-on-surface">1.12s</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Created / Skips</span>
+<span class="font-medium text-on-surface">29 Generated · 1 Skip</span>
+</div>
+<div>
+<span class="text-outline block text-[10px] uppercase font-semibold">Commit Status</span>
+<span class="inline-flex items-center gap-1 font-semibold text-on-surface">
+<span class="material-symbols-outlined text-[13px] text-primary">done_all</span> Committed
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Deep Safeguard Diagnostic Specs -->
+<div class="pt-3 border-t border-surface-container-high/40 space-y-2">
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline font-semibold">Engine Verification Hash</span>
+<div class="p-2.5 rounded-lg bg-surface-container-high font-mono text-[11px] text-on-surface flex items-center justify-between">
+<span class="truncate">SHA256: d8f498c0b2...1e8432a9</span>
+<button class="text-primary hover:text-secondary" title="Copy Checksum">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+</button>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant pt-1">
+<span>DB Connection Pool: Active (4 idle)</span>
+<span>Replica Lag: 0ms</span>
+</div>
+</div>
+</div>
+<!-- Live Operations Team Contact / Operations Quick-Note -->
+<div class="p-4 rounded-xl bg-gradient-to-br from-surface-container-high to-surface-container p-4 shadow-sm flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">policy</span>
+<div class="space-y-1">
+<h3 class="font-label-md text-label-md font-semibold text-on-surface">Billing Officer Policy Check</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Invoices created above ₹5,00,000 threshold will be auto-flagged for dual GST e-Invoice IRN dispatch within 24h.
+            </p>
+</div>
+</div>
+</section>
+</div>
+<!-- Idempotent Safeguard Modal (Triggered on Execute Click) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm hidden" id="confirmation-modal">
+<div class="bg-surface-container-lowest max-w-lg w-full rounded-2xl p-6 shadow-2xl space-y-5 m-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">security</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Confirm Live Billing Commit</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cycle Date: October 31, 2026</p>
+</div>
+</div>
+<button class="text-outline hover:text-on-surface" id="btn-close-modal" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container space-y-2 text-body-sm font-body-sm">
+<div class="flex justify-between text-on-surface">
+<span>Subscriptions to Bill:</span>
+<span class="font-bold">48 records</span>
+</div>
+<div class="flex justify-between text-on-surface">
+<span>Net Collectible Amount:</span>
+<span class="font-bold text-primary">₹20,64,587</span>
+</div>
+<div class="flex justify-between text-on-surface">
+<span>Idempotent Key Range:</span>
+<span class="font-mono text-[11px] text-on-surface-variant">[SUB-0001..SUB-0048, 2026-10-31]</span>
+</div>
+<div class="flex justify-between text-secondary font-medium">
+<span>Collision Guard Status:</span>
+<span>Zero Re-billing Guaranteed</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          This operation will issue PDF invoices, update the general ledger, and queue notifications via email/WhatsApp webhooks.
+        </p>
+<div class="flex items-center justify-end gap-2.5 pt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors" id="btn-cancel-modal" type="button">
+            Cancel
+          </button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-sm flex items-center gap-1.5 transition-all" id="btn-confirm-commit" type="button">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+            Commit Transaction
+          </button>
+</div>
+</div>
+</div>
+<!-- Success Toast Notification -->
+<div class="fixed bottom-6 right-6 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transition-transform translate-y-24 duration-300 pointer-events-none" id="success-toast">
+<span class="material-symbols-outlined text-secondary text-[22px]">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold">Dry-Run Preview Re-Validated</span>
+<span class="font-body-sm text-body-sm text-inverse-on-surface/80">48 Subscriptions verified. 0 hash collisions. Ready to commit.</span>
+</div>
+</div>
+</div>
+<!-- Interactive script for client-side search, filtering, and modal flows -->
+<script>
+    (function initBillingRun() {
+      const modal = document.getElementById('confirmation-modal');
+      const executeBtn = document.getElementById('btn-execute-run');
+      const dryRunBtn = document.getElementById('btn-dry-run');
+      const closeBtn = document.getElementById('btn-close-modal');
+      const cancelBtn = document.getElementById('btn-cancel-modal');
+      const confirmCommitBtn = document.getElementById('btn-confirm-commit');
+      const toast = document.getElementById('success-toast');
+      const searchInput = document.getElementById('table-search');
+      const planFilter = document.getElementById('filter-plan');
+      const tableBody = document.getElementById('preview-table-body');
+
+      // Modal open/close controls
+      if (executeBtn && modal) {
+        executeBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+      }
+
+      function closeModal() {
+        if (modal) modal.classList.add('hidden');
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+      // Toast feedback helper
+      function showToast(title, msg) {
+        if (!toast) return;
+        toast.querySelector('.font-label-md').innerText = title;
+        toast.querySelector('.font-body-sm').innerText = msg;
+        toast.classList.remove('translate-y-24', 'pointer-events-none');
+        setTimeout(() => {
+          toast.classList.add('translate-y-24', 'pointer-events-none');
+        }, 3600);
+      }
+
+      // Execute Commit action
+      if (confirmCommitBtn) {
+        confirmCommitBtn.addEventListener('click', () => {
+          closeModal();
+          showToast('Live Run Executed Successfully', '48 invoices generated & committed. Run #2026-1031-02 created in 1.38s.');
+        });
+      }
+
+      // Dry-Run Re-calculation feedback
+      if (dryRunBtn) {
+        dryRunBtn.addEventListener('click', () => {
+          dryRunBtn.classList.add('animate-pulse');
+          setTimeout(() => {
+            dryRunBtn.classList.remove('animate-pulse');
+            showToast('Dry-Run Recalculated', 'All idempotent locks verified. No duplicate records detected.');
+          }, 400);
+        });
+      }
+
+      // Filter search interactions on Preview Rows
+      if (searchInput && tableBody) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase();
+          const rows = tableBody.querySelectorAll('tr');
+          rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+          });
+        });
+      }
+
+      if (planFilter && tableBody) {
+        planFilter.addEventListener('change', (e) => {
+          const selected = e.target.value;
+          const rows = tableBody.querySelectorAll('tr');
+          rows.forEach(row => {
+            if (selected === 'all') {
+              row.style.display = '';
+            } else if (selected === 'enterprise' && row.innerText.includes('Enterprise')) {
+              row.style.display = '';
+            } else if (selected === 'pro' && row.innerText.includes('Pro Monthly')) {
+              row.style.display = '';
+            } else if (selected === 'starter' && row.innerText.includes('Starter Monthly')) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+      }
+    })();
+  </script>
+</div></main></div></body></html>

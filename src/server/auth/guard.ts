@@ -94,3 +94,4 @@ export function scopeToCustomer(session: { role: UserRole; customerId: string | 
   }
   return {};
 }
+

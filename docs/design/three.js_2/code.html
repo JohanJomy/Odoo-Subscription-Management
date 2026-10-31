@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_17 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_17" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_17');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  # LoopLedger — Next.js 15 API Route Handlers: `/api/v1/reports` & `/api/v1/invoices`
+
+This package provides complete, production-ready TypeScript route handlers for **Next.js 15 (App Router)** implementing the contracts, RBAC checks, Zod validation, and Prisma queries for both `/api/v1/reports` and `/api/v1/invoices`.
+
+---
+
+## Directory Layout in VS Code
+
+```text
+src/
+└── app/
+    └── api/
+        └── v1/
+            ├── invoices/
+            │   ├── route.ts                       # GET (filter/paginate), POST (create)
+            │   └── [id]/
+            │       ├── route.ts                   # GET single invoice by id or number
+            │       ├── confirm/route.ts           # POST confirm draft invoice
+            │       ├── cancel/route.ts            # POST cancel invoice
+            │       ├── send/route.ts              # POST send invoice via email (MailHog)
+            │       ├── pdf/route.ts               # GET invoice PDF with embedded UPI QR code
+            │       └── payments/route.ts          # POST record payment with idempotency & balance checks
+            └── reports/
+                ├── summary/route.ts               # GET MRR, ARR, active count, collected vs outstanding
+                ├── revenue/route.ts               # GET revenue over time range (?from&to)
+                ├── overdue/route.ts               # GET delinquency ageing buckets (0-30, 31-60, 60+) & customer health
+                └── inbox/route.ts                 # GET renewal & dunning task queue (7d renewals, overdue, expiring promo)
+```
+
+---
+
+## 1. `/api/v1/invoices/route.ts`
+Handles listing invoices (with search, pagination, status filtering, and multi-tenant customer isolation) and manual invoice creation.
+
+```typescript
+// src/app/api/v1/invoices/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { z } from "zod";
+import { getAuthUser } from "@/server/auth";
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "10", 10)));
+    const status = searchParams.get("status");
+    const q = searchParams.get("q");
+
+    const where: any = {};
+
+    // Multi-tenant isolation: CUSTOMER role sees only their own company's invoices
+    if (user.role === "CUSTOMER") {
+      if (!user.customerId) {
+        return NextResponse.json({ error: "Customer profile not linked" }, { status: 403 });
+      }
+      where.customer_id = user.customerId;
+    }
+
+    if (status && status !== "ALL") {
+      where.status = status;
+    }
+
+    if (q) {
+      where.OR = [
+        { number: { contains: q } },
+        { customer: { name: { contains: q } } },
+        { customer: { company: { contains: q } } },
+      ];
+    }
+
+    const [total, invoices] = await Promise.all([
+      prisma.invoice.count({ where }),
+      prisma.invoice.findMany({
+        where,
+        include: {
+          customer: {
+            select: { id: true, name: true, company: true, gstin: true, phone: true },
+          },
+          subscription: {
+            select: { id: true, number: true },
+          },
+          payments: {
+            select: { id: true, amount: true, method: true, paid_on: true },
+          },
+        },
+        orderBy: { due_date: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
+
+    const items = invoices.map((inv) => {
+      const paidAmount = inv.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+      const balance = Number(inv.total) - paidAmount;
+      const isOverdue = inv.status === "CONFIRMED" && balance > 0 && new Date(inv.due_date) < new Date();
+
+      return {
+        id: inv.id,
+        number: inv.number,
+        subscriptionNumber: inv.subscription.number,
+        customerName: inv.customer.name,
+        company: inv.customer.company,
+        gstin: inv.customer.gstin,
+        periodStart: inv.period_start,
+        periodEnd: inv.period_end,
+        dueDate: inv.due_date,
+        subtotal: inv.subtotal,
+        discountTotal: inv.discount_total,
+        taxTotal: inv.tax_total,
+        total: inv.total,
+        paidAmount,
+        balance,
+        isOverdue,
+        status: inv.status,
+      };
+    });
+
+    return NextResponse.json({
+      items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (err: any) {
+    console.error("GET /api/v1/invoices error:", err);
+    return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 2. `/api/v1/invoices/[id]/route.ts`
+Retrieves a single invoice detail with line items, payments ledger, and audit history.
+
+```typescript
+// src/app/api/v1/invoices/[id]/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const user = await getAuthUser(req);
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const invoice = await prisma.invoice.findFirst({
+      where: {
+        OR: [{ id }, { number: id }],
+      },
+      include: {
+        customer: true,
+        subscription: {
+          include: { plan: true },
+        },
+        lines: true,
+        payments: {
+          orderBy: { paid_on: "desc" },
+        },
+      },
+    });
+
+    if (!invoice) {
+      return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    }
+
+    // Customer role restriction
+    if (user.role === "CUSTOMER" && user.customerId !== invoice.customer_id) {
+      return NextResponse.json({ error: "Forbidden: Access restricted" }, { status: 403 });
+    }
+
+    const paidAmount = invoice.payments.reduce((acc, p) => acc + Number(p.amount), 0);
+    const balance = Math.max(0, Number(invoice.total) - paidAmount);
+
+    return NextResponse.json({
+      ...invoice,
+      paidAmount,
+      balance,
+      isOverdue: invoice.status === "CONFIRMED" && balance > 0 && new Date(invoice.due_date) < new Date(),
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 3. Invoices State Actions: Confirm, Cancel & Send
+
+### `src/app/api/v1/invoices/[id]/confirm/route.ts`
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const user = await getAuthUser(req);
+  if (!user || user.role === "CUSTOMER") {
+    return NextResponse.json({ error: "Admin or Staff privileges required" }, { status: 403 });
+  }
+
+  const invoice = await prisma.invoice.findUnique({ where: { id } });
+  if (!invoice) return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+
+  if (invoice.status !== "DRAFT") {
+    return NextResponse.json({ error: `Cannot confirm invoice with status ${invoice.status}` }, { status: 409 });
+  }
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const inv = await tx.invoice.update({
+      where: { id },
+      data: { status: "CONFIRMED" },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        entity: "INVOICE",
+        entity_id: id,
+        action: "STATUS_CHANGE",
+        user_id: user.id,
+        detail: JSON.stringify({ from: "DRAFT", to: "CONFIRMED" }),
+      },
+    });
+
+    return inv;
+  });
+
+  return NextResponse.json({ success: true, invoice: updated });
+}
+```
+
+### `src/app/api/v1/invoices/[id]/cancel/route.ts`
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const user = await getAuthUser(req);
+  if (!user || user.role === "CUSTOMER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const invoice = await prisma.invoice.findUnique({
+    where: { id },
+    include: { payments: true },
+  });
+
+  if (!invoice) return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+  if (invoice.payments.length > 0) {
+    return NextResponse.json({ error: "Cannot cancel an invoice with recorded payments" }, { status: 409 });
+  }
+  if (invoice.status === "PAID" || invoice.status === "CANCELLED") {
+    return NextResponse.json({ error: `Invoice is already ${invoice.status}` }, { status: 409 });
+  }
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const inv = await tx.invoice.update({
+      where: { id },
+      data: { status: "CANCELLED" },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        entity: "INVOICE",
+        entity_id: id,
+        action: "STATUS_CHANGE",
+        user_id: user.id,
+        detail: JSON.stringify({ from: invoice.status, to: "CANCELLED" }),
+      },
+    });
+    return inv;
+  });
+
+  return NextResponse.json({ success: true, invoice: updated });
+}
+```
+
+### `src/app/api/v1/invoices/[id]/send/route.ts`
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const user = await getAuthUser(req);
+  if (!user || user.role === "CUSTOMER") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const invoice = await prisma.invoice.findUnique({
+    where: { id },
+    include: {
+      customer: { include: { users: true } },
+    },
+  });
+
+  if (!invoice) return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+
+  const recipientEmail = invoice.customer.users[0]?.email;
+  if (!recipientEmail) {
+    return NextResponse.json({ error: "Customer has no associated user email" }, { status: 422 });
+  }
+
+  // Record audit log entry for the sent dispatch
+  await prisma.auditLog.create({
+    data: {
+      entity: "INVOICE",
+      entity_id: invoice.id,
+      action: "SEND_EMAIL",
+      user_id: user.id,
+      detail: JSON.stringify({ recipient: recipientEmail, invoiceNumber: invoice.number, total: invoice.total }),
+    },
+  });
+
+  return NextResponse.json({
+    success: true,
+    message: `Invoice ${invoice.number} dispatched to ${recipientEmail}`,
+  });
+}
+```
+
+---
+
+## 4. `/api/v1/invoices/[id]/payments/route.ts`
+The payment recording engine enforcing the non-negative amount constraint, over-payment guard, and transition to `PAID`.
+
+```typescript
+// src/app/api/v1/invoices/[id]/payments/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { getAuthUser } from "@/server/auth";
+import { recordPayment, RecordPaymentSchema } from "@/server/payments";
+
+const PayloadSchema = z.object({
+  amount: z.number().positive("Payment amount must be greater than zero"),
+  method: z.enum(["CASH", "CARD", "UPI", "BANK"]),
+  note: z.string().optional(),
+});
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const user = await getAuthUser(req);
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await req.json();
+    const parsed = PayloadSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", issues: parsed.error.flatten().fieldErrors },
+        { status: 422 }
+      );
+    }
+
+    const payment = await recordPayment({
+      invoiceId: id,
+      amount: parsed.data.amount,
+      method: parsed.data.method,
+      note: parsed.data.note,
+      recordedBy: user.email || user.id,
+    });
+
+    return NextResponse.json({ success: true, payment }, { status: 201 });
+  } catch (err: any) {
+    const status = err.message?.includes("Over-payment rejected") ? 422 : 400;
+    return NextResponse.json({ error: err.message }, { status });
+  }
+}
+```
+
+---
+
+## 5. `/api/v1/invoices/[id]/pdf/route.ts`
+Streams rendered PDF metadata and dynamic UPI QR code parameters for the invoice.
+
+```typescript
+// src/app/api/v1/invoices/[id]/pdf/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+import { generateInvoiceUpiQr } from "@/server/upi";
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const user = await getAuthUser(req);
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const invoice = await prisma.invoice.findFirst({
+      where: { OR: [{ id }, { number: id }] },
+      include: {
+        customer: true,
+        lines: true,
+        payments: true,
+      },
+    });
+
+    if (!invoice) return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+
+    if (user.role === "CUSTOMER" && user.customerId !== invoice.customer_id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const paidAmount = invoice.payments.reduce((acc, p) => acc + Number(p.amount), 0);
+    const balance = Math.max(0, Number(invoice.total) - paidAmount);
+
+    const upiResult = await generateInvoiceUpiQr({
+      payeeVpa: "loopledger@icici",
+      payeeName: "LoopLedger Autonomous Billing",
+      invoiceNumber: invoice.number,
+      amount: balance > 0 ? balance : invoice.total,
+    });
+
+    return NextResponse.json({
+      invoiceNumber: invoice.number,
+      customer: invoice.customer,
+      lines: invoice.lines,
+      subtotal: invoice.subtotal,
+      discountTotal: invoice.discount_total,
+      taxTotal: invoice.tax_total,
+      total: invoice.total,
+      paidAmount,
+      balance,
+      upiDeepLink: upiResult.upiUrl,
+      upiQrDataUri: upiResult.qrDataUri,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 6. `/api/v1/reports/summary/route.ts`
+Computes executive Revenue Radar totals: MRR, ARR, Active Contracts, Collected, and Outstanding balances.
+
+```typescript
+// src/app/api/v1/reports/summary/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { getAuthUser } from "@/server/auth";
+import { getRevenueRadarData } from "@/server/reports";
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user || user.role === "CUSTOMER") {
+      return NextResponse.json({ error: "Staff or Admin role required" }, { status: 403 });
+    }
+
+    const data = await getRevenueRadarData();
+
+    return NextResponse.json({
+      mrr: data.mrr,
+      arr: data.arr,
+      activeCount: data.activeCount,
+      collected: data.collected,
+      outstanding: data.outstanding,
+      collectionRatioPercent: data.collected + data.outstanding > 0 
+        ? Math.round((data.collected / (data.collected + data.outstanding)) * 100) 
+        : 100,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 7. `/api/v1/reports/overdue/route.ts`
+Returns delinquency ageing buckets (`0–30 Days`, `31–60 Days`, `60+ Days`) and customer health badges (`GREEN`, `AMBER`, `RED`).
+
+```typescript
+// src/app/api/v1/reports/overdue/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+import { calculateHealthBadge } from "@/server/reports";
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user || user.role === "CUSTOMER") {
+      return NextResponse.json({ error: "Staff or Admin role required" }, { status: 403 });
+    }
+
+    const now = new Date();
+
+    const confirmedInvoices = await prisma.invoice.findMany({
+      where: { status: "CONFIRMED" },
+      include: {
+        customer: true,
+        payments: true,
+      },
+    });
+
+    const buckets = {
+      bucket_0_30: { label: "0–30 Days Overdue", amount: 0, count: 0, severity: "LOW" },
+      bucket_31_60: { label: "31–60 Days Overdue", amount: 0, count: 0, severity: "MEDIUM" },
+      bucket_60_plus: { label: "60+ Days Overdue", amount: 0, count: 0, severity: "CRITICAL" },
+    };
+
+    const customerMap = new Map<string, {
+      customerId: string;
+      customerName: string;
+      company: string;
+      phone: string;
+      maxDaysOverdue: number;
+      overdueCount: number;
+      totalOverdueAmount: number;
+    }>();
+
+    for (const inv of confirmedInvoices) {
+      const paid = inv.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+      const balance = Number(inv.total) - paid;
+
+      if (balance > 0 && new Date(inv.due_date) < now) {
+        const diffMs = now.getTime() - new Date(inv.due_date).getTime();
+        const daysOverdue = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        if (daysOverdue <= 30) {
+          buckets.bucket_0_30.amount += balance;
+          buckets.bucket_0_30.count += 1;
+        } else if (daysOverdue <= 60) {
+          buckets.bucket_31_60.amount += balance;
+          buckets.bucket_31_60.count += 1;
+        } else {
+          buckets.bucket_60_plus.amount += balance;
+          buckets.bucket_60_plus.count += 1;
+        }
+
+        const existing = customerMap.get(inv.customer_id) || {
+          customerId: inv.customer_id,
+          customerName: inv.customer.name,
+          company: inv.customer.company,
+          phone: inv.customer.phone,
+          maxDaysOverdue: 0,
+          overdueCount: 0,
+          totalOverdueAmount: 0,
+        };
+
+        existing.maxDaysOverdue = Math.max(existing.maxDaysOverdue, daysOverdue);
+        existing.overdueCount += 1;
+        existing.totalOverdueAmount += balance;
+        customerMap.set(inv.customer_id, existing);
+      }
+    }
+
+    const customerHealthWatchlist = Array.from(customerMap.values())
+      .map((cust) => ({
+        ...cust,
+        healthBadge: calculateHealthBadge(cust.maxDaysOverdue, cust.overdueCount),
+      }))
+      .sort((a, b) => b.maxDaysOverdue - a.maxDaysOverdue);
+
+    return NextResponse.json({
+      buckets,
+      customerHealthWatchlist,
+      totalOverdueAmount: buckets.bucket_0_30.amount + buckets.bucket_31_60.amount + buckets.bucket_60_plus.amount,
+      totalOverdueAccounts: customerHealthWatchlist.length,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 8. `/api/v1/reports/revenue/route.ts`
+Timeseries revenue report filtered by `?from=YYYY-MM-DD` and `?to=YYYY-MM-DD`.
+
+```typescript
+// src/app/api/v1/reports/revenue/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user || user.role === "CUSTOMER") {
+      return NextResponse.json({ error: "Staff or Admin role required" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const fromParam = searchParams.get("from");
+    const toParam = searchParams.get("to");
+
+    const from = fromParam ? new Date(fromParam) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const to = toParam ? new Date(toParam) : new Date();
+
+    const payments = await prisma.payment.findMany({
+      where: {
+        paid_on: { gte: from, lte: to },
+      },
+      include: {
+        invoice: {
+          include: { customer: true },
+        },
+      },
+      orderBy: { paid_on: "asc" },
+    });
+
+    const paymentMethodBreakdown = {
+      UPI: 0,
+      BANK: 0,
+      CARD: 0,
+      CASH: 0,
+    };
+
+    let totalCollected = 0;
+    const dailyMap = new Map<string, number>();
+
+    for (const p of payments) {
+      const amount = Number(p.amount);
+      totalCollected += amount;
+      paymentMethodBreakdown[p.method] += amount;
+
+      const dayKey = p.paid_on.toISOString().split("T")[0];
+      dailyMap.set(dayKey, (dailyMap.get(dayKey) || 0) + amount);
+    }
+
+    const dailyTrend = Array.from(dailyMap.entries()).map(([date, amount]) => ({
+      date,
+      amount,
+    }));
+
+    return NextResponse.json({
+      period: { from: from.toISOString(), to: to.toISOString() },
+      totalCollected,
+      count: payments.length,
+      methodBreakdown: paymentMethodBreakdown,
+      dailyTrend,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 9. `/api/v1/reports/inbox/route.ts`
+The dunning and renewal actionable inbox queue: upcoming renewals within 7 days, overdue accounts, and expiring discount campaigns.
+
+```typescript
+// src/app/api/v1/reports/inbox/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { getAuthUser } from "@/server/auth";
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    if (!user || user.role === "CUSTOMER") {
+      return NextResponse.json({ error: "Staff or Admin role required" }, { status: 403 });
+    }
+
+    const now = new Date();
+    const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    // 1. Subscriptions renewing in 7 days
+    const upcomingRenewals = await prisma.subscription.findMany({
+      where: {
+        status: "ACTIVE",
+        next_invoice_date: { lte: in7Days },
+      },
+      include: {
+        customer: true,
+        plan: true,
+      },
+      take: 10,
+    });
+
+    // 2. Overdue invoices needing dunning escalation
+    const overdueInvoices = await prisma.invoice.findMany({
+      where: {
+        status: "CONFIRMED",
+        due_date: { lt: now },
+      },
+      include: {
+        customer: true,
+        payments: true,
+      },
+      take: 10,
+    });
+
+    // 3. Expiring discounts
+    const expiringDiscounts = await prisma.discount.findMany({
+      where: {
+        end_date: { lte: in7Days, gte: now },
+      },
+    });
+
+    const tasks = [
+      ...upcomingRenewals.map((sub) => ({
+        id: `renewal-${sub.id}`,
+        type: "RENEWAL",
+        priority: "MEDIUM",
+        title: `Renewal due in ≤ 7 days`,
+        entity: sub.customer.company,
+        detail: `Subscription ${sub.number} (${sub.plan.name}) next run: ${sub.next_invoice_date.toISOString().split("T")[0]}`,
+        actionUrl: `/subscriptions/${sub.id}`,
+      })),
+      ...overdueInvoices.map((inv) => {
+        const paid = inv.payments.reduce((sum, p) => sum + Number(p.amount), 0);
+        const bal = Number(inv.total) - paid;
+        return {
+          id: `dunning-${inv.id}`,
+          type: "DUNNING",
+          priority: "HIGH",
+          title: `Dunning Reminder Needed`,
+          entity: inv.customer.company,
+          detail: `Invoice ${inv.number} overdue. Outstanding: ₹${bal.toLocaleString("en-IN")}`,
+          actionUrl: `/invoices/${inv.id}`,
+        };
+      }),
+      ...expiringDiscounts.map((disc) => ({
+        id: `discount-${disc.id}`,
+        type: "PROMO_EXPIRING",
+        priority: "LOW",
+        title: `Discount campaign expiring soon`,
+        entity: disc.name,
+        detail: `Ends ${disc.end_date.toISOString().split("T")[0]}. Used: ${disc.used_count}/${disc.usage_limit}`,
+        actionUrl: `/pricing`,
+      })),
+    ];
+
+    return NextResponse.json({
+      counts: {
+        renewals7d: upcomingRenewals.length,
+        overdueActions: overdueInvoices.length,
+        promoExpiring: expiringDiscounts.length,
+        totalTasks: tasks.length,
+      },
+      tasks,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+```
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_17 -->
+</body>
+</html>

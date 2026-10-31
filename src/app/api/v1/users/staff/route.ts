@@ -57,3 +57,4 @@ export const POST = apiHandler(async (request: Request) => {
     createdAt: user.createdAt,
   });
 });
+

@@ -54,3 +54,4 @@ export const GET = apiHandler(async (request: Request) => {
 
   return ok(users, { page, limit, total, totalPages });
 });
+

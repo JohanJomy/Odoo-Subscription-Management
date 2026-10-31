@@ -12,88 +12,113 @@ export interface NavItem {
   }[];
 }
 
-export const MAIN_MENU_ITEMS: NavItem[] = [
+export interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
+export const NAV_GROUPS: NavGroup[] = [
   {
-    title: "Dashboard",
-    href: "/dashboard",
-    iconName: "LayoutDashboard",
-    roles: ["ADMIN", "STAFF"],
-  },
-  {
-    title: "Inbox",
-    href: "/inbox",
-    iconName: "Inbox",
-    roles: ["ADMIN", "STAFF"],
-  },
-  {
-    title: "Customers",
-    href: "/customers",
-    iconName: "Users",
-    roles: ["ADMIN", "STAFF"],
-  },
-  {
-    title: "Subscriptions",
-    href: "/subscriptions",
-    iconName: "Repeat",
-    roles: ["ADMIN", "STAFF"],
-  },
-  {
-    title: "Invoices",
-    href: "/invoices",
-    iconName: "Receipt",
-    roles: ["ADMIN", "STAFF"],
-  },
-  {
-    title: "Payments",
-    href: "/payments",
-    iconName: "CreditCard",
-    roles: ["ADMIN", "STAFF"],
-  },
-  {
-    title: "Catalog",
-    href: "/catalog/products",
-    iconName: "Package",
-    roles: ["ADMIN", "STAFF"],
-    children: [
-      { title: "Products & Variants", href: "/catalog/products" },
-      { title: "Plans", href: "/catalog/plans" },
-      { title: "Quotation Templates", href: "/catalog/templates" },
+    group: "Overview",
+    items: [
+      {
+        title: "Revenue Radar",
+        href: "/dashboard",
+        iconName: "LayoutDashboard",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Renewal & Dunning Inbox",
+        href: "/inbox",
+        iconName: "Inbox",
+        roles: ["ADMIN", "STAFF"],
+      },
     ],
   },
   {
-    title: "Pricing",
-    href: "/pricing/taxes",
-    iconName: "Tag",
-    roles: ["ADMIN", "STAFF"],
-    children: [
-      { title: "Taxes (GST)", href: "/pricing/taxes" },
-      { title: "Discounts", href: "/pricing/discounts" },
+    group: "Core Operations",
+    items: [
+      {
+        title: "Billing Run",
+        href: "/billing",
+        iconName: "PlayCircle",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Subscriptions",
+        href: "/subscriptions",
+        iconName: "Repeat",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Invoices Ledger",
+        href: "/invoices",
+        iconName: "Receipt",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Payments",
+        href: "/payments",
+        iconName: "CreditCard",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Customers",
+        href: "/customers",
+        iconName: "Users",
+        roles: ["ADMIN", "STAFF"],
+      },
     ],
   },
   {
-    title: "Billing Run",
-    href: "/billing",
-    iconName: "PlayCircle",
-    roles: ["ADMIN", "STAFF"],
+    group: "Product & Catalog",
+    items: [
+      {
+        title: "Products & Variants",
+        href: "/catalog/products",
+        iconName: "Package",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Plans & Policies",
+        href: "/catalog/plans",
+        iconName: "Layers",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Quotation Templates",
+        href: "/catalog/templates",
+        iconName: "FileText",
+        roles: ["ADMIN", "STAFF"],
+      },
+    ],
+  },
+  {
+    group: "Settings & Administration",
+    items: [
+      {
+        title: "Pricing & Taxes",
+        href: "/pricing/taxes",
+        iconName: "Tag",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "Team & Staff",
+        href: "/team",
+        iconName: "UserCheck",
+        roles: ["ADMIN"],
+      },
+      {
+        title: "Audit Trail",
+        href: "/audit",
+        iconName: "ShieldAlert",
+        roles: ["ADMIN"],
+      },
+    ],
   },
 ];
 
-export const ADMIN_MENU_ITEMS: NavItem[] = [
-  {
-    title: "Team",
-    href: "/team",
-    iconName: "UserCheck",
-    roles: ["ADMIN"],
-  },
-  {
-    title: "Audit Trail",
-    href: "/audit",
-    iconName: "ShieldAlert",
-    roles: ["ADMIN"],
-  },
-];
-
-export const CUSTOMER_MENU_ITEMS: NavItem[] = [
+export const CUSTOMER_NAV_ITEMS: NavItem[] = [
   {
     title: "My Subscriptions",
     href: "/my/subscriptions",
@@ -101,20 +126,25 @@ export const CUSTOMER_MENU_ITEMS: NavItem[] = [
     roles: ["CUSTOMER"],
   },
   {
-    title: "My Invoices",
+    title: "My Invoices & Ledger",
     href: "/my/invoices",
     iconName: "Receipt",
     roles: ["CUSTOMER"],
   },
 ];
 
-export function getMenuItemsForRole(role: UserRole) {
+export function getFilteredNavGroups(role: UserRole): NavGroup[] {
   if (role === "CUSTOMER") {
-    return { main: CUSTOMER_MENU_ITEMS, admin: [] };
+    return [
+      {
+        group: "Customer Portal",
+        items: CUSTOMER_NAV_ITEMS,
+      },
+    ];
   }
 
-  const main = MAIN_MENU_ITEMS.filter((item) => item.roles.includes(role));
-  const admin = ADMIN_MENU_ITEMS.filter((item) => item.roles.includes(role));
-
-  return { main, admin };
+  return NAV_GROUPS.map((group) => ({
+    group: group.group,
+    items: group.items.filter((item) => item.roles.includes(role)),
+  })).filter((group) => group.items.length > 0);
 }

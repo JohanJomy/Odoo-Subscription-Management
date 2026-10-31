@@ -53,3 +53,4 @@ export function PasswordChecklist({ value }: PasswordChecklistProps) {
     </div>
   );
 }
+

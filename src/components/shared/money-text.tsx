@@ -14,3 +14,4 @@ export function MoneyText({ paise, className }: MoneyTextProps) {
     </span>
   );
 }
+

@@ -32,3 +32,4 @@ export const GET = apiHandler(async (request: Request) => {
 
   return ok(logs, { page, limit, total, totalPages });
 });
+

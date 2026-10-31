@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, FormEvent } from "react";
-import { UserCheck, Plus, X, Shield, UserX, AlertCircle, RefreshCw } from "lucide-react";
+import { UserCheck, Plus, X, Shield, UserX, AlertCircle, RefreshCw, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/shared/status-chip";
 import { PasswordChecklist } from "@/components/auth/password-checklist";
@@ -112,15 +112,23 @@ export default function TeamPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Stitch-style Page Header with Breadcrumbs */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pb-2 border-b border-slate-200/60">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-            Team & Staff Management
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Manage administrative personnel, support agents, and user account access.
-          </p>
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <span>Settings & Administration</span>
+            <span>/</span>
+            <span className="text-slate-800">Team & Roles</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Team & Staff Management
+            </h1>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200/60 text-indigo-700 text-xs font-semibold">
+              <Users className="h-3 w-3" />
+              {users.length} Registered Members
+            </span>
+          </div>
         </div>
 
         <Button
@@ -128,7 +136,7 @@ export default function TeamPage() {
             setDialogOpen(true);
             setDialogError(null);
           }}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs h-9 px-4 inline-flex items-center gap-1.5 shadow-xs"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs h-9 px-4 inline-flex items-center gap-1.5 shadow-xs self-start sm:self-auto"
         >
           <Plus className="h-4 w-4" />
           <span>Add Staff Member</span>
@@ -179,56 +187,56 @@ export default function TeamPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-medium">
+              <thead className="bg-[#F8FAFC] border-b border-slate-200 text-slate-500 font-semibold uppercase text-[11px] tracking-wider">
                 <tr>
-                  <th className="px-4 py-3">Member</th>
-                  <th className="px-4 py-3">Role</th>
-                  <th className="px-4 py-3">Status</th>
+                  <th className="px-5 py-3">Member Details</th>
+                  <th className="px-4 py-3">Assigned Role</th>
+                  <th className="px-4 py-3">Account Status</th>
                   <th className="px-4 py-3">Joined Date</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-5 py-3 text-right">Access Controls</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {users.map((u) => {
                   const displayName = u.customer?.name ?? u.email.split("@")[0];
                   return (
-                    <tr key={u.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200 shrink-0">
+                    <tr key={u.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-indigo-700 font-bold text-xs border border-indigo-200/50 shrink-0">
                             {displayName.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-medium text-slate-900 truncate">{displayName}</p>
-                            <p className="text-[11px] text-slate-500 truncate">{u.email}</p>
+                            <p className="font-semibold text-slate-900 truncate">{displayName}</p>
+                            <p className="text-[11px] text-slate-500 font-mono truncate">{u.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
-                          <Shield className="h-3 w-3 text-slate-400" />
-                          {u.role}
+                      <td className="px-4 py-3.5">
+                        <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700 border border-slate-200/60">
+                          <Shield className="h-3 w-3 text-slate-500" />
+                          {u.role === "ADMIN" ? "RevOps Admin" : u.role === "STAFF" ? "Support Staff" : "Customer Portal"}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3.5">
                         <StatusChip
                           status={u.active ? "ACTIVE" : "CLOSED"}
                           label={u.active ? "Active" : "Deactivated"}
                         />
                       </td>
-                      <td className="px-4 py-3 text-slate-500 tabular-nums">
+                      <td className="px-4 py-3.5 text-slate-500 font-mono text-[11px] tabular-nums">
                         {new Date(u.createdAt).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
                         })}
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-5 py-3.5 text-right">
                         <Button
                           variant="ghost"
                           disabled={togglingId === u.id}
                           onClick={() => handleToggleActive(u)}
-                          className={`text-xs h-7 px-2.5 ${
+                          className={`text-xs h-7 px-2.5 rounded-lg ${
                             u.active
                               ? "text-rose-600 hover:text-rose-700 hover:bg-rose-50"
                               : "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
@@ -273,7 +281,7 @@ export default function TeamPage() {
               <button
                 type="button"
                 onClick={() => setDialogOpen(false)}
-                className="rounded-md p-1 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -287,38 +295,38 @@ export default function TeamPage() {
 
             <form onSubmit={handleAddStaff} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Full Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Rahul Verma"
-                  className="h-9 w-full rounded-md border border-slate-300 px-3 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="h-9 w-full rounded-lg border border-slate-300 px-3 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Staff Email</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Staff Work Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="staff@loopledger.test"
-                  className="h-9 w-full rounded-md border border-slate-300 px-3 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="h-9 w-full rounded-lg border border-slate-300 px-3 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Temporary Password</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Temporary Password</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="•••••••••"
-                  className="h-9 w-full rounded-md border border-slate-300 px-3 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="h-9 w-full rounded-lg border border-slate-300 px-3 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
@@ -329,14 +337,14 @@ export default function TeamPage() {
                   type="button"
                   variant="outline"
                   onClick={() => setDialogOpen(false)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={saving || !isPasswordValid}
-                  className="h-9 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium"
+                  className="h-9 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg"
                 >
                   {saving ? "Creating staff..." : "Create Staff Account"}
                 </Button>
