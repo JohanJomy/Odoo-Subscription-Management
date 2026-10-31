@@ -161,7 +161,11 @@ export function pickBestDiscount(
   let bestMatch: { discount: DiscountCandidate; saving: number; matchingIndices: number[] } | null = null;
 
   const totalOrderAmount = lines.reduce((sum, l) => sum + l.lineAmount, 0);
-  const totalOrderQty = lines.reduce((sum, l) => sum + l.qty, 0);
+  // minQty checks must only count PRODUCT lines (those with a productId).
+  // The plan fee line (qty=1, no productId) must never inflate the seat count.
+  const productLinesQty = lines
+    .filter((l) => !!l.productId)
+    .reduce((sum, l) => sum + l.qty, 0);
 
   for (const disc of discounts) {
     if (!disc.active) continue;
@@ -186,7 +190,8 @@ export function pickBestDiscount(
       if (!disc.subscriptionId || disc.subscriptionId === subscriptionId) {
         matchingIndices = lines.map((_, idx) => idx);
         applicableBase = totalOrderAmount;
-        applicableQty = totalOrderQty;
+        // Use only product line qty — plan fee (qty=1) must not count as a seat
+        applicableQty = productLinesQty;
       }
     }
 
