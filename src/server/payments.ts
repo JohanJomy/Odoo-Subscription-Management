@@ -1,4 +1,4 @@
-import { Prisma, type Customer as PrismaCustomer, type Invoice as PrismaInvoice, type Payment as PrismaPayment } from "@prisma/client";
+import { Prisma, type Invoice as PrismaInvoice, type Payment as PrismaPayment } from "@prisma/client";
 import { prisma } from "@/server/db";
 import { writeAudit } from "@/server/audit";
 
@@ -35,7 +35,7 @@ export class PaymentError extends Error {
   }
 }
 
-type InvoiceWithPayments = PrismaInvoice & { payments: PrismaPayment[]; customer: PrismaCustomer };
+type InvoiceWithPayments = PrismaInvoice & { payments: PrismaPayment[] };
 
 function mapPayment(payment: PrismaPayment): Payment {
   return {
@@ -53,7 +53,7 @@ function mapInvoice(invoice: InvoiceWithPayments): Invoice {
   return {
     id: invoice.id,
     number: invoice.number,
-    customer: invoice.customer.name,
+    customer: invoice.customerId,
     total: invoice.total,
     paidTotal: invoice.paidTotal,
     dueDate: invoice.dueDate.toISOString().slice(0, 10),
@@ -62,7 +62,7 @@ function mapInvoice(invoice: InvoiceWithPayments): Invoice {
   };
 }
 
-const invoiceInclude = { payments: { orderBy: { paidOn: "desc" as const } }, customer: true };
+const invoiceInclude = { payments: { orderBy: { paidOn: "desc" as const } } };
 
 export async function listInvoices(): Promise<Invoice[]> {
   const rows = await prisma.invoice.findMany({ include: invoiceInclude, orderBy: { dueDate: "asc" } });

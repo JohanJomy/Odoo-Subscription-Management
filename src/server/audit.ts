@@ -54,7 +54,15 @@ export async function listAuditLogs(limit = 100) {
     entity: row.entity,
     entityId: row.entityId,
     actor: row.userId ?? "system",
-    metadata: row.detail ? JSON.parse(row.detail) as Record<string, unknown> : null,
+    metadata: row.detail
+      ? (() => {
+          try {
+            return JSON.parse(row.detail) as Record<string, unknown>;
+          } catch {
+            return { detail: row.detail };
+          }
+        })()
+      : null,
     createdAt: row.at.toISOString(),
   }));
 }
