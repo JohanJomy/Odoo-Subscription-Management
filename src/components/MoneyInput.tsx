@@ -9,10 +9,10 @@ export interface CurrencyOption {
 }
 
 export const DEFAULT_CURRENCIES: CurrencyOption[] = [
+  { code: "INR", symbol: "₹", label: "INR (₹)" },
   { code: "USD", symbol: "$", label: "USD ($)" },
   { code: "EUR", symbol: "€", label: "EUR (€)" },
   { code: "GBP", symbol: "£", label: "GBP (£)" },
-  { code: "INR", symbol: "₹", label: "INR (₹)" },
   { code: "CAD", symbol: "CA$", label: "CAD (CA$)" },
   { code: "AUD", symbol: "A$", label: "AUD (A$)" },
   { code: "JPY", symbol: "¥", label: "JPY (¥)" },
@@ -23,9 +23,16 @@ export interface MoneyInputProps
     React.InputHTMLAttributes<HTMLInputElement>,
     "value" | "defaultValue" | "onChange" | "size"
   > {
+  /** Value in standard units (e.g. 1000 for ₹1,000) */
   value?: number | string;
+  /** Value in integer paise (e.g. 100000 for ₹1,000). Takes precedence if provided. */
+  valuePaise?: number;
   defaultValue?: number | string;
+  defaultValuePaise?: number;
+  /** Emits value in standard units and formatted string */
   onChange?: (value: number | undefined, formattedValue: string) => void;
+  /** Emits value in integer paise (e.g. 100000) */
+  onChangePaise?: (paise: number | undefined) => void;
   currency?: string;
   currencySymbol?: string;
   currencies?: CurrencyOption[];
@@ -52,7 +59,6 @@ function formatNumberWithCommas(
 ): string {
   if (!valStr) return "";
 
-  // Handle negative sign
   const isNegative = valStr.startsWith("-");
   const cleanStr = isNegative ? valStr.slice(1) : valStr;
 
@@ -60,10 +66,7 @@ function formatNumberWithCommas(
   let integerPart = parts[0] || "0";
   let decimalPart = parts[1];
 
-  // Remove leading zeros from integer part unless it's just "0"
   integerPart = integerPart.replace(/^0+(?=\d)/, "");
-
-  // Add thousand separators
   const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   if (isBlur) {
@@ -85,9 +88,12 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
   (
     {
       value,
+      valuePaise,
       defaultValue,
+      defaultValuePaise,
       onChange,
-      currency = "USD",
+      onChangePaise,
+      currency = "INR",
       currencySymbol,
       currencies = DEFAULT_CURRENCIES,
       onCurrencyChange,
@@ -118,13 +124,21 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
     const [isFocused, setIsFocused] = useState(false);
     const [selectedCurrency, setSelectedCurrency] = useState(currency);
 
-    // Find symbol
     const activeSymbol =
       currencySymbol ||
       currencies.find((c) => c.code === selectedCurrency)?.symbol ||
-      "$";
+      "₹";
 
-    // Initialize display string
+    const getRupeeFromPaiseOrValue = (
+      val?: number | string,
+      paise?: number
+    ): number | string | undefined => {
+      if (paise !== undefined && paise !== null) {
+        return (paise / 100).toFixed(precision);
+      }
+      return val;
+    };
+
     const formatInitial = (val?: number | string) => {
       if (val === undefined || val === null || val === "") return "";
       const num = typeof val === "number" ? val : parseFloat(val.toString().replace(/,/g, ""));
@@ -132,33 +146,35 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
       return formatNumberWithCommas(num.toFixed(precision), precision, true);
     };
 
-    const [displayValue, setDisplayValue] = useState(() =>
-      formatInitial(value !== undefined ? value : defaultValue)
+    const initialRaw = getRupeeFromPaiseOrValue(
+      value !== undefined ? value : defaultValue,
+      valuePaise !== undefined ? valuePaise : defaultValuePaise
     );
 
-    // Sync when controlled value changes externally while not focused
+    const [displayValue, setDisplayValue] = useState(() => formatInitial(initialRaw));
+
     useEffect(() => {
-      if (!isFocused && value !== undefined) {
-        setDisplayValue(formatInitial(value));
+      if (!isFocused) {
+        const targetVal = getRupeeFromPaiseOrValue(value, valuePaise);
+        if (targetVal !== undefined) {
+          setDisplayValue(formatInitial(targetVal));
+        }
       }
-    }, [value, precision, isFocused]);
+    }, [value, valuePaise, precision, isFocused]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const rawInput = e.target.value;
 
-      // Allow digits, single decimal point, and optional minus if allowed
       let sanitized = rawInput.replace(/[^0-9.-]/g, "");
 
       if (!allowNegative) {
         sanitized = sanitized.replace(/-/g, "");
       } else {
-        // Only allow minus at the beginning
         const hasMinus = sanitized.startsWith("-");
         sanitized = sanitized.replace(/-/g, "");
         if (hasMinus) sanitized = "-" + sanitized;
       }
 
-      // Allow only one decimal point
       const decimalCount = (sanitized.match(/\./g) || []).length;
       if (decimalCount > 1) {
         const firstDotIndex = sanitized.indexOf(".");
@@ -167,15 +183,17 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
           sanitized.slice(firstDotIndex + 1).replace(/\./g, "");
       }
 
-      // Format current typing state
       const formatted = formatNumberWithCommas(sanitized, precision, false);
       setDisplayValue(formatted);
 
-      // Numeric calculation
       const numericString = formatted.replace(/,/g, "");
-      const numericVal = numericString === "" || numericString === "-" ? undefined : parseFloat(numericString);
+      const numericVal =
+        numericString === "" || numericString === "-" ? undefined : parseFloat(numericString);
+
+      const paiseVal = numericVal !== undefined ? Math.round(numericVal * 100) : undefined;
 
       onChange?.(numericVal, formatted);
+      onChangePaise?.(paiseVal);
     };
 
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -196,10 +214,13 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
 
           const formatted = formatNumberWithCommas(num.toFixed(precision), precision, true);
           setDisplayValue(formatted);
+          const paiseVal = Math.round(num * 100);
           onChange?.(num, formatted);
+          onChangePaise?.(paiseVal);
         } else {
           setDisplayValue("");
           onChange?.(undefined, "");
+          onChangePaise?.(undefined);
         }
       }
 
@@ -212,7 +233,6 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
       onCurrencyChange?.(code);
     };
 
-    // Size variants
     const sizeClasses = {
       sm: "py-1 text-xs",
       md: "py-2 text-sm",
@@ -248,7 +268,6 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
               : "border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 hover:border-neutral-400 dark:hover:border-neutral-600"
           }`}
         >
-          {/* Currency Prefix Badge or Selector */}
           {allowCurrencySelect ? (
             <div className="relative border-r border-neutral-200 dark:border-neutral-700 flex items-center">
               <select
@@ -275,7 +294,6 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
             </div>
           )}
 
-          {/* Amount Input */}
           <input
             ref={ref}
             id={inputId}
@@ -292,13 +310,13 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
             {...rest}
           />
 
-          {/* Quick Clear Button */}
           {displayValue && !disabled && (
             <button
               type="button"
               onClick={() => {
                 setDisplayValue("");
                 onChange?.(undefined, "");
+                onChangePaise?.(undefined);
               }}
               className="px-2.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 flex items-center transition"
               title="Clear"
@@ -320,11 +338,10 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
           )}
         </div>
 
-        {/* Error or Helper text */}
         {error ? (
           <p className="text-xs text-red-500 dark:text-red-400 flex items-center gap-1 mt-0.5">
             <svg
-              className="w-3 h-3 flex-shrink-0"
+              className="w-3.5 h-3.5 shrink-0"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
