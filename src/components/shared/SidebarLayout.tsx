@@ -82,9 +82,6 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           </Link>
-          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container text-on-surface-variant font-mono">
-            v2.4
-          </span>
         </div>
 
         {/* Live Workspace Badge */}

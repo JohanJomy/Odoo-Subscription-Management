@@ -13,9 +13,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <span className="text-xl font-bold tracking-tight text-slate-900 leading-none">
               LoopLedger
             </span>
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700">
-              v2.4
-            </span>
           </div>
           <span className="text-[11px] text-slate-500 font-medium mt-0.5">
             Autonomous Billing Cloud

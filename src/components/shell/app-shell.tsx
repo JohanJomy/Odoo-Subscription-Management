@@ -139,9 +139,6 @@ export function AppShell({ children, user }: AppShellProps) {
                   </span>
                 </div>
               </div>
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                v2.4
-              </span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -373,7 +370,7 @@ export function AppShell({ children, user }: AppShellProps) {
                 </div>
                 <div>
                   <span className="font-bold text-slate-900 text-sm">LoopLedger</span>
-                  <span className="block text-[10px] text-slate-400">Billing Cloud v2.4</span>
+                  <span className="block text-[10px] text-slate-400">Billing Cloud</span>
                 </div>
               </div>
               <button

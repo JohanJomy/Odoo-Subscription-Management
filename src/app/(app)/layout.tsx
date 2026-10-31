@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   });
 
   if (!user || !user.active) {
-    redirect("/login");
+    redirect("/login?reset=1");
   }
 
   return (
