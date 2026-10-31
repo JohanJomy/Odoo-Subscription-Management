@@ -63,6 +63,18 @@ export const NAV_GROUPS: NavGroup[] = [
         roles: ["ADMIN", "STAFF"],
       },
       {
+        title: "Revenue Reports",
+        href: "/reports",
+        iconName: "BarChart3",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
+        title: "QR Scanner",
+        href: "/scanner",
+        iconName: "ScanLine",
+        roles: ["ADMIN", "STAFF"],
+      },
+      {
         title: "Customers",
         href: "/customers",
         iconName: "Users",

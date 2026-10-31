@@ -24,6 +24,8 @@
     "date-fns": "^4.4.0",
     "jose": "^6.2.14",
     "lucide-react": "^1.64.0",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
     "next": "16.4.3",
     "nodemailer": "^10.3.1",
     "react": "19.3.0",
@@ -43,9 +45,13 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "prisma": "6.4.1",
+    "@types/qrcode": "^1.5.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "packageManager": "pnpm@12.16.1"
 }

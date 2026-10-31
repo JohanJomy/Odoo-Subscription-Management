@@ -34,3 +34,28 @@ export async function audit(
   });
 }
 
+export async function writeAudit(
+  client: PrismaTransaction | PrismaClient | undefined,
+  params: {
+    entity: string;
+    entityId: string;
+    action: string;
+    userId?: string | null;
+    metadata?: Record<string, unknown>;
+  },
+) {
+  return audit(client, {
+    entity: params.entity,
+    entityId: params.entityId,
+    action: params.action,
+    userId: params.userId,
+    detail: params.metadata ? JSON.stringify(params.metadata) : null,
+  });
+}
+
+export async function listAuditLogs(limit = 100) {
+  return defaultPrisma.auditLog.findMany({
+    orderBy: { at: "desc" },
+    take: Math.min(Math.max(limit, 1), 200),
+  });
+}
