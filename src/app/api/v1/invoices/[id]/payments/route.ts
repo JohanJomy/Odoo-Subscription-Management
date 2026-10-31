@@ -12,7 +12,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     if (!method || !methods.has(method) || !Number.isInteger(amount) || typeof body.note === "string" && body.note.length > 200) {
       return Response.json({ error: { code: "VALIDATION_FAILED" } }, { status: 422 });
     }
-    const result = recordPayment(id, { method, amount, paidOn, note: typeof body.note === "string" ? body.note : undefined, externalRef: typeof body.externalRef === "string" ? body.externalRef : undefined });
+    const externalRef = typeof body.externalRef === "string" ? body.externalRef : request.headers.get("Idempotency-Key") || undefined;
+    const result = await recordPayment(id, { method, amount, paidOn, note: typeof body.note === "string" ? body.note : undefined, externalRef });
     return Response.json({ data: result }, { status: result.duplicate ? 200 : 201 });
   } catch (error) {
     if (error instanceof PaymentError) return Response.json({ error: { code: error.code } }, { status: error.status });

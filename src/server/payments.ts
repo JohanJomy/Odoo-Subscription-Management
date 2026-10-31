@@ -1,3 +1,6 @@
+import { Prisma, type Invoice as PrismaInvoice, type Payment as PrismaPayment } from "@prisma/client";
+import { prisma } from "@/server/db";
+
 export type InvoiceStatus = "DRAFT" | "CONFIRMED" | "PAID" | "CANCELLED";
 export type PaymentMethod = "UPI" | "BANK" | "CARD" | "CASH";
 
@@ -31,65 +34,106 @@ export class PaymentError extends Error {
   }
 }
 
-const initialInvoices: Invoice[] = [
-  { id: "inv-0412", number: "INV-2026-0412", customer: "Apex Logix India Pvt Ltd", total: 2450000, paidTotal: 0, dueDate: "2026-11-04", status: "CONFIRMED", payments: [] },
-  { id: "inv-0182", number: "INV-2026-0182", customer: "Nexus Cloud Technologies", total: 1998300, paidTotal: 1998300, dueDate: "2026-10-01", status: "PAID", payments: [] },
-  { id: "inv-draft", number: "INV-2026-DRAFT", customer: "Brightloop Demo Account", total: 125000, paidTotal: 0, dueDate: "2026-11-15", status: "DRAFT", payments: [] },
-];
+type InvoiceWithPayments = PrismaInvoice & { payments: PrismaPayment[] };
 
-const invoices = new Map(initialInvoices.map((invoice) => [invoice.id, invoice]));
-const paymentsByExternalRef = new Map<string, Payment>();
-
-function cloneInvoice(invoice: Invoice): Invoice {
-  return { ...invoice, payments: invoice.payments.map((payment) => ({ ...payment })) };
+function mapPayment(payment: PrismaPayment): Payment {
+  return {
+    id: payment.id,
+    invoiceId: payment.invoiceId,
+    method: payment.method,
+    amount: payment.amount,
+    paidOn: payment.paidOn,
+    note: payment.note,
+    externalRef: payment.externalRef,
+  };
 }
 
-export function listInvoices(): Invoice[] {
-  return [...invoices.values()].map(cloneInvoice);
+function mapInvoice(invoice: InvoiceWithPayments): Invoice {
+  return {
+    id: invoice.id,
+    number: invoice.number,
+    customer: invoice.customer,
+    total: invoice.total,
+    paidTotal: invoice.paidTotal,
+    dueDate: invoice.dueDate,
+    status: invoice.status,
+    payments: invoice.payments.map(mapPayment),
+  };
 }
 
-export function getInvoice(invoiceId: string): Invoice {
-  const invoice = invoices.get(invoiceId);
+const invoiceInclude = { payments: { orderBy: { paidOn: "desc" as const } } };
+
+export async function listInvoices(): Promise<Invoice[]> {
+  const rows = await prisma.invoice.findMany({ include: invoiceInclude, orderBy: { dueDate: "asc" } });
+  return rows.map(mapInvoice);
+}
+
+export async function getInvoice(invoiceId: string): Promise<Invoice> {
+  const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: invoiceInclude });
   if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
-  return cloneInvoice(invoice);
+  return mapInvoice(invoice);
 }
 
-export function recordPayment(
+export async function recordPayment(
   invoiceId: string,
   input: { method: PaymentMethod; amount: number; paidOn: string; note?: string; externalRef?: string },
-): { invoice: Invoice; payment: Payment; duplicate: boolean } {
-  const invoice = invoices.get(invoiceId);
-  if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
-  if (input.externalRef) {
-    const existing = paymentsByExternalRef.get(input.externalRef);
-    if (existing) return { invoice: cloneInvoice(invoice), payment: { ...existing }, duplicate: true };
-  }
-  if (invoice.status !== "CONFIRMED") throw new PaymentError("INVOICE_NOT_PAYABLE", 409);
+): Promise<{ invoice: Invoice; payment: Payment; duplicate: boolean }> {
   if (!Number.isInteger(input.amount) || input.amount <= 0) throw new PaymentError("INVALID_AMOUNT", 422);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.paidOn) || input.paidOn > new Date().toISOString().slice(0, 10)) throw new PaymentError("INVALID_DATE", 422);
-  const balance = invoice.total - invoice.paidTotal;
-  if (input.amount > balance) throw new PaymentError("OVERPAYMENT", 422);
-  const payment: Payment = {
-    id: `pay-${crypto.randomUUID()}`,
-    invoiceId,
-    method: input.method,
-    amount: input.amount,
-    paidOn: input.paidOn,
-    note: input.note?.trim() || null,
-    externalRef: input.externalRef || null,
-  };
-  invoice.payments.push(payment);
-  invoice.paidTotal += payment.amount;
-  invoice.status = invoice.paidTotal === invoice.total ? "PAID" : "CONFIRMED";
-  if (payment.externalRef) paymentsByExternalRef.set(payment.externalRef, payment);
-  return { invoice: cloneInvoice(invoice), payment: { ...payment }, duplicate: false };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(input.paidOn) || input.paidOn > new Date().toISOString().slice(0, 10)) {
+    throw new PaymentError("INVALID_DATE", 422);
+  }
+
+  try {
+    return await prisma.$transaction(async (transaction) => {
+      if (input.externalRef) {
+        const existing = await transaction.payment.findUnique({ where: { externalRef: input.externalRef } });
+        if (existing) {
+          const invoice = await transaction.invoice.findUnique({ where: { id: existing.invoiceId }, include: invoiceInclude });
+          if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
+          return { invoice: mapInvoice(invoice), payment: mapPayment(existing), duplicate: true };
+        }
+      }
+
+      const invoice = await transaction.invoice.findUnique({ where: { id: invoiceId }, include: invoiceInclude });
+      if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
+      if (invoice.status !== "CONFIRMED") throw new PaymentError("INVOICE_NOT_PAYABLE", 409);
+      if (input.amount > invoice.total - invoice.paidTotal) throw new PaymentError("OVERPAYMENT", 422);
+
+      const payment = await transaction.payment.create({
+        data: {
+          id: `pay-${crypto.randomUUID()}`,
+          invoiceId,
+          method: input.method,
+          amount: input.amount,
+          paidOn: input.paidOn,
+          note: input.note?.trim() || null,
+          externalRef: input.externalRef || null,
+        },
+      });
+      const paidTotal = invoice.paidTotal + payment.amount;
+      const updated = await transaction.invoice.update({
+        where: { id: invoiceId },
+        data: { paidTotal, status: paidTotal === invoice.total ? "PAID" : "CONFIRMED" },
+        include: invoiceInclude,
+      });
+      return { invoice: mapInvoice(updated), payment: mapPayment(payment), duplicate: false };
+    });
+  } catch (error) {
+    if (error instanceof PaymentError) throw error;
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002" && input.externalRef) {
+      return recordPayment(invoiceId, input);
+    }
+    throw error;
+  }
 }
 
-export function transitionInvoice(invoiceId: string, nextStatus: "CONFIRMED" | "CANCELLED"): Invoice {
-  const invoice = invoices.get(invoiceId);
+export async function transitionInvoice(invoiceId: string, nextStatus: "CONFIRMED" | "CANCELLED"): Promise<Invoice> {
+  const invoice = await prisma.invoice.findUnique({ where: { id: invoiceId }, include: invoiceInclude });
   if (!invoice) throw new PaymentError("INVOICE_NOT_FOUND", 404);
   if (nextStatus === "CONFIRMED" && invoice.status !== "DRAFT") throw new PaymentError("INVOICE_NOT_PAYABLE", 409);
-  if (nextStatus === "CANCELLED" && (!["DRAFT", "CONFIRMED"].includes(invoice.status) || invoice.paidTotal > 0)) throw new PaymentError("INVOICE_NOT_PAYABLE", 409);
-  invoice.status = nextStatus;
-  return cloneInvoice(invoice);
+  if (nextStatus === "CANCELLED" && (!["DRAFT", "CONFIRMED"].includes(invoice.status) || invoice.paidTotal > 0)) {
+    throw new PaymentError("INVOICE_NOT_PAYABLE", 409);
+  }
+  const updated = await prisma.invoice.update({ where: { id: invoiceId }, data: { status: nextStatus }, include: invoiceInclude });
+  return mapInvoice(updated);
 }

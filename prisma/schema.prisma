@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model User {
   id           String          @id @default(cuid())
   email        String          @unique
@@ -231,4 +232,45 @@ model BillingRun {
   skipped Int
   failed  Int
   report  String // JSON array of { subscriptionId, outcome, message }
+=======
+enum InvoiceStatus {
+  DRAFT
+  CONFIRMED
+  PAID
+  CANCELLED
+}
+
+enum PaymentMethod {
+  UPI
+  BANK
+  CARD
+  CASH
+}
+
+model Invoice {
+  id        String        @id
+  number    String        @unique
+  customer  String
+  total     Int
+  paidTotal Int           @default(0)
+  dueDate   String
+  status    InvoiceStatus @default(DRAFT)
+  payments  Payment[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Payment {
+  id            String        @id
+  invoiceId     String
+  method        PaymentMethod
+  amount        Int
+  paidOn        String
+  note          String?
+  externalRef   String?       @unique
+  createdAt     DateTime      @default(now())
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+>>>>>>> b154088 (feat(p4): persist invoices and payments with sqlite)
 }

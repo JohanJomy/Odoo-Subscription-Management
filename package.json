@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+<<<<<<< HEAD
     "db:seed": "tsx prisma/seed.ts",
     "db:verify": "tsx prisma/verify-p1.ts",
     "db:reset": "prisma migrate reset --force"
@@ -24,6 +25,14 @@
     "date-fns": "^4.4.0",
     "jose": "^6.2.14",
     "lucide-react": "^1.64.0",
+=======
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+>>>>>>> b154088 (feat(p4): persist invoices and payments with sqlite)
     "next": "16.4.3",
     "nodemailer": "^10.3.1",
     "react": "19.3.0",
@@ -42,10 +51,17 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+<<<<<<< HEAD
     "prisma": "6.4.1",
+=======
+    "prisma": "^6.19.0",
+>>>>>>> b154088 (feat(p4): persist invoices and payments with sqlite)
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "packageManager": "pnpm@12.16.1"
 }

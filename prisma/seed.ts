@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -566,3 +567,31 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+=======
+import { PrismaClient, InvoiceStatus } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+const invoices = [
+  { id: "inv-0412", number: "INV-2026-0412", customer: "Apex Logix India Pvt Ltd", total: 2450000, dueDate: "2026-11-04", status: InvoiceStatus.CONFIRMED },
+  { id: "inv-0182", number: "INV-2026-0182", customer: "Nexus Cloud Technologies", total: 1998300, paidTotal: 1998300, dueDate: "2026-10-01", status: InvoiceStatus.PAID },
+  { id: "inv-draft", number: "INV-2026-DRAFT", customer: "Brightloop Demo Account", total: 125000, dueDate: "2026-11-15", status: InvoiceStatus.DRAFT },
+];
+
+async function main() {
+  for (const invoice of invoices) {
+    await prisma.invoice.upsert({
+      where: { id: invoice.id },
+      update: invoice,
+      create: invoice,
+    });
+  }
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  })
+  .finally(() => prisma.$disconnect());
+>>>>>>> b154088 (feat(p4): persist invoices and payments with sqlite)
