@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { HttpError } from '@/lib/http-error';
+import { HttpError } from '@/lib/http';
 import { SubscriptionStatus, CloseReason } from '@/lib/constants';
 
 type TransactionClient = Omit<

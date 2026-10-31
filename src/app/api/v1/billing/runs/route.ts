@@ -1,26 +1,23 @@
 import { NextRequest } from 'next/server';
-import { prisma } from '@/lib/db';
-import { apiSuccess, apiError } from '@/lib/http-error';
+import { prisma } from '@/lib/prisma';
+import { ok, apiHandler, parsePagination } from '@/lib/http';
+import { requireRole } from '@/server/auth/guard';
 
-export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 100);
-    const skip = (page - 1) * limit;
+export const GET = apiHandler(async (request: NextRequest) => {
+  await requireRole(['ADMIN', 'STAFF'], request);
+  const { page, limit, skip } = parsePagination(request.url);
 
-    const [runs, total] = await Promise.all([
-      prisma.billingRun.findMany({
-        skip,
-        take: limit,
-        orderBy: { ranAt: 'desc' },
-      }),
-      prisma.billingRun.count(),
-    ]);
+  const [runs, total] = await Promise.all([
+    prisma.billingRun.findMany({
+      skip,
+      take: limit,
+      orderBy: { ranAt: 'desc' },
+      include: {
+        ranBy: { select: { id: true, email: true } },
+      },
+    }),
+    prisma.billingRun.count(),
+  ]);
 
-    return apiSuccess(runs, { page, limit, total });
-  } catch (err) {
-    return apiError(err);
-  }
-}
-
+  return ok(runs, { page, limit, total });
+});

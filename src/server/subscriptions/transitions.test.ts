@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { validateTransition } from './transitions';
-import { HttpError } from '@/lib/http-error';
+import { HttpError } from '@/lib/http';
 
 describe('Subscription Status Machine (Transitions)', () => {
   const defaultPlan = {
@@ -66,7 +66,7 @@ describe('Subscription Status Machine (Transitions)', () => {
       validateTransition(defaultSub, defaultPlan, 'ACTIVE');
     } catch (err) {
       const httpErr = err as HttpError;
-      expect(httpErr.statusCode).toBe(409);
+      expect(httpErr.status).toBe(409);
       expect(httpErr.code).toBe('INVALID_TRANSITION');
     }
   });
@@ -87,7 +87,7 @@ describe('Subscription Status Machine (Transitions)', () => {
       validateTransition(expiredSub, defaultPlan, 'CONFIRMED', { today });
     } catch (err) {
       const httpErr = err as HttpError;
-      expect(httpErr.statusCode).toBe(409);
+      expect(httpErr.status).toBe(409);
       expect(httpErr.code).toBe('QUOTE_EXPIRED');
     }
   });
@@ -108,7 +108,7 @@ describe('Subscription Status Machine (Transitions)', () => {
       });
     } catch (err) {
       const httpErr = err as HttpError;
-      expect(httpErr.statusCode).toBe(409);
+      expect(httpErr.status).toBe(409);
       expect(httpErr.code).toBe('PLAN_NOT_CLOSABLE');
     }
   });
@@ -129,7 +129,7 @@ describe('Subscription Status Machine (Transitions)', () => {
       });
     } catch (err) {
       const httpErr = err as HttpError;
-      expect(httpErr.statusCode).toBe(409);
+      expect(httpErr.status).toBe(409);
       expect(httpErr.code).toBe('PLAN_NOT_PAUSABLE');
     }
   });
