@@ -74,13 +74,10 @@ export function parsePagination(url: string | URL) {
   return { page, limit, skip, searchParams };
 }
 
-export type RouteHandler = (
-  request: Request,
-  context?: any
-) => Promise<Response | NextResponse> | Response | NextResponse;
+export type RouteHandler<T = any> = (request: T, context?: any) => Promise<Response | NextResponse> | Response | NextResponse;
 
-export function apiHandler(handler: RouteHandler): RouteHandler {
-  return async (request: Request, context?: any) => {
+export function apiHandler<T = any>(handler: RouteHandler<T>): (request: any, context?: any) => Promise<Response | NextResponse> {
+  return async (request: any, context?: any) => {
     try {
       return await handler(request, context);
     } catch (error: any) {
@@ -97,3 +94,4 @@ export function apiHandler(handler: RouteHandler): RouteHandler {
     }
   };
 }
+

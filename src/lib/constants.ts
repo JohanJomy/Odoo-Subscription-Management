@@ -46,8 +46,11 @@ export type BillingPeriod = (typeof BILLING_PERIODS)[number];
 export const DISCOUNT_TYPES = ["FIXED", "PERCENT"] as const;
 export type DiscountType = (typeof DISCOUNT_TYPES)[number];
 
+// P1 name: DISCOUNT_APPLIES_TO | P2 alias: DISCOUNT_SCOPES — both exported for compatibility
 export const DISCOUNT_APPLIES_TO = ["PRODUCT", "SUBSCRIPTION"] as const;
 export type DiscountAppliesTo = (typeof DISCOUNT_APPLIES_TO)[number];
+export const DISCOUNT_SCOPES = DISCOUNT_APPLIES_TO;
+export type DiscountScope = DiscountAppliesTo;
 
 export const SESSION_COOKIE_NAME = "session";
 
